@@ -1,0 +1,5 @@
+name: MobNegotiation
+version: 1.0
+author: Zazsona
+main: com.zazsona.mobnegotiation.MobNegotiationPlugin
+api-version: 1.17
