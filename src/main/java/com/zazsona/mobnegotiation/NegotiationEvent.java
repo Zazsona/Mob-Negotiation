@@ -4,7 +4,7 @@ public interface NegotiationEvent
 {
     /**
      * An event fired whenever the state of a {@link NegotiationProcess} is updated.
-     * @param state the state of negotiations
+     * @param negotiation the updated negotiation
      */
-    void onNegotiationStateUpdate(NegotiationState state);
+    void onNegotiationStateUpdate(NegotiationProcess negotiation);
 }
