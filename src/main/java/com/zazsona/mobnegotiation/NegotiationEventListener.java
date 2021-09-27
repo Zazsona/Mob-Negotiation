@@ -1,6 +1,6 @@
 package com.zazsona.mobnegotiation;
 
-public interface NegotiationEvent
+public interface NegotiationEventListener
 {
     /**
      * An event fired whenever the state of a {@link NegotiationProcess} is updated.

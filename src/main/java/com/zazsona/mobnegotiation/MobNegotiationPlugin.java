@@ -32,7 +32,7 @@ public class MobNegotiationPlugin extends JavaPlugin
     public void onEnable()
     {
         super.onEnable();
-        MobEventListener mobEventListener = new MobEventListener();
-        getServer().getPluginManager().registerEvents(mobEventListener, this);
+        NegotiationTriggerListener negotiationTriggerListener = new NegotiationTriggerListener();
+        getServer().getPluginManager().registerEvents(negotiationTriggerListener, this);
     }
 }
