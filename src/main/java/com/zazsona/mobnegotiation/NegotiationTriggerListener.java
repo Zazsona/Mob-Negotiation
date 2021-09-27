@@ -1,52 +1,110 @@
 package com.zazsona.mobnegotiation;
 
-import org.bukkit.entity.Creature;
+import org.bukkit.GameMode;
+import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
-import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
 
-import java.util.HashSet;
-import java.util.List;
+import java.util.HashMap;
 
 public class NegotiationTriggerListener implements Listener, NegotiationEventListener
 {
-    private HashSet<NegotiationProcess> negotiations;
+    private HashMap<Player, NegotiationProcess> negotiations;
 
     public NegotiationTriggerListener()
     {
-        this.negotiations = new HashSet<>();
+        this.negotiations = new HashMap<>();
     }
 
     /**
-     * Detects when a valid mob is hit to check if negotiations should begin
+     * Detects when a valid mob is hit, and if parameters are valid, begins a negotiation session.
      * @param e the event
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onMobAttack(EntityDamageByEntityEvent e)
     {
-        if (e.getDamager() instanceof Player && e.getEntity() instanceof Mob)
+        if (isNegotiationTriggerConditionsMet(e))
         {
+            e.setCancelled(true);
             Player player = (Player) e.getDamager();
             Mob mob = (Mob) e.getEntity();
             NegotiationProcess negotiationProcess = new NegotiationProcess(player, mob);
             negotiationProcess.addEventListener(this);
+
+            NegotiationEntityEventListener negotiationEntityListener = new NegotiationEntityEventListener(negotiationProcess);
+            MobNegotiationPlugin plugin = MobNegotiationPlugin.getInstance();
+            plugin.getServer().getPluginManager().registerEvents(negotiationEntityListener, plugin);
+
             negotiationProcess.start();
         }
+
     }
 
+    /**
+     * Checks to see if the parameters of the provided event meet the conditions for negotiation to occur
+     * @param e an {@link EntityDamageByEntityEvent} featuring a player and entity to check if they can negotiate
+     * @return true if valid parameters for negotiation
+     */
+    private boolean isNegotiationTriggerConditionsMet(EntityDamageByEntityEvent e)
+    {
+        if (e.getDamager() instanceof Player && e.getEntity() instanceof Mob && !negotiations.containsKey(e.getDamager()))
+        {
+            Player player = (Player) e.getDamager();
+            Mob mob = (Mob) e.getEntity();
+            boolean playerCanNegotiate = isEntityAbleToNegotiate(player);
+            boolean mobCanNegotiate = isEntityAbleToNegotiate(mob);
+            return (playerCanNegotiate && mobCanNegotiate);
+        }
+        return false;
+    }
+
+    /**
+     * Checks if an entity's current status and position is suitable for negotiation
+     * @param entity the entity to check
+     * @return true if entity can negotiate
+     */
+    private boolean isEntityAbleToNegotiate(Entity entity)
+    {
+        if (entity instanceof Player && (((Player) entity).isFlying() || !isPlayerInNegotiatingGameMode((Player) entity)))
+            return false;
+
+        if (!entity.isInWater() && !entity.isInsideVehicle())
+        {
+            Location location = entity.getLocation();
+            Block standingBlock = location.getWorld().getBlockAt(location.getBlockX(), location.getBlockY() - 1, location.getBlockZ());
+            Block jumpingBlock = location.getWorld().getBlockAt(location.getBlockX(), location.getBlockY() - 2, location.getBlockZ());
+            return (standingBlock.getType().isSolid() || jumpingBlock.getType().isSolid());
+        }
+        return false;
+    }
+
+    /**
+     * Checks to see if this player is in a gamemode suitable for negotiations
+     * @param player the player to check
+     * @return true if player not in creative or spectator mode
+     */
+    private boolean isPlayerInNegotiatingGameMode(Player player)
+    {
+        return !(player.getGameMode() == GameMode.CREATIVE || player.getGameMode() == GameMode.SPECTATOR);
+    }
+
+    /**
+     * Maintains negotiations with active negotiations
+     * @param negotiation the updated negotiation
+     */
     @Override
     public void onNegotiationStateUpdate(NegotiationProcess negotiation)
     {
         NegotiationState state = negotiation.getState();
         if (state == NegotiationState.STARTED)
-            negotiations.add(negotiation);
+            negotiations.put(negotiation.getPlayer(), negotiation);
         else if (state.isTerminating)
-            negotiations.remove(negotiation);
+            negotiations.remove(negotiation.getPlayer());
     }
 }
