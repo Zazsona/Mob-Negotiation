@@ -3,6 +3,7 @@ package com.zazsona.mobnegotiation;
 public enum NegotiationState
 {
     NONE(false),
+    INITIALISING(false),
     STARTED(false),
     FINISHED(true);
 

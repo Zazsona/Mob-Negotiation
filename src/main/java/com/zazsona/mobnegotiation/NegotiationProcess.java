@@ -11,6 +11,7 @@ import org.bukkit.entity.Player;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.logging.Level;
 
 public class NegotiationProcess
 {
@@ -81,6 +82,9 @@ public class NegotiationProcess
      */
     public void start()
     {
+        this.state = NegotiationState.INITIALISING;
+        this.updateListeners();
+
         positionEntity(player);
         positionEntity(mob);
         mob.setTarget(null); // Disabling this allows us to override the head position of the entity
@@ -142,6 +146,17 @@ public class NegotiationProcess
     private void updateListeners()
     {
         for (int i = listeners.size() - 1; i >= 0; i--)
-            listeners.get(i).onNegotiationStateUpdate(this);
+        {
+            try
+            {
+                listeners.get(i).onNegotiationStateUpdate(this);
+            }
+            catch (Exception e)
+            {
+                MobNegotiationPlugin.getInstance().getLogger().log(Level.SEVERE, "Error while handling negotiation listener:", e);
+            }
+
+        }
+
     }
 }
