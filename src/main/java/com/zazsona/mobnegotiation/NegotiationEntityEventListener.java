@@ -1,16 +1,10 @@
 package com.zazsona.mobnegotiation;
 
 import org.bukkit.Location;
-import org.bukkit.entity.Creature;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.Player;
+import org.bukkit.entity.*;
 import org.bukkit.event.*;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDeathEvent;
-import org.bukkit.event.entity.EntityTargetEvent;
+import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
-import org.bukkit.event.inventory.InventoryInteractEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -26,6 +20,7 @@ public class NegotiationEntityEventListener implements Listener, NegotiationEven
     private boolean previousMobAwareState = true;
     private boolean previousPlayerInvulnerableState = false;
     private boolean previousMobInvulnerableState = false;
+    private int previousMobMaxFuseTicks = 30;
     private BukkitTask tickTask;
 
     public NegotiationEntityEventListener(NegotiationProcess negotiation)
@@ -140,7 +135,6 @@ public class NegotiationEntityEventListener implements Listener, NegotiationEven
             if (clicker == negotiation.getPlayer())
                 e.setCancelled(true);
         }
-
     }
 
     /*
@@ -180,7 +174,20 @@ public class NegotiationEntityEventListener implements Listener, NegotiationEven
         NegotiationState state = negotiation.getState();
         Player player = negotiation.getPlayer();
         Mob mob = negotiation.getMob();
-        if (state == NegotiationState.STARTED)
+        if (state == NegotiationState.INITIALISING)
+        {
+            // There is a one tick delay before negotiations start to finalise initialisation
+            // This could be enough for a creeper to explode, thus we must prevent it.
+            if (mob instanceof Creeper)
+            {
+                Creeper creeper = (Creeper) mob;
+                int ticksPerDay = 20 * 60 * 60 * 24; // Arbitrary high amount
+                previousMobMaxFuseTicks = creeper.getMaxFuseTicks();
+                creeper.setMaxFuseTicks(ticksPerDay);
+                creeper.setFuseTicks(0);
+            }
+        }
+        else if (state == NegotiationState.STARTED)
         {
             playerLocation = player.getLocation();
             mobLocation = mob.getLocation();
@@ -204,10 +211,22 @@ public class NegotiationEntityEventListener implements Listener, NegotiationEven
                 tickTask.cancel();
             HandlerList.unregisterAll(this);
             negotiation.removeEventListener(this);
-            player.setWalkSpeed(previousPlayerWalkSpeed);
-            mob.setAware(previousMobAwareState);
-            player.setInvulnerable(previousPlayerInvulnerableState);
-            mob.setInvulnerable(previousMobInvulnerableState);
+            if (player != null)
+            {
+                player.setWalkSpeed(previousPlayerWalkSpeed);
+                player.setInvulnerable(previousPlayerInvulnerableState);
+            }
+            if (mob != null && mob.isValid())
+            {
+                mob.setAware(previousMobAwareState);
+                mob.setInvulnerable(previousMobInvulnerableState);
+                if (mob instanceof Creeper)
+                {
+                    Creeper creeper = (Creeper) mob;
+                    creeper.setMaxFuseTicks(previousMobMaxFuseTicks);
+                    creeper.setFuseTicks(0);
+                }
+            }
         }
     }
 
@@ -216,10 +235,10 @@ public class NegotiationEntityEventListener implements Listener, NegotiationEven
      */
     private void removeNearbyEntityTargets()
     {
-        int entityTargetingDistance = 40;
+        int maxEntityTargetingDistance = 40;
         Player player = negotiation.getPlayer();
         Mob mob = negotiation.getMob();
-        List<Entity> nearbyEntities = player.getNearbyEntities(entityTargetingDistance, entityTargetingDistance, entityTargetingDistance);
+        List<Entity> nearbyEntities = player.getNearbyEntities(maxEntityTargetingDistance, maxEntityTargetingDistance, maxEntityTargetingDistance);
         for (Entity entity : nearbyEntities)
         {
             if (entity instanceof Creature)
