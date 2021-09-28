@@ -3,6 +3,7 @@ package com.zazsona.mobnegotiation;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
@@ -12,6 +13,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class NegotiationTriggerListener implements Listener, NegotiationEventListener
 {
@@ -31,7 +33,7 @@ public class NegotiationTriggerListener implements Listener, NegotiationEventLis
     {
         if (isNegotiationTriggerConditionsMet(e))
         {
-            e.setCancelled(true);
+            e.setDamage(0.0f);
             Player player = (Player) e.getDamager();
             Mob mob = (Mob) e.getEntity();
             NegotiationProcess negotiationProcess = new NegotiationProcess(player, mob);
@@ -43,7 +45,6 @@ public class NegotiationTriggerListener implements Listener, NegotiationEventLis
 
             negotiationProcess.start();
         }
-
     }
 
     /**
@@ -57,9 +58,19 @@ public class NegotiationTriggerListener implements Listener, NegotiationEventLis
         {
             Player player = (Player) e.getDamager();
             Mob mob = (Mob) e.getEntity();
+            int mobTargetingRange = 7;
             boolean playerCanNegotiate = isEntityAbleToNegotiate(player);
             boolean mobCanNegotiate = isEntityAbleToNegotiate(mob);
-            return (playerCanNegotiate && mobCanNegotiate);
+            if (playerCanNegotiate && mobCanNegotiate) // While not required, this reduces wasteful O(n) searches.
+            {
+                boolean isPlayerTargeted = isEntityTargeted(player, mobTargetingRange, mob);
+                if (!isPlayerTargeted)  // While not required, this reduces wasteful wasteful O(n) searches.
+                {
+                    boolean isMobTargeted = isEntityTargeted(mob, mobTargetingRange, player);
+                    if (!isMobTargeted)
+                        return true;
+                }
+            }
         }
         return false;
     }
@@ -80,6 +91,31 @@ public class NegotiationTriggerListener implements Listener, NegotiationEventLis
             Block standingBlock = location.getWorld().getBlockAt(location.getBlockX(), location.getBlockY() - 1, location.getBlockZ());
             Block jumpingBlock = location.getWorld().getBlockAt(location.getBlockX(), location.getBlockY() - 2, location.getBlockZ());
             return (standingBlock.getType().isSolid() || jumpingBlock.getType().isSolid());
+        }
+        return false;
+    }
+
+    /**
+     * Checks if the entity is currently being targeted
+     * @param entity the entity
+     * @param radius the radius to search for mobs from the entity's position
+     * @param exclusions entities to ignore
+     * @return true if targeted
+     */
+    private boolean isEntityTargeted(Entity entity, int radius, Entity... exclusions)
+    {
+        List<Entity> nearbyEntities = entity.getNearbyEntities(radius, radius, radius);
+        for (Entity excludedEntity : exclusions)
+            nearbyEntities.remove(excludedEntity);
+
+        for (Entity nearbyEntity : nearbyEntities)
+        {
+            if (nearbyEntity instanceof Creature)
+            {
+                Creature creature = (Creature) nearbyEntity;
+                if (creature.getTarget() == entity)
+                    return true;
+            }
         }
         return false;
     }
