@@ -97,7 +97,7 @@ public class NegotiationTriggerListener implements Listener, NegotiationEventLis
         if (entity instanceof Player && (((Player) entity).isFlying() || !isPlayerInNegotiatingGameMode((Player) entity)))
             return false;
 
-        if (!entity.isInWater() && !entity.isInsideVehicle())
+        if (!entity.isInWater() && !entity.isInsideVehicle() && !entity.isVisualFire() && entity.getFireTicks() <= 0 && entity.getPassengers().size() == 0)
         {
             Location location = entity.getLocation();
             Block standingBlock = location.getWorld().getBlockAt(location.getBlockX(), location.getBlockY() - 1, location.getBlockZ());
