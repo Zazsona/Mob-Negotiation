@@ -18,8 +18,6 @@ public class NegotiationEntityEventListener implements Listener, NegotiationEven
     private Location mobLocation;
     private float previousPlayerWalkSpeed = 0.2f;
     private boolean previousMobAwareState = true;
-    private boolean previousPlayerInvulnerableState = false;
-    private boolean previousMobInvulnerableState = false;
     private int previousMobMaxFuseTicks = 30;
     private BukkitTask tickTask;
 
@@ -34,17 +32,16 @@ public class NegotiationEntityEventListener implements Listener, NegotiationEven
      */
 
     /**
-     * Prevents the player and mob associated with the {@link NegotiationProcess} taking or dealing damage
+     * Prevents the player and mob associated with the {@link NegotiationProcess} taking damage
      * @param e the event
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onMobAttack(EntityDamageByEntityEvent e)
+    public void onDamage(EntityDamageEvent e)
     {
         Entity entity = e.getEntity();
-        Entity damager = e.getDamager();
         Player player = negotiation.getPlayer();
         Mob mob = negotiation.getMob();
-        if ((entity == player || entity == mob) || (damager == player || damager == mob))
+        if (entity == player || entity == mob)
             e.setCancelled(true);
     }
 
@@ -84,6 +81,20 @@ public class NegotiationEntityEventListener implements Listener, NegotiationEven
                                                 e.getTo().getPitch());
             e.setTo(newPosition);
         }
+    }
+
+    /**
+     * Prevents the player and mob associated with the {@link NegotiationProcess} dealing damage
+     * @param e the event
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onDamage(EntityDamageByEntityEvent e)
+    {
+        Entity damager = e.getDamager();
+        Player player = negotiation.getPlayer();
+        Mob mob = negotiation.getMob();
+        if (damager == player || damager == mob)
+            e.setCancelled(true);
     }
 
     /**
@@ -185,8 +196,6 @@ public class NegotiationEntityEventListener implements Listener, NegotiationEven
     public void onNegotiationStateUpdate(NegotiationProcess negotiation)
     {
         NegotiationState state = negotiation.getState();
-        Player player = negotiation.getPlayer();
-        Mob mob = negotiation.getMob();
         if (state == NegotiationState.INITIALISING)
         {
             // There is a one tick delay before negotiations start to finalise initialisation
@@ -232,12 +241,8 @@ public class NegotiationEntityEventListener implements Listener, NegotiationEven
         mobLocation = mob.getLocation();
         previousPlayerWalkSpeed = player.getWalkSpeed();
         previousMobAwareState = mob.isAware();
-        previousPlayerInvulnerableState = player.isInvulnerable();
-        previousMobInvulnerableState = mob.isInvulnerable();
         player.setWalkSpeed(0);
         mob.setAware(false);
-        player.setInvulnerable(true);
-        mob.setInvulnerable(true);
         removeNearbyEntityTargets();
 
         MobNegotiationPlugin plugin = MobNegotiationPlugin.getInstance();
@@ -281,16 +286,33 @@ public class NegotiationEntityEventListener implements Listener, NegotiationEven
         if (player != null)
         {
             player.setWalkSpeed(previousPlayerWalkSpeed);
-            plugin.getServer().getScheduler().runTaskLater(plugin, () ->
+
+            // Delay restoring mortality so players can get their bearings.
+            Listener playerGraceListener = new Listener()
             {
-                if (player.isValid())     // Delay restoring vulnerability so players can get their surroundings.
-                    player.setInvulnerable(previousPlayerInvulnerableState);
+                @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+                public void onPlayerDamaged(EntityDamageEvent e)
+                {
+                    if (e.getEntity() == player)
+                        e.setCancelled(true);
+                }
+
+                @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+                public void onPlayerTargeted(EntityTargetEvent e)
+                {
+                    if (e.getTarget() == player)
+                        e.setCancelled(true);
+                }
+            };
+            plugin.getServer().getPluginManager().registerEvents(playerGraceListener, plugin);
+            plugin.getServer().getScheduler().runTaskLater(plugin, () ->
+            {                                                               // Manual invulnerability, Invulnerability from NBT cannot be unset for OfflinePlayer
+                HandlerList.unregisterAll(playerGraceListener);
             }, PluginConfig.getNegotiationDmgGracePeriod());
         }
         if (mob != null && mob.isValid())
         {
             mob.setAware(previousMobAwareState);
-            mob.setInvulnerable(previousMobInvulnerableState);
             if (mob instanceof Creeper)
             {
                 Creeper creeper = (Creeper) mob;
