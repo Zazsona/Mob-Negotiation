@@ -165,6 +165,19 @@ public class NegotiationEntityEventListener implements Listener, NegotiationEven
     }
 
     /**
+     * Stops the negotiation when the player or mob explodes.
+     * Should never occur in theory, as creeper explosions are disabled, but better safe than sorry due to other plugins.
+     * @param e the event
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onEntityExplode(EntityExplodeEvent e)
+    {
+        Entity entity = e.getEntity();
+        if (entity == negotiation.getPlayer() || entity == negotiation.getMob())
+            negotiation.stop();
+    }
+
+    /**
      * Tracks the state of negotiation to register and unregister state enforcement events
      * @param negotiation the updated negotiation
      */
@@ -178,56 +191,58 @@ public class NegotiationEntityEventListener implements Listener, NegotiationEven
         {
             // There is a one tick delay before negotiations start to finalise initialisation
             // This could be enough for a creeper to explode, thus we must prevent it.
-            if (mob instanceof Creeper)
-            {
-                Creeper creeper = (Creeper) mob;
-                int ticksPerDay = 20 * 60 * 60 * 24; // Arbitrary high amount
-                previousMobMaxFuseTicks = creeper.getMaxFuseTicks();
-                creeper.setMaxFuseTicks(ticksPerDay);
-                creeper.setFuseTicks(0);
-            }
+            runNegotiationInitialisationActions();
         }
         else if (state == NegotiationState.STARTED)
         {
-            playerLocation = player.getLocation();
-            mobLocation = mob.getLocation();
-            previousPlayerWalkSpeed = player.getWalkSpeed();
-            previousMobAwareState = mob.isAware();
-            previousPlayerInvulnerableState = player.isInvulnerable();
-            previousMobInvulnerableState = mob.isInvulnerable();
-            player.setWalkSpeed(0);
-            mob.setAware(false);
-            player.setInvulnerable(true);
-            mob.setInvulnerable(true);
-            removeNearbyEntityTargets();
-
-            MobNegotiationPlugin plugin = MobNegotiationPlugin.getInstance();
-            plugin.getServer().getPluginManager().registerEvents(this, plugin);
-            tickTask = plugin.getServer().getScheduler().runTaskTimer(plugin, this::onTick, 1, 1);
+            runNogotiationStartedActions();
         }
         else if (state.isTerminating)
         {
-            if (tickTask != null)
-                tickTask.cancel();
-            HandlerList.unregisterAll(this);
-            negotiation.removeEventListener(this);
-            if (player != null)
-            {
-                player.setWalkSpeed(previousPlayerWalkSpeed);
-                player.setInvulnerable(previousPlayerInvulnerableState);
-            }
-            if (mob != null && mob.isValid())
-            {
-                mob.setAware(previousMobAwareState);
-                mob.setInvulnerable(previousMobInvulnerableState);
-                if (mob instanceof Creeper)
-                {
-                    Creeper creeper = (Creeper) mob;
-                    creeper.setMaxFuseTicks(previousMobMaxFuseTicks);
-                    creeper.setFuseTicks(0);
-                }
-            }
+            runNegotiationTerminationActions();
         }
+    }
+
+    /**
+     * Prepares this listener for the {@link NegotiationProcess}'s initialisation state.
+     * There is a one tick delay before negotiations start to finalise initialisation,
+     * this could be enough for a creeper to explode, thus this method prevents it.
+     */
+    private void runNegotiationInitialisationActions()
+    {
+        Mob mob = negotiation.getMob();
+        if (mob instanceof Creeper)
+        {
+            Creeper creeper = (Creeper) mob;
+            int ticksPerDay = 20 * 60 * 60 * 24; // Arbitrary high amount
+            previousMobMaxFuseTicks = creeper.getMaxFuseTicks();
+            creeper.setMaxFuseTicks(ticksPerDay);
+            creeper.setFuseTicks(0);
+        }
+    }
+
+    /**
+     * Prepares this listener for the {@link NegotiationProcess}'s started state.
+     */
+    private void runNogotiationStartedActions()
+    {
+        Player player = negotiation.getPlayer();
+        Mob mob = negotiation.getMob();
+        playerLocation = player.getLocation();
+        mobLocation = mob.getLocation();
+        previousPlayerWalkSpeed = player.getWalkSpeed();
+        previousMobAwareState = mob.isAware();
+        previousPlayerInvulnerableState = player.isInvulnerable();
+        previousMobInvulnerableState = mob.isInvulnerable();
+        player.setWalkSpeed(0);
+        mob.setAware(false);
+        player.setInvulnerable(true);
+        mob.setInvulnerable(true);
+        removeNearbyEntityTargets();
+
+        MobNegotiationPlugin plugin = MobNegotiationPlugin.getInstance();
+        plugin.getServer().getPluginManager().registerEvents(this, plugin);
+        tickTask = plugin.getServer().getScheduler().runTaskTimer(plugin, this::onTick, 1, 1);
     }
 
     /**
@@ -246,6 +261,47 @@ public class NegotiationEntityEventListener implements Listener, NegotiationEven
                 Creature creature = (Creature) entity;
                 if (creature.getTarget() == player || creature.getTarget() == mob)
                     creature.setTarget(null);
+            }
+        }
+    }
+
+    /**
+     * Prepares this listener for the {@link NegotiationProcess}'s terminating state.
+     */
+    private void runNegotiationTerminationActions()
+    {
+        Player player = negotiation.getPlayer();
+        Mob mob = negotiation.getMob();
+        if (tickTask != null)
+            tickTask.cancel();
+        HandlerList.unregisterAll(this);
+        negotiation.removeEventListener(this);
+
+        MobNegotiationPlugin plugin = MobNegotiationPlugin.getInstance();
+        if (player != null)
+        {
+            player.setWalkSpeed(previousPlayerWalkSpeed);
+            plugin.getServer().getScheduler().runTaskLater(plugin, () ->
+            {
+                if (player.isValid())     // Delay restoring vulnerability so players can get their surroundings.
+                    player.setInvulnerable(previousPlayerInvulnerableState);
+            }, PluginConfig.getNegotiationDmgGracePeriod());
+        }
+        if (mob != null && mob.isValid())
+        {
+            mob.setAware(previousMobAwareState);
+            mob.setInvulnerable(previousMobInvulnerableState);
+            if (mob instanceof Creeper)
+            {
+                Creeper creeper = (Creeper) mob;
+                int fuseTime = previousMobMaxFuseTicks + PluginConfig.getNegotiationDmgGracePeriod();
+                creeper.setMaxFuseTicks(fuseTime);
+                creeper.setFuseTicks(0);
+                plugin.getServer().getScheduler().runTaskLater(plugin, () ->
+                {
+                    if (creeper.isValid())       // As the grace period has ended, reset to previous fuse time.
+                        creeper.setMaxFuseTicks(previousMobMaxFuseTicks);
+                }, fuseTime);
             }
         }
     }
