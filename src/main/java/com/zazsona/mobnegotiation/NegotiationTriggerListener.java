@@ -12,16 +12,21 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class NegotiationTriggerListener implements Listener, NegotiationEventListener
 {
     private HashMap<Player, NegotiationProcess> negotiations;
+    private HashMap<Player, Long> playerToNegotiationCooldown;
+    private Random rand;
+    private TickClock tickClock;
 
     public NegotiationTriggerListener()
     {
         this.negotiations = new HashMap<>();
+        this.playerToNegotiationCooldown = new HashMap<>();
+        this.rand = new Random();
+        this.tickClock = new TickClock(MobNegotiationPlugin.getInstance());
     }
 
     /**
@@ -54,21 +59,28 @@ public class NegotiationTriggerListener implements Listener, NegotiationEventLis
      */
     private boolean isNegotiationTriggerConditionsMet(EntityDamageByEntityEvent e)
     {
-        if (e.getDamager() instanceof Player && e.getEntity() instanceof Mob && !negotiations.containsKey(e.getDamager()))
+        double roll = (rand.nextDouble() * 100);
+        if (PluginConfig.isPluginEnabled() && roll <= PluginConfig.getNegotiationRate())
         {
-            Player player = (Player) e.getDamager();
-            Mob mob = (Mob) e.getEntity();
-            int mobTargetingRange = 7;
-            boolean playerCanNegotiate = isEntityAbleToNegotiate(player);
-            boolean mobCanNegotiate = isEntityAbleToNegotiate(mob);
-            if (playerCanNegotiate && mobCanNegotiate) // While not required, this reduces wasteful O(n) searches.
+            if (e.getDamager() instanceof Player && e.getEntity() instanceof Mob)
             {
-                boolean isPlayerTargeted = isEntityTargeted(player, mobTargetingRange, mob);
-                if (!isPlayerTargeted)  // While not required, this reduces wasteful wasteful O(n) searches.
+                Player player = (Player) e.getDamager();
+                Mob mob = (Mob) e.getEntity();
+                if (!negotiations.containsKey(player) && !isPlayerNegotiationCooldownActive(player))
                 {
-                    boolean isMobTargeted = isEntityTargeted(mob, mobTargetingRange, player);
-                    if (!isMobTargeted)
-                        return true;
+                    int mobTargetingRange = 7;
+                    boolean playerCanNegotiate = isEntityAbleToNegotiate(player);
+                    boolean mobCanNegotiate = isEntityAbleToNegotiate(mob);
+                    if (playerCanNegotiate && mobCanNegotiate) // While not required, this reduces wasteful O(n) searches.
+                    {
+                        boolean isPlayerTargeted = isEntityTargeted(player, mobTargetingRange, mob);
+                        if (!isPlayerTargeted)  // While not required, this reduces wasteful wasteful O(n) searches.
+                        {
+                            boolean isMobTargeted = isEntityTargeted(mob, mobTargetingRange, player);
+                            if (!isMobTargeted)
+                                return true;
+                        }
+                    }
                 }
             }
         }
@@ -131,6 +143,26 @@ public class NegotiationTriggerListener implements Listener, NegotiationEventLis
     }
 
     /**
+     * Checks to see if this player is in the negotiation cooldown
+     * @param player the player to check
+     * @return true if the player is still on the cooldown timer
+     */
+    private boolean isPlayerNegotiationCooldownActive(Player player)
+    {
+        if (playerToNegotiationCooldown.containsKey(player))
+            return (tickClock.getTicks() - playerToNegotiationCooldown.get(player)) <= PluginConfig.getNegotiationCooldownTicks();
+        return false;
+    }
+
+    /**
+     * Removes entries from the cooldown map if their cooldown has expired.
+     */
+    private void removeExpiredNegotiationCooldowns()
+    {
+        playerToNegotiationCooldown.entrySet().removeIf(entry -> !isPlayerNegotiationCooldownActive(entry.getKey()));
+    }
+
+    /**
      * Maintains negotiations with active negotiations
      * @param negotiation the updated negotiation
      */
@@ -141,6 +173,16 @@ public class NegotiationTriggerListener implements Listener, NegotiationEventLis
         if (state == NegotiationState.STARTED)
             negotiations.put(negotiation.getPlayer(), negotiation);
         else if (state.isTerminating)
+        {
+            if (!tickClock.isRunning())
+            {
+                MobNegotiationPlugin plugin = MobNegotiationPlugin.getInstance();
+                tickClock.start();
+                int ticksPerMinute = 20 * 60;
+                plugin.getServer().getScheduler().runTaskTimer(plugin, this::removeExpiredNegotiationCooldowns, ticksPerMinute, ticksPerMinute);
+            }
             negotiations.remove(negotiation.getPlayer());
+            playerToNegotiationCooldown.put(negotiation.getPlayer(), tickClock.getTicks());
+        }
     }
 }
