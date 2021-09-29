@@ -8,6 +8,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -85,10 +86,15 @@ public class NegotiationProcess
         this.state = NegotiationState.INITIALISING;
         this.updateListeners();
 
-        positionEntity(player);
-        positionEntity(mob);
-        mob.setTarget(null); // Disabling this allows us to override the head position of the entity
-        mob.setRotation(mob.getLocation().getYaw(), 45); // Sad expression
+        Location playerLocation = player.getLocation();
+        Location mobLocation = mob.getLocation();
+        Vector gradientDirection = playerLocation.toVector().subtract(mobLocation.toVector());
+        mobLocation.setDirection(gradientDirection);
+        mobLocation.setPitch(50); // Sad expression
+
+        positionEntityAtLocation(player, playerLocation);
+        positionEntityAtLocation(mob, mobLocation);
+        mob.setTarget(null);
 
         MobNegotiationPlugin plugin = MobNegotiationPlugin.getInstance();   // Wait a tick to allow initialisations to apply
         plugin.getServer().getScheduler().runTaskLater(plugin, this::beginNegotiation, 1);
@@ -111,19 +117,19 @@ public class NegotiationProcess
     /**
      * Teleports the entity to a valid position within their current X/Y co-ordinates for negotiation.
      * @param entity the entity to position
+     * @param location the approximate location the entity should be
      * @throws InvalidParameterException no valid position could be found for the entity
      */
-    private void positionEntity(Entity entity)
+    private void positionEntityAtLocation(Entity entity, Location location)
     {
         World world = entity.getWorld();
-        Location entityLocation = entity.getLocation();
-        int playerY = entityLocation.getBlockY();
-        for (int yIndex = playerY; yIndex >= player.getWorld().getMinHeight(); yIndex--)
+        int entityY = location.getBlockY();
+        for (int yIndex = entityY; yIndex >= player.getWorld().getMinHeight(); yIndex--)
         {
-            Block block = world.getBlockAt(entityLocation.getBlockX(), yIndex, entityLocation.getBlockZ());
+            Block block = world.getBlockAt(location.getBlockX(), yIndex, location.getBlockZ());
             if (block != null && block.getType().isSolid())
             {
-                Location teleportLocation = new Location(world, entityLocation.getX(), (yIndex + 1), entityLocation.getZ(), entityLocation.getYaw(), entityLocation.getPitch());
+                Location teleportLocation = new Location(world, location.getX(), (yIndex + 1), location.getZ(), location.getYaw(), location.getPitch());
                 entity.teleport(teleportLocation);
                 return;
             }
