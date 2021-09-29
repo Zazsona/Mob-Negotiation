@@ -1,0 +1,12 @@
+# Plugin version. Do not modify.
+version: 1.0
+# Toggles the plugin
+plugin-enabled: true
+# % chance of negotiation occurring, if conditions are met
+negotiation-rate: 100.0
+# Ticks without a player response before negotiation ends
+negotiation-idle-timeout-ticks: 600
+# Minimum ticks before a player can get another negotiation
+negotiation-cooldown-ticks: 3600
+# The amount of ticks a player is invincible for after a negotiation to allow them to move safely
+negotiation-damage-grace-ticks: 30

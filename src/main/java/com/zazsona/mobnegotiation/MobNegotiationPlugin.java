@@ -20,12 +20,7 @@ public class MobNegotiationPlugin extends JavaPlugin
     {
         super.onLoad();
         pluginName = getDescription().getName();
-    }
-
-    @Override
-    public void onDisable()
-    {
-        super.onDisable();
+        saveDefaultConfig();
     }
 
     @Override
@@ -34,5 +29,12 @@ public class MobNegotiationPlugin extends JavaPlugin
         super.onEnable();
         NegotiationTriggerListener negotiationTriggerListener = new NegotiationTriggerListener();
         getServer().getPluginManager().registerEvents(negotiationTriggerListener, this);
+    }
+
+
+    @Override
+    public void onDisable()
+    {
+        super.onDisable();
     }
 }
