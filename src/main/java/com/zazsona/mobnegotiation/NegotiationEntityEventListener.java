@@ -180,8 +180,7 @@ public class NegotiationEntityEventListener implements Listener, NegotiationEven
     }
 
     /**
-     * Stops the negotiation when the player or mob explodes.
-     * Should never occur in theory, as creeper explosions are disabled, but better safe than sorry due to other plugins.
+     * Stops the negotiation when the player or mob explodes, and stops any external nearby explosions having an effect.
      * @param e the event
      */
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
@@ -189,7 +188,17 @@ public class NegotiationEntityEventListener implements Listener, NegotiationEven
     {
         Entity entity = e.getEntity();
         if (entity == negotiation.getPlayer() || entity == negotiation.getMob())
+        {
             negotiation.stop();
+        }
+        else
+        {
+            Block playerBlock = playerLocation.getWorld().getBlockAt(playerLocation.getBlockX(), playerLocation.getBlockY() - 1, playerLocation.getBlockZ());
+            Block mobBlock = mobLocation.getWorld().getBlockAt(mobLocation.getBlockX(), mobLocation.getBlockY() - 1, mobLocation.getBlockZ());
+            List<Block> blocksInExplosion = e.blockList();
+            if (blocksInExplosion.contains(playerBlock) || blocksInExplosion.contains(mobBlock))
+                e.setCancelled(true);
+        }
     }
 
     /**
