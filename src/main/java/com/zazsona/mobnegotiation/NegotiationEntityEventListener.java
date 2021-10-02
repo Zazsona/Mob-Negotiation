@@ -1,13 +1,17 @@
 package com.zazsona.mobnegotiation;
 
 import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.entity.*;
 import org.bukkit.event.*;
 import org.bukkit.event.entity.*;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.*;
 import org.bukkit.scheduler.BukkitTask;
+import org.bukkit.util.Vector;
 
+import java.security.InvalidParameterException;
 import java.util.List;
 
 public class NegotiationEntityEventListener implements Listener, NegotiationEventListener
@@ -197,19 +201,11 @@ public class NegotiationEntityEventListener implements Listener, NegotiationEven
     {
         NegotiationState state = negotiation.getState();
         if (state == NegotiationState.INITIALISING)
-        {
-            // There is a one tick delay before negotiations start to finalise initialisation
-            // This could be enough for a creeper to explode, thus we must prevent it.
             runNegotiationInitialisationActions();
-        }
         else if (state == NegotiationState.STARTED)
-        {
-            runNogotiationStartedActions();
-        }
+            runNegotiationStartedActions();
         else if (state.isTerminating)
-        {
             runNegotiationTerminationActions();
-        }
     }
 
     /**
@@ -219,7 +215,27 @@ public class NegotiationEntityEventListener implements Listener, NegotiationEven
      */
     private void runNegotiationInitialisationActions()
     {
+        Player player = negotiation.getPlayer();
         Mob mob = negotiation.getMob();
+
+        Location playerLocationTarget = player.getLocation();
+        Location mobLocationTarget = mob.getLocation();
+        Vector gradientDirection = playerLocationTarget.toVector().subtract(mobLocationTarget.toVector());
+        mobLocationTarget.setDirection(gradientDirection);
+        mobLocationTarget.setPitch(50); // Sad expression
+
+        positionEntityAtNegotiationLocation(player, playerLocationTarget);
+        positionEntityAtNegotiationLocation(mob, mobLocationTarget);
+
+        playerLocation = player.getLocation();
+        mobLocation = mob.getLocation();
+        previousPlayerWalkSpeed = player.getWalkSpeed();
+        previousMobAwareState = mob.isAware();
+        player.setWalkSpeed(0);
+        mob.setAware(false);
+        mob.setTarget(null);
+        removeNearbyEntityTargets();
+
         if (mob instanceof Creeper)
         {
             Creeper creeper = (Creeper) mob;
@@ -231,20 +247,33 @@ public class NegotiationEntityEventListener implements Listener, NegotiationEven
     }
 
     /**
+     * Teleports the entity to a valid position within their current X/Y co-ordinates for negotiation.
+     * @param entity the entity to position
+     * @param location the approximate location the entity should be
+     * @throws InvalidParameterException no valid position could be found for the entity
+     */
+    private void positionEntityAtNegotiationLocation(Entity entity, Location location)
+    {
+        World world = entity.getWorld();
+        int entityY = location.getBlockY();
+        for (int yIndex = entityY; yIndex >= entity.getWorld().getMinHeight(); yIndex--)
+        {
+            Block block = world.getBlockAt(location.getBlockX(), yIndex, location.getBlockZ());
+            if (block != null && block.getType().isSolid())
+            {
+                Location teleportLocation = new Location(world, location.getX(), (yIndex + 1), location.getZ(), location.getYaw(), location.getPitch());
+                entity.teleport(teleportLocation);
+                return;
+            }
+        }
+        throw new InvalidParameterException(String.format("Entity %s is not in a valid negotiating position (%s)", entity.getName(), entity.getLocation()));
+    }
+
+    /**
      * Prepares this listener for the {@link NegotiationProcess}'s started state.
      */
-    private void runNogotiationStartedActions()
+    private void runNegotiationStartedActions()
     {
-        Player player = negotiation.getPlayer();
-        Mob mob = negotiation.getMob();
-        playerLocation = player.getLocation();
-        mobLocation = mob.getLocation();
-        previousPlayerWalkSpeed = player.getWalkSpeed();
-        previousMobAwareState = mob.isAware();
-        player.setWalkSpeed(0);
-        mob.setAware(false);
-        removeNearbyEntityTargets();
-
         MobNegotiationPlugin plugin = MobNegotiationPlugin.getInstance();
         plugin.getServer().getPluginManager().registerEvents(this, plugin);
         tickTask = plugin.getServer().getScheduler().runTaskTimer(plugin, this::onTick, 1, 1);

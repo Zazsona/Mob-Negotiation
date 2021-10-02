@@ -2,13 +2,8 @@ package com.zazsona.mobnegotiation;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
-import org.bukkit.block.Block;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
@@ -78,26 +73,13 @@ public class NegotiationProcess
 
     /**
      * Initialises the negotiation process and, if successful, presents the UI to the player.
-     * There is a one tick delay before the UI is displayed and the listener is fired to ensure initialisation values are applied.
      * @throws InvalidParameterException Negotiating entity is unable to negotiate
      */
     public void start()
     {
         this.state = NegotiationState.INITIALISING;
         this.updateListeners();
-
-        Location playerLocation = player.getLocation();
-        Location mobLocation = mob.getLocation();
-        Vector gradientDirection = playerLocation.toVector().subtract(mobLocation.toVector());
-        mobLocation.setDirection(gradientDirection);
-        mobLocation.setPitch(50); // Sad expression
-
-        positionEntityAtLocation(player, playerLocation);
-        positionEntityAtLocation(mob, mobLocation);
-        mob.setTarget(null);
-
-        MobNegotiationPlugin plugin = MobNegotiationPlugin.getInstance();   // Wait a tick to allow initialisations to apply
-        plugin.getServer().getScheduler().runTaskLater(plugin, this::beginNegotiation, 1);
+        beginNegotiation();
     }
 
     /**
@@ -112,29 +94,6 @@ public class NegotiationProcess
         player.sendTitle(alertFormat + "WAIT, WAIT!", null, 2, 20, 7);
 
         Bukkit.getScheduler().runTaskLater(MobNegotiationPlugin.getInstance(), this::stop, 80);
-    }
-
-    /**
-     * Teleports the entity to a valid position within their current X/Y co-ordinates for negotiation.
-     * @param entity the entity to position
-     * @param location the approximate location the entity should be
-     * @throws InvalidParameterException no valid position could be found for the entity
-     */
-    private void positionEntityAtLocation(Entity entity, Location location)
-    {
-        World world = entity.getWorld();
-        int entityY = location.getBlockY();
-        for (int yIndex = entityY; yIndex >= player.getWorld().getMinHeight(); yIndex--)
-        {
-            Block block = world.getBlockAt(location.getBlockX(), yIndex, location.getBlockZ());
-            if (block != null && block.getType().isSolid())
-            {
-                Location teleportLocation = new Location(world, location.getX(), (yIndex + 1), location.getZ(), location.getYaw(), location.getPitch());
-                entity.teleport(teleportLocation);
-                return;
-            }
-        }
-        throw new InvalidParameterException(String.format("Entity %s is not in a valid negotiating position (%s)", entity.getName(), entity.getLocation()));
     }
 
     /**
