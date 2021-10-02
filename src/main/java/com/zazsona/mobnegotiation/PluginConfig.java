@@ -3,6 +3,8 @@ package com.zazsona.mobnegotiation;
 import com.zazsona.mobnegotiation.MobNegotiationPlugin;
 import org.bukkit.plugin.Plugin;
 
+import java.util.List;
+
 public class PluginConfig
 {
     public static final String VERSION_KEY = "version";
@@ -11,6 +13,7 @@ public class PluginConfig
     public static final String NEGOTIATION_IDLE_TIMEOUT_KEY = "negotiation-idle-timeout-ticks";
     public static final String NEGOTIATION_COOLDOWN_KEY = "negotiation-cooldown-ticks";
     public static final String NEGOTIATION_DMG_GRACE_KEY = "negotiation-damage-grace-ticks";
+    public static final String NEGOTIATION_ALERT_MSGS_KEY = "negotiation-alert-messages";
 
     /**
      * Saves the config
@@ -146,6 +149,27 @@ public class PluginConfig
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
         return plugin.getConfig().getInt(NEGOTIATION_DMG_GRACE_KEY);
+    }
+
+    /**
+     * Sets the messages displayed on the player's screen when a negotiation begins
+     * @param messages the messages to display
+     */
+    public static void setNegotiationAlertMessages(List<String> messages)
+    {
+        Plugin plugin = MobNegotiationPlugin.getInstance();
+        plugin.getConfig().set(NEGOTIATION_ALERT_MSGS_KEY, messages);
+        save();
+    }
+
+    /**
+     * Gets the messages displayed on the player's screen when a negotiation begins
+     * @return the messages to display
+     */
+    public static List<String> getNegotiationAlertMessages()
+    {
+        Plugin plugin = MobNegotiationPlugin.getInstance();
+        return plugin.getConfig().getStringList(NEGOTIATION_ALERT_MSGS_KEY);
     }
 
 }

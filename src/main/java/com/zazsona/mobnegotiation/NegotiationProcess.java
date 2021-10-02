@@ -7,6 +7,8 @@ import org.bukkit.entity.Player;
 
 import java.security.InvalidParameterException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 import java.util.logging.Level;
 
 public class NegotiationProcess
@@ -14,6 +16,7 @@ public class NegotiationProcess
     private Player player;
     private Mob mob;
     private NegotiationState state;
+    private Random rand;
     private ArrayList<NegotiationEventListener> listeners;
 
     public NegotiationProcess(Player player, Mob mob)
@@ -21,6 +24,7 @@ public class NegotiationProcess
         this.player = player;
         this.mob = mob;
         this.state = NegotiationState.NONE;
+        this.rand = new Random();
         this.listeners = new ArrayList<>();
     }
 
@@ -90,8 +94,10 @@ public class NegotiationProcess
         this.state = NegotiationState.STARTED;
         this.updateListeners();
 
+        List<String> alertMessages = PluginConfig.getNegotiationAlertMessages();
+        String alertMessage = alertMessages.get(rand.nextInt(alertMessages.size()));
         String alertFormat = "" + ChatColor.RED + ChatColor.BOLD;
-        player.sendTitle(alertFormat + "WAIT, WAIT!", null, 2, 20, 7);
+        player.sendTitle(alertFormat + alertMessage, null, 2, 20, 7);
 
         Bukkit.getScheduler().runTaskLater(MobNegotiationPlugin.getInstance(), this::stop, 80);
     }

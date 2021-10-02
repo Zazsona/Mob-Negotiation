@@ -20,7 +20,9 @@ public class MobNegotiationPlugin extends JavaPlugin
     {
         super.onLoad();
         pluginName = getDescription().getName();
-        saveDefaultConfig();
+        getConfig().options().copyDefaults(true);
+        getConfig().options().copyHeader(true);
+        saveConfig();
     }
 
     @Override

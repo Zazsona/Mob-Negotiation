@@ -1,12 +1,20 @@
-# Plugin version. Do not modify.
+#  =========================== Details ====================================
+#  version : Plugin version. Don't edit this unless you want things to go higgledy-piggledy.
+#  plugin-enabled : Toggles the plugin
+#  negotiation-rate : % chance of negotiation occurring, if conditions are met
+#  negotiation-idle-timeout-ticks : Ticks without a player response before negotiation ends
+#  negotiation-cooldown-ticks : Minimum ticks before a player can get another negotiation
+#  negotiation-damage-grace-ticks : The amount of ticks a player is invincible for after a negotiation to allow them to move safely
+#  negotiation-alert-messages : Alert message spread on the player's screen when a negotiation is triggered
+#  ========================================================================
+
 version: 1.0
-# Toggles the plugin
 plugin-enabled: true
-# % chance of negotiation occurring, if conditions are met
 negotiation-rate: 100.0
-# Ticks without a player response before negotiation ends
 negotiation-idle-timeout-ticks: 600
-# Minimum ticks before a player can get another negotiation
 negotiation-cooldown-ticks: 3600
-# The amount of ticks a player is invincible for after a negotiation to allow them to move safely
 negotiation-damage-grace-ticks: 30
+negotiation-alert-messages:
+  - "WAIT, WAIT!"
+  - "HOLD UP!"
+  - "HANG ON!"
