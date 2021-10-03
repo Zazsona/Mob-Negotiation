@@ -7,7 +7,7 @@ public enum NegotiationState
     STARTED(false),
     FINISHED(true);
 
-    public final boolean isTerminating;
+    private final boolean isTerminating;
 
     NegotiationState(boolean isTerminating)
     {

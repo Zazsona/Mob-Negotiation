@@ -16,14 +16,14 @@ import java.util.*;
 
 public class NegotiationTriggerListener implements Listener, NegotiationEventListener
 {
-    private HashMap<Player, NegotiationProcess> negotiations;
+    private NegotiationSessionsHolder negotiationSessionsHolder;
     private HashMap<Player, Long> playerToNegotiationCooldown;
     private Random rand;
     private TickClock tickClock;
 
     public NegotiationTriggerListener()
     {
-        this.negotiations = new HashMap<>();
+        this.negotiationSessionsHolder = NegotiationSessionsHolder.getInstance();
         this.playerToNegotiationCooldown = new HashMap<>();
         this.rand = new Random();
         this.tickClock = new TickClock(MobNegotiationPlugin.getInstance());
@@ -48,6 +48,7 @@ public class NegotiationTriggerListener implements Listener, NegotiationEventLis
             MobNegotiationPlugin plugin = MobNegotiationPlugin.getInstance();
             plugin.getServer().getPluginManager().registerEvents(negotiationEntityListener, plugin);
 
+            negotiationSessionsHolder.addNegotiation(negotiationProcess);
             negotiationProcess.start();
         }
     }
@@ -66,7 +67,7 @@ public class NegotiationTriggerListener implements Listener, NegotiationEventLis
             {
                 Player player = (Player) e.getDamager();
                 Mob mob = (Mob) e.getEntity();
-                if (!negotiations.containsKey(player) && !isPlayerNegotiationCooldownActive(player))
+                if (!negotiationSessionsHolder.hasNegotiationForPlayer(player) && !isPlayerNegotiationCooldownActive(player))
                 {
                     int mobTargetingRange = 7;
                     boolean playerCanNegotiate = isEntityAbleToNegotiate(player);
@@ -170,9 +171,7 @@ public class NegotiationTriggerListener implements Listener, NegotiationEventLis
     public void onNegotiationStateUpdate(NegotiationProcess negotiation)
     {
         NegotiationState state = negotiation.getState();
-        if (state == NegotiationState.STARTED)
-            negotiations.put(negotiation.getPlayer(), negotiation);
-        else if (state.isTerminating)
+        if (state.isTerminating())
         {
             if (!tickClock.isRunning())
             {
@@ -181,7 +180,6 @@ public class NegotiationTriggerListener implements Listener, NegotiationEventLis
                 int ticksPerMinute = 20 * 60;
                 plugin.getServer().getScheduler().runTaskTimer(plugin, this::removeExpiredNegotiationCooldowns, ticksPerMinute, ticksPerMinute);
             }
-            negotiations.remove(negotiation.getPlayer());
             playerToNegotiationCooldown.put(negotiation.getPlayer(), tickClock.getTicks());
         }
     }

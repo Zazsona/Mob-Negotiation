@@ -213,7 +213,7 @@ public class NegotiationEntityEventListener implements Listener, NegotiationEven
             runNegotiationInitialisationActions();
         else if (state == NegotiationState.STARTED)
             runNegotiationStartedActions();
-        else if (state.isTerminating)
+        else if (state.isTerminating())
             runNegotiationTerminationActions();
     }
 
