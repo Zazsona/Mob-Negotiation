@@ -1,5 +1,6 @@
 package com.zazsona.mobnegotiation;
 
+import com.zazsona.mobnegotiation.command.NegotiationResponseCommand;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -16,15 +17,15 @@ import java.util.*;
 
 public class NegotiationTriggerListener implements Listener, NegotiationEventListener
 {
-    private NegotiationResponseCommandExecutor commandExecutor;
+    private NegotiationResponseCommand responseCommand;
     private NegotiationSessionsHolder negotiationSessionsHolder;
     private HashMap<Player, Long> playerToNegotiationCooldown;
     private Random rand;
     private TickClock tickClock;
 
-    public NegotiationTriggerListener(NegotiationResponseCommandExecutor commandExecutor)
+    public NegotiationTriggerListener(NegotiationResponseCommand responseCommand)
     {
-        this.commandExecutor = commandExecutor;
+        this.responseCommand = responseCommand;
         this.negotiationSessionsHolder = NegotiationSessionsHolder.getInstance();
         this.playerToNegotiationCooldown = new HashMap<>();
         this.rand = new Random();
@@ -43,7 +44,7 @@ public class NegotiationTriggerListener implements Listener, NegotiationEventLis
             e.setDamage(0.0f);
             Player player = (Player) e.getDamager();
             Mob mob = (Mob) e.getEntity();
-            NegotiationProcess negotiationProcess = new NegotiationProcess(player, mob, commandExecutor);
+            NegotiationProcess negotiationProcess = new NegotiationProcess(player, mob, responseCommand);
             negotiationSessionsHolder.addNegotiation(negotiationProcess);
             negotiationProcess.addEventListener(this);
             negotiationProcess.start();

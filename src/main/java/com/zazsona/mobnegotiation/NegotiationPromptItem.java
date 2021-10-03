@@ -5,14 +5,18 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 
+import java.util.UUID;
+
 public class NegotiationPromptItem
 {
+    private String itemId;
     private String text;
     private NegotiationPromptItemType type;
     private HoverEvent hoverEvent;
 
     public NegotiationPromptItem(String text, NegotiationPromptItemType type, HoverEvent hoverEvent)
     {
+        this.itemId = UUID.randomUUID().toString();
         this.text = text;
         this.type = type;
         this.hoverEvent = hoverEvent;
@@ -20,9 +24,19 @@ public class NegotiationPromptItem
 
     public NegotiationPromptItem(String text, NegotiationPromptItemType type)
     {
+        this.itemId = UUID.randomUUID().toString();
         this.text = text;
         this.type = type;
         this.hoverEvent = null;
+    }
+
+    /**
+     * Gets itemId
+     * @return itemId
+     */
+    public String getItemId()
+    {
+        return itemId;
     }
 
     /**

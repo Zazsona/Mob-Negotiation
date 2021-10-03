@@ -1,5 +1,6 @@
 package com.zazsona.mobnegotiation;
 
+import com.zazsona.mobnegotiation.command.NegotiationResponseCommand;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -29,9 +30,9 @@ public class MobNegotiationPlugin extends JavaPlugin
     public void onEnable()
     {
         super.onEnable();
-        NegotiationResponseCommandExecutor commandExecutor = new NegotiationResponseCommandExecutor();
-        getCommand(NegotiationResponseCommandExecutor.COMMAND_KEY).setExecutor(commandExecutor);
-        NegotiationTriggerListener negotiationTriggerListener = new NegotiationTriggerListener(commandExecutor);
+        NegotiationResponseCommand responseCommand = new NegotiationResponseCommand();
+        getCommand(NegotiationResponseCommand.COMMAND_KEY).setExecutor(responseCommand);
+        NegotiationTriggerListener negotiationTriggerListener = new NegotiationTriggerListener(responseCommand);
         getServer().getPluginManager().registerEvents(negotiationTriggerListener, this);
     }
 

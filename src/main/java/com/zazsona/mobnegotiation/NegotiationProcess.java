@@ -1,12 +1,11 @@
 package com.zazsona.mobnegotiation;
 
 import com.zazsona.mobnegotiation.NegotiationPromptItem.NegotiationPromptItemType;
+import com.zazsona.mobnegotiation.command.NegotiationResponseCommand;
 import com.zazsona.mobnegotiation.entitystate.EntityActionLockListener;
-import com.zazsona.mobnegotiation.entitystate.EntityInvalidatedEventListener;
 import com.zazsona.mobnegotiation.entitystate.EntityInvalidatedListener;
 import com.zazsona.mobnegotiation.entitystate.EntityInvincibilityListener;
 import net.md_5.bungee.api.ChatMessageType;
-import net.md_5.bungee.api.chat.BaseComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
@@ -27,9 +26,10 @@ import java.util.logging.Level;
 
 public class NegotiationProcess
 {
+    private String negotiationId;
     private Player player;
+    private NegotiationResponseCommand negotiationResponseCommand;
     private Mob mob;
-    private NegotiationResponseCommandExecutor commandExecutor;
     private NegotiationState state;
     private Random rand;
     private ArrayList<NegotiationEventListener> listeners;
@@ -41,19 +41,39 @@ public class NegotiationProcess
     private EntityInvincibilityListener mobInvincibilityListener;
     private EntityInvalidatedListener mobInvalidatedListener;
 
+    private NegotiationPrompt currentPrompt;
     private String mobChatTag;
 
-    public NegotiationProcess(Player player, Mob mob, NegotiationResponseCommandExecutor commandExecutor)
+    public NegotiationProcess(Player player, Mob mob, NegotiationResponseCommand responseCommand)
     {
+        this.negotiationId = UUID.randomUUID().toString();
         this.player = player;
+        this.negotiationResponseCommand = responseCommand;
         this.mob = mob;
-        this.commandExecutor = commandExecutor;
         this.state = NegotiationState.NONE;
         this.rand = new Random();
         this.listeners = new ArrayList<>();
 
         String mobName = (mob.getCustomName() == null) ? mob.getName() : mob.getCustomName();
         this.mobChatTag = String.format("<%s>", mobName);
+    }
+
+    /**
+     * Gets the unique ID for this negotiation instance
+     * @return the id
+     */
+    public String getNegotiationId()
+    {
+        return negotiationId;
+    }
+
+    /**
+     * Gets the current {@link NegotiationPrompt}
+     * @return the prompt, or null if none has been created
+     */
+    public NegotiationPrompt getCurrentPrompt()
+    {
+        return currentPrompt;
     }
 
     /**
@@ -176,6 +196,7 @@ public class NegotiationProcess
      */
     private void beginNegotiation()
     {
+        MobNegotiationPlugin.getInstance().getLogger().info(String.format("%s started negotiation with %s.", player.getName(), mob.getName()));
         this.state = NegotiationState.STARTED;
         this.updateListeners();
 
@@ -187,14 +208,14 @@ public class NegotiationProcess
         player.sendMessage(String.format("%s %s", mobChatTag, formattedAlertMessage));
         player.sendMessage(String.format("%s Please... Spare me. I'll give you anything.", mobChatTag));
 
-        BaseComponent[] prompt = new NegotiationPromptBuilder(UUID.randomUUID())
+        this.currentPrompt = new NegotiationPrompt();
+        this.currentPrompt
                 .addItem(new NegotiationPromptItem("Lend me your power.", NegotiationPromptItemType.SPEECH))
                 .addItem(new NegotiationPromptItem("I want items.", NegotiationPromptItemType.SPEECH))
                 .addItem(new NegotiationPromptItem("Attack", NegotiationPromptItemType.ATTACK))
-                .addItem(new NegotiationPromptItem("Return to battle", NegotiationPromptItemType.CANCEL))
-                .build();
+                .addItem(new NegotiationPromptItem("Return to battle", NegotiationPromptItemType.CANCEL));
 
-        player.spigot().sendMessage(ChatMessageType.CHAT, prompt);
+        player.spigot().sendMessage(ChatMessageType.CHAT, this.currentPrompt.getFormattedComponent(negotiationId));
         Bukkit.getScheduler().runTaskLater(MobNegotiationPlugin.getInstance(), this::stop, 80);
     }
 
@@ -215,6 +236,7 @@ public class NegotiationProcess
 
         this.state = NegotiationState.FINISHED;
         this.updateListeners();
+        plugin.getLogger().info(String.format("%s completed negotiation with %s.", player.getName(), mob.getName()));
     }
 
     /**
@@ -232,8 +254,6 @@ public class NegotiationProcess
             {
                 MobNegotiationPlugin.getInstance().getLogger().log(Level.SEVERE, "Error while handling negotiation listener:", e);
             }
-
         }
-
     }
 }
