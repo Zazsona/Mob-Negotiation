@@ -16,13 +16,15 @@ import java.util.*;
 
 public class NegotiationTriggerListener implements Listener, NegotiationEventListener
 {
+    private NegotiationResponseCommandExecutor commandExecutor;
     private NegotiationSessionsHolder negotiationSessionsHolder;
     private HashMap<Player, Long> playerToNegotiationCooldown;
     private Random rand;
     private TickClock tickClock;
 
-    public NegotiationTriggerListener()
+    public NegotiationTriggerListener(NegotiationResponseCommandExecutor commandExecutor)
     {
+        this.commandExecutor = commandExecutor;
         this.negotiationSessionsHolder = NegotiationSessionsHolder.getInstance();
         this.playerToNegotiationCooldown = new HashMap<>();
         this.rand = new Random();
@@ -41,14 +43,9 @@ public class NegotiationTriggerListener implements Listener, NegotiationEventLis
             e.setDamage(0.0f);
             Player player = (Player) e.getDamager();
             Mob mob = (Mob) e.getEntity();
-            NegotiationProcess negotiationProcess = new NegotiationProcess(player, mob);
-            negotiationProcess.addEventListener(this);
-
-            NegotiationEntityEventListener negotiationEntityListener = new NegotiationEntityEventListener(negotiationProcess);
-            MobNegotiationPlugin plugin = MobNegotiationPlugin.getInstance();
-            plugin.getServer().getPluginManager().registerEvents(negotiationEntityListener, plugin);
-
+            NegotiationProcess negotiationProcess = new NegotiationProcess(player, mob, commandExecutor);
             negotiationSessionsHolder.addNegotiation(negotiationProcess);
+            negotiationProcess.addEventListener(this);
             negotiationProcess.start();
         }
     }

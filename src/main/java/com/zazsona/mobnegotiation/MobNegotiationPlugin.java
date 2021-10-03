@@ -29,9 +29,10 @@ public class MobNegotiationPlugin extends JavaPlugin
     public void onEnable()
     {
         super.onEnable();
-        NegotiationTriggerListener negotiationTriggerListener = new NegotiationTriggerListener();
+        NegotiationResponseCommandExecutor commandExecutor = new NegotiationResponseCommandExecutor();
+        getCommand(NegotiationResponseCommandExecutor.COMMAND_KEY).setExecutor(commandExecutor);
+        NegotiationTriggerListener negotiationTriggerListener = new NegotiationTriggerListener(commandExecutor);
         getServer().getPluginManager().registerEvents(negotiationTriggerListener, this);
-        getCommand(NegotiationResponseCommandExecutor.COMMAND_KEY).setExecutor(new NegotiationResponseCommandExecutor());
     }
 
 
