@@ -41,8 +41,7 @@ public class EntityInvincibilityListener extends EntityListener implements Liste
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onDamage(EntityDamageEvent e)
     {
-        Entity eventEntity = e.getEntity();
-        if (eventEntity == entity)
+        if (e.getEntity() == entity)
             e.setCancelled(true);
     }
 
@@ -53,8 +52,7 @@ public class EntityInvincibilityListener extends EntityListener implements Liste
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onMobTargetEntity(EntityTargetEvent e)
     {
-        Entity eventEntity = e.getEntity();
-        if (eventEntity == entity)
+        if (e.getTarget() == entity)
             e.setCancelled(true);
     }
 
@@ -79,13 +77,13 @@ public class EntityInvincibilityListener extends EntityListener implements Liste
     {
         int maxEntityTargetingDistance = 40;
         List<Entity> nearbyEntities = entity.getNearbyEntities(maxEntityTargetingDistance, maxEntityTargetingDistance, maxEntityTargetingDistance);
-        for (Entity entity : nearbyEntities)
+        for (Entity nearbyEntity : nearbyEntities)
         {
-            if (entity instanceof Creature)
+            if (nearbyEntity instanceof Creature)
             {
-                Creature creature = (Creature) entity;
-                if (creature.getTarget() == entity)
-                    creature.setTarget(null);
+                Creature nearbyCreature = (Creature) nearbyEntity;
+                if (nearbyCreature.getTarget() == entity)
+                    nearbyCreature.setTarget(null);
             }
         }
     }
