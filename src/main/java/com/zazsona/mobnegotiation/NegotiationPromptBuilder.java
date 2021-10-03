@@ -88,7 +88,7 @@ public class NegotiationPromptBuilder
             promptBuilder
                     .append("  ")
                     .append(item.getFormattedComponent(), ComponentBuilder.FormatRetention.ALL)
-                    .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.format("/%s %s %s", "COMMAND_ID_HERE", negotiationId.toString(), i))) //TODO: Add this command
+                    .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.format("/%s %s %s", NegotiationResponseCommandExecutor.COMMAND_KEY, negotiationId.toString(), i))) //TODO: Add this command
                     .append("\n")
                     .reset();
         }
