@@ -152,8 +152,14 @@ public class NegotiationPrompt
         items.addAll(attackItems);
         items.addAll(cancelItems);
 
+        boolean dividerInserted = false;
         for (NegotiationPromptItem item : items)
         {
+            if (item.getItemType() != NegotiationPromptItemType.SPEECH && !dividerInserted)
+            {
+                promptBuilder.append("  =================").color(ChatColor.DARK_GRAY).append("\n").reset();
+                dividerInserted = true;
+            }
             promptBuilder
                     .append("  ")
                     .append(item.getFormattedComponent(), ComponentBuilder.FormatRetention.ALL)
