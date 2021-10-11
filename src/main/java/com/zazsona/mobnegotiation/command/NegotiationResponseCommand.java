@@ -37,8 +37,8 @@ public class NegotiationResponseCommand implements CommandExecutor
                         NegotiationPromptItem item = currentPrompt.getItem(args[2]);
                         if (item != null && item.getItemId().equals(args[2]))
                         {
-                            for (NegotiationSelectionListener listener : listeners)
-                                listener.onNegotiationItemSelected(negotiationProcess, currentPrompt, item);
+                            for (int i = listeners.size() - 1; i > -1; i--)
+                                listeners.get(i).onNegotiationItemSelected(negotiationProcess, currentPrompt, item);
                         }
                     }
                 }
