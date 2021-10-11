@@ -1,4 +1,4 @@
-package com.zazsona.mobnegotiation.dialogue;
+package com.zazsona.mobnegotiation.script;
 
 import com.zazsona.mobnegotiation.PersonalityType;
 
@@ -25,7 +25,7 @@ public class PersonalityVariant<T>
      * @param personalityType the personality type
      * @return the {@link T}
      */
-    public T getAlternative(PersonalityType personalityType)
+    public T getVariant(PersonalityType personalityType)
     {
         return switch (personalityType)
         {
