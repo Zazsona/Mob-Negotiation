@@ -5,7 +5,12 @@ public enum NegotiationState
     NONE(false),
     INITIALISING(false),
     STARTED(false),
-    FINISHED(true);
+    FINISHED_POWER(true),
+    FINISHED_ITEM(true),
+    FINISHED_ATTACK(true),
+    FINISHED_CANCEL(true),
+    FINISHED_ERROR_INITIALISATION_FAILURE(true),
+    FINISHED_ERROR_ENTITY_LOST(true);
 
     private final boolean isTerminating;
 
