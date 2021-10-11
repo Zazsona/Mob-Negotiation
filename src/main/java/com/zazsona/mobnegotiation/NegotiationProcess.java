@@ -8,6 +8,7 @@ import com.zazsona.mobnegotiation.entitystate.EntityActionLockListener;
 import com.zazsona.mobnegotiation.entitystate.EntityInvalidatedListener;
 import com.zazsona.mobnegotiation.entitystate.EntityInvincibilityListener;
 import com.zazsona.mobnegotiation.script.NegotiationScript;
+import com.zazsona.mobnegotiation.script.NegotiationScriptLoader;
 import net.md_5.bungee.api.ChatMessageType;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -29,9 +30,6 @@ import java.util.logging.Level;
 
 public class NegotiationProcess implements NegotiationSelectionListener
 {
-    private static final String SCRIPT_PATH = "scripts";
-    private static final String SCRIPT_FORMAT = ".json";
-
     private String negotiationId;
     private Player player;
     private NegotiationResponseCommand responseCommand;
@@ -184,7 +182,7 @@ public class NegotiationProcess implements NegotiationSelectionListener
         mobInvalidatedListener.start();
 
         // UI
-        script = loadScript();
+        script = NegotiationScriptLoader.loadScript(mob.getType());
         responseCommand.addListener(this);
     }
 
@@ -267,28 +265,6 @@ public class NegotiationProcess implements NegotiationSelectionListener
         this.state = terminatingState;
         this.updateListeners();
         plugin.getLogger().info(String.format("%s completed negotiation with %s.", player.getName(), mob.getName()));
-    }
-
-    /**
-     * Loads and deserializes the script for this negotiation's entity.
-     * @throws IOException unable to read script
-     * @throws FileNotFoundException unable to find script for mob
-     * @return the script
-     */
-    private NegotiationScript loadScript() throws IOException, FileNotFoundException
-    {
-        String mobType = mob.getType().toString().toLowerCase();
-        String scriptPath = String.format("/%s/%s%s", SCRIPT_PATH, mobType, SCRIPT_FORMAT);
-        if (getClass().getResource(scriptPath) != null)
-        {
-            InputStream inputStream = getClass().getResourceAsStream(scriptPath);
-            InputStreamReader reader = new InputStreamReader(inputStream);
-            Gson gson = new Gson();
-            NegotiationScript script = gson.fromJson(reader, NegotiationScript.class);
-            return script;
-        }
-        else
-            throw new FileNotFoundException(String.format("Unknown script: %s. Is the mob \"%s\" supported?", scriptPath, mobType));
     }
 
     /**

@@ -1,6 +1,7 @@
 package com.zazsona.mobnegotiation;
 
 import com.zazsona.mobnegotiation.command.NegotiationResponseCommand;
+import com.zazsona.mobnegotiation.script.NegotiationScriptLoader;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
@@ -94,6 +95,9 @@ public class NegotiationTriggerListener implements Listener, NegotiationEventLis
     private boolean isEntityAbleToNegotiate(Entity entity)
     {
         if (entity instanceof Player && (((Player) entity).isFlying() || !isPlayerInNegotiatingGameMode((Player) entity)))
+            return false;
+
+        if (!(entity instanceof Player) && !NegotiationScriptLoader.isEntityScripted(entity.getType()))
             return false;
 
         if (!entity.isInWater() && !entity.isInsideVehicle() && !entity.isVisualFire() && entity.getFireTicks() <= 0 && entity.getPassengers().size() == 0)
