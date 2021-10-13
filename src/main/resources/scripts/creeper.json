@@ -1,0 +1,240 @@
+{
+  "greetingMessage": {
+    "upbeat": "How about we talk thisss out?",
+    "timid": "Pleassse, pleassse... Spare me.",
+    "irritable": "Ssstop! Ssstop already! What will make you go away?",
+    "gloomy": "Look, jussst... End me."
+  },
+  "initialItemOfferMessage": {
+    "upbeat": "I just ssso happen to have thisss %s ssspare.",
+    "timid": "Isss thisss %s enough?",
+    "irritable": "Take thisss %s and go would you?",
+    "gloomy": "Thisss %s is probably the best thing I have..."
+  },
+  "furtherItemOfferMessage": {
+    "upbeat": "Alright, let'sss upgrade that to this %s.",
+    "timid": "What!? How about thisss %s?",
+    "irritable": "Don't be ssso cocky. Take this %s.",
+    "gloomy": "Oh... what about this %s?"
+  },
+  "refuseItemDemandMessage": {
+    "upbeat": "Inssstead, let'sss party.",
+    "timid": "Sssorry, I can't offer any more.",
+    "irritable": "Enough. Let'sss gamble life inssstead.",
+    "gloomy": "My life'sss not worth any more. Take it inssstead."
+  },
+  "powerSuccessMessage": {
+    "upbeat": "I had fun. Here, enjoy thisss power.",
+    "timid": "Thanksss for the chat. Here, take thisss power.",
+    "irritable": "Well, that'sss my time. Thanksss. Take thisss power.",
+    "gloomy": "Thingsss to do. Wasssn't bad to chat, take thisss power."
+  },
+  "powerTrees": [
+    {
+      "text": "Destruction is what you ssseek? I thought humans were creatorsss?",
+      "responses": [
+        {
+          "text": "Figured I'd give it a go.",
+          "successRates": {
+            "upbeat": 85.0,
+            "timid": 5.0,
+            "irritable": 25.0,
+            "gloomy": 5.0
+          },
+          "successResponses": {
+            "upbeat": "It isss pretty fun.",
+            "timid": "Sss-",
+            "irritable": "Predictable responsssse, but I like it.",
+            "gloomy": "Sssome might find it fun..."
+          },
+          "failureResponses": {
+            "upbeat": "Ha. Sssee if you can top thisss.",
+            "timid": "Sssorry, I can't let you play around with it.",
+            "irritable": "Typical humansss. Enough of thisss!",
+            "gloomy": "Sssigh. I can't let you play with thisss."
+          }
+        },
+        {
+          "text": "I need to prepare land for building.",
+          "successRates": {
+            "upbeat": 5.0,
+            "timid": 15.0,
+            "irritable": 85.0,
+            "gloomy": 5.0
+          },
+          "successResponses": {
+            "upbeat": "I could alwaysss do that for you, you know.",
+            "timid": "Don't make too much noissse with that.",
+            "irritable": "You humansss are never sssatisfied with nature. Curiousss.",
+            "gloomy": "More of thisss world you humans are taking, then."
+          },
+          "failureResponses": {
+            "upbeat": "Sssnore. You're boring. Let'sss have sssome real fun.",
+            "timid": "S- Ssstop! I like thisss place how it isss.",
+            "irritable": "I've had enough of you humansss wrecking thisss world.",
+            "gloomy": "More conssstruction? I'm rather sssick of it I'm afraid."
+          }
+        },
+        {
+          "text": "I'm no normal human.",
+          "successRates": {
+            "upbeat": 15.0,
+            "timid": 10.0,
+            "irritable": 5.0,
+            "gloomy": 95.0
+          },
+          "successResponses": {
+            "upbeat": "Sssorta look like one to me.",
+            "timid": "So you're sssome sort of sssuper human then? Hmm.",
+            "irritable": "I heard all humansss think that. Interesssting.",
+            "gloomy": "I'm no ssstandard Creeper, too. We're both outcastsss."
+          },
+          "failureResponses": {
+            "upbeat": "Get off your high horssse.",
+            "timid": "Are humansss... evolving? I've had enough change.",
+            "irritable": "Ssso they all sssay. You're nothing ssspecial.",
+            "gloomy": "Ssso what? Thisss is too much effort..."
+          }
+        }
+      ],
+      "children": [
+        {
+          "text": "Ssso, have you ever heard of... A Creeper that buildsss?",
+          "responses": [
+            {
+              "text": "Anyone can be a builder.",
+              "successRates": {
+                "upbeat": 15.0,
+                "timid": 85.0,
+                "irritable": 2.5,
+                "gloomy": 25.0
+              },
+              "successResponses": {
+                "upbeat": "Heh, sssuppose ssso.",
+                "timid": "Maybe sssomeday...",
+                "irritable": "Sssounds daft...",
+                "gloomy": "Sssometimes I think I might be able to..."
+              },
+              "failureResponses": {
+                "upbeat": "I'll ssstick to blowing up. You.",
+                "timid": "Wha- really? You're jussst teasssing me, aren't you? Fine.",
+                "irritable": "What a load of crap.",
+                "gloomy": "Dreamsss for sssome. But not for me."
+              }
+            },
+            {
+              "text": "How? You don't have hands!",
+              "successRates": {
+                "upbeat": 85.0,
+                "timid": 10.0,
+                "irritable": 2.5,
+                "gloomy": 5.0
+              },
+              "successResponses": {
+                "upbeat": "Heh, that'sss a fair point.",
+                "timid": "Sssuppose, no need to ssshout it about though.",
+                "irritable": "Ssstill could do better than humansss.",
+                "gloomy": "Yeah, maybe it'sss a sssilly dream..."
+              },
+              "failureResponses": {
+                "upbeat": "Doesssn't ssstop me from doing thisss!",
+                "timid": "Ssso that'sss what it takes? I'll ssstick to what I can do then...",
+                "irritable": "Neither will you!",
+                "gloomy": "Ssso there'sss nothing to live for. Ssso be it."
+              }
+            },
+            {
+              "text": "No.",
+              "successRates": {
+                "upbeat": 5.0,
+                "timid": 10.0,
+                "irritable": 85.0,
+                "gloomy": 5.0
+              },
+              "successResponses": {
+                "upbeat": "No beating around the busssh, then?",
+                "timid": "Oh. Okay...",
+                "irritable": "Makes sssense.",
+                "gloomy": "Ssshame. One can dream I sssuppose."
+              },
+              "failureResponses": {
+                "upbeat": "It wasss a joke. I'll give you sssomething ssserious to think about.",
+                "timid": "Ssso rude!",
+                "irritable": "Try sssome kindnesss next time.",
+                "gloomy": "Could've usssed the uplift, you know?"
+              }
+            }
+          ]
+        },
+        {
+          "text": "At any rate, your sssearch for power comesss from flawsss of the human then?",
+          "responses": [
+            {
+              "text": "Shuddup...",
+              "successRates": {
+                "upbeat": 15.0,
+                "timid": 85.0,
+                "irritable": 2.5,
+                "gloomy": 15.0
+              },
+              "successResponses": {
+                "upbeat": "Ha, I'll think about it.",
+                "timid": "I ssshould sssay the sssame to you!",
+                "irritable": "Sssassy one, aren't we?",
+                "gloomy": "Did I ssstrike a cord?"
+              },
+              "failureResponses": {
+                "upbeat": "I'll ssshut you up.",
+                "timid": "I'll sssshut up in the after life.",
+                "irritable": "We'll sssee who ssshuts up first.",
+                "gloomy": "Ssso be it."
+              }
+            },
+            {
+              "text": "Less flawed than a Creeper.",
+              "successRates": {
+                "upbeat": 85.0,
+                "timid": 20.0,
+                "irritable": 2.5,
+                "gloomy": 2.5
+              },
+              "successResponses": {
+                "upbeat": "I'll let you think that. Haha.",
+                "timid": "Maybe ssso...",
+                "irritable": "Maybe sssome of you can be.",
+                "gloomy": "Maybe jussst me, I'll give you that."
+              },
+              "failureResponses": {
+                "upbeat": "Want to put that to the tessst? Let's go.",
+                "timid": "Arroganccce won't serve you.",
+                "irritable": "Then let'sss sssee where your power gets you.",
+                "gloomy": "I can ssstill pack sssome trouble. Just watch."
+              }
+            },
+            {
+              "text": "I have my reasons...",
+              "successRates": {
+                "upbeat": 5.0,
+                "timid": 15.0,
+                "irritable": 5.0,
+                "gloomy": 85.0
+              },
+              "successResponses": {
+                "upbeat": "Ah, too ssscared to admit it. I get it.",
+                "timid": "Asss do I...",
+                "irritable": "Fair enough.",
+                "gloomy": "Heh, don't we all?"
+              },
+              "failureResponses": {
+                "upbeat": "Not going to ssshare? Very well. Let'sss sssee if you ssshare in the after life.",
+                "timid": "Then you'll have to excussse mine. I can't take speechesss.",
+                "irritable": "And I jussst found a reassson to blow you up.",
+                "gloomy": "And you don't trussst me to keep them sssecret? Very well."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
