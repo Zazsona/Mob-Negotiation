@@ -10,10 +10,7 @@ import com.zazsona.mobnegotiation.entitystate.EntityInvincibilityListener;
 import com.zazsona.mobnegotiation.script.NegotiationScript;
 import com.zazsona.mobnegotiation.script.NegotiationScriptLoader;
 import net.md_5.bungee.api.ChatMessageType;
-import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
-import org.bukkit.Location;
-import org.bukkit.World;
+import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
@@ -230,7 +227,7 @@ public class NegotiationProcess implements NegotiationSelectionListener
         this.currentPrompt
                 .addItem(new NegotiationPromptItem("Lend me your power.", NegotiationPromptItemType.SPEECH))
                 .addItem(new NegotiationPromptItem("I want items.", NegotiationPromptItemType.SPEECH))
-                .addItem(new NegotiationPromptItem("Attack", NegotiationPromptItemType.ATTACK))
+                .addItem(new NegotiationPromptItem("All Out Attack", NegotiationPromptItemType.ATTACK))
                 .addItem(new NegotiationPromptItem("Return to battle", NegotiationPromptItemType.CANCEL));
 
         player.spigot().sendMessage(ChatMessageType.CHAT, this.currentPrompt.getFormattedComponent(negotiationId));
@@ -267,6 +264,60 @@ public class NegotiationProcess implements NegotiationSelectionListener
         plugin.getLogger().info(String.format("%s completed negotiation with %s.", player.getName(), mob.getName()));
     }
 
+    private void attack()
+    {
+        mobInvincibilityListener.stop();
+        Random r = new Random();
+        final Location originalPlayerLoc = player.getLocation();
+        final int ticksInterval = 8; // Do not set this too high, or the anti-cheat fly checker will throw a fit.
+        final int minParticles = 3;
+        final int maxParticles = 4;
+        final int particleCount = r.nextInt((maxParticles - minParticles) + 1) + minParticles;
+        final double offsetMaxHorizRange = 2.0f;
+        final double offsetMinHorizRange = 0.5f;
+        final double offsetMaxVertRange = mob.getHeight() * 1.5f;
+        final double offsetMinVertRange = 0.25f;
+        for (int i = 0; i < particleCount; i++)
+        {
+            Bukkit.getScheduler().runTaskLater(MobNegotiationPlugin.getInstance(), () ->
+            {
+
+                World world = mob.getWorld();
+                Location mobLocation = mob.getLocation();
+                double xOffset = ((r.nextFloat() * (offsetMaxHorizRange - offsetMinHorizRange)) + offsetMinHorizRange) * (r.nextBoolean() ? 1 : -1); // Generate a random number in the range, then randomise negative flip.
+                double yOffset = ((r.nextFloat() * (offsetMaxVertRange - offsetMinVertRange)) + offsetMinVertRange); // No negatives to prevent underground values
+                double zOffset = ((r.nextFloat() * (offsetMaxHorizRange - offsetMinHorizRange)) + offsetMinHorizRange) * (r.nextBoolean() ? 1 : -1); // Generate a random number in the range, then randomise negative flip.
+                Location location = new Location(mobLocation.getWorld(), mobLocation.getX() + xOffset, mobLocation.getY() + yOffset, mobLocation.getZ() + zOffset);
+                world.spawnParticle(Particle.EXPLOSION_LARGE, location, 1);
+                world.playEffect(location, Effect.BLAZE_SHOOT, null);
+
+                Location playerLocation = location.clone();
+                playerLocation.setY(playerLocation.getY() - (player.getHeight() / 2.0f));
+                Vector gradientDirection = mobLocation.toVector().subtract(playerLocation.toVector());
+                playerLocation.setDirection(gradientDirection);
+                playerActionLockListener.setLockedLocation(playerLocation);
+                player.teleport(playerLocation);
+            }, i * ticksInterval);
+        }
+
+        Bukkit.getScheduler().runTaskLater(MobNegotiationPlugin.getInstance(), () ->
+        {
+            World world = mob.getWorld();
+            Location mobLocation = mob.getLocation();
+            double yOffset = (mob.getHeight() / 2.0f);
+            Location location = new Location(mobLocation.getWorld(), mobLocation.getX(), mobLocation.getY() + yOffset, mobLocation.getZ());
+
+            mob.damage(mob.getHealth());
+            world.spawnParticle(Particle.EXPLOSION_LARGE, location, 1);
+            world.playSound(location, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
+
+            Vector gradientDirection = mobLocation.toVector().subtract(originalPlayerLoc.toVector());
+            originalPlayerLoc.setDirection(gradientDirection);
+            playerActionLockListener.setLockedLocation(originalPlayerLoc);
+            player.teleport(originalPlayerLoc);
+        }, particleCount * ticksInterval);
+    }
+
     /**
      * Notifies all subscribed listeners of a state update
      */
@@ -293,7 +344,7 @@ public class NegotiationProcess implements NegotiationSelectionListener
             switch (item.getItemType())
             {
                 case SPEECH -> stop(NegotiationState.FINISHED_POWER);
-                case ATTACK -> stop(NegotiationState.FINISHED_ATTACK);
+                case ATTACK -> attack();
                 case CANCEL -> stop(NegotiationState.FINISHED_CANCEL);
             }
         }
