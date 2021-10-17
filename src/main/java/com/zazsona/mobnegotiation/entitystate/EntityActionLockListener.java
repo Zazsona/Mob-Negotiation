@@ -17,7 +17,9 @@ public class EntityActionLockListener extends EntityListener
     private Location entityLocation;
     private BukkitTask tickMovementTask;
 
+    private Location playerLocation;
     private float playerWalkSpeed;
+    private boolean playerInvisibilityState;
     private boolean mobAwareState;
     private int creeperMaxFuseTicks;
 
@@ -52,7 +54,9 @@ public class EntityActionLockListener extends EntityListener
             if (entity instanceof Player)
             {
                 Player player = (Player) entity;
+                playerLocation = player.getLocation();
                 playerWalkSpeed = player.getWalkSpeed();
+                playerInvisibilityState = player.isInvisible();
                 player.setWalkSpeed(0);
             }
             if (entity instanceof Mob)
@@ -85,7 +89,12 @@ public class EntityActionLockListener extends EntityListener
                 tickMovementTask.cancel();
 
             if (entity instanceof Player)
-                ((Player) entity).setWalkSpeed(playerWalkSpeed);
+            {
+                Player player = (Player) entity;
+                player.setWalkSpeed(playerWalkSpeed);
+                player.setInvisible(playerInvisibilityState);
+                player.teleport(playerLocation);
+            }
             if (entity instanceof Mob)
                 ((Mob) entity).setAware(mobAwareState);
             if (entity instanceof Creeper)
@@ -174,4 +183,6 @@ public class EntityActionLockListener extends EntityListener
         if (e.getWhoClicked() == entity)
             e.setCancelled(true);
     }
+
+    // TODO: Stop on server stop
 }
