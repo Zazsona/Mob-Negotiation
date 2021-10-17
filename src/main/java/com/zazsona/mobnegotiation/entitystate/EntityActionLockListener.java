@@ -183,6 +183,4 @@ public class EntityActionLockListener extends EntityListener
         if (e.getWhoClicked() == entity)
             e.setCancelled(true);
     }
-
-    // TODO: Stop on server stop
 }

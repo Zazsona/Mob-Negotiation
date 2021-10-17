@@ -1,5 +1,6 @@
 package com.zazsona.mobnegotiation.entitystate;
 
+import com.zazsona.mobnegotiation.MobNegotiationPlugin;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -7,6 +8,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.PluginDisableEvent;
 import org.bukkit.plugin.Plugin;
 
 import java.util.ArrayList;
@@ -48,8 +50,19 @@ public class EntityInvalidatedListener extends EntityListener implements Listene
      */
     private void runListeners()
     {
-        for (EntityInvalidatedEventListener listener : listeners)
-            listener.onEntityInvalidated(entity);
+        for (int i = listeners.size() - 1; i > -1; i--)
+            listeners.get(i).onEntityInvalidated(entity);
+    }
+
+    /**
+     * Fires an event when the plugin is disabled
+     * @param e the event
+     */
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onPluginDisable(PluginDisableEvent e)
+    {
+        if (e.getPlugin() == MobNegotiationPlugin.getInstance())
+            runListeners();
     }
 
     /**

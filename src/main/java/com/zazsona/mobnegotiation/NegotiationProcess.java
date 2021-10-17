@@ -5,6 +5,7 @@ import com.zazsona.mobnegotiation.NegotiationPromptItem.NegotiationPromptItemTyp
 import com.zazsona.mobnegotiation.command.NegotiationSelectionListener;
 import com.zazsona.mobnegotiation.command.NegotiationResponseCommand;
 import com.zazsona.mobnegotiation.entitystate.EntityActionLockListener;
+import com.zazsona.mobnegotiation.entitystate.EntityInvalidatedEventListener;
 import com.zazsona.mobnegotiation.entitystate.EntityInvalidatedListener;
 import com.zazsona.mobnegotiation.entitystate.EntityInvincibilityListener;
 import com.zazsona.mobnegotiation.script.NegotiationScript;
@@ -38,9 +39,11 @@ public class NegotiationProcess implements NegotiationSelectionListener
     private EntityActionLockListener playerActionLockListener;
     private EntityInvincibilityListener playerInvincibilityListener;
     private EntityInvalidatedListener playerInvalidatedListener;
+    private EntityInvalidatedEventListener playerInvalidatedHandler;
     private EntityActionLockListener mobActionLockListener;
     private EntityInvincibilityListener mobInvincibilityListener;
     private EntityInvalidatedListener mobInvalidatedListener;
+    private EntityInvalidatedEventListener mobInvalidatedHandler;
 
     private NegotiationPrompt currentPrompt;
     private NegotiationScript script;
@@ -55,7 +58,6 @@ public class NegotiationProcess implements NegotiationSelectionListener
         this.state = NegotiationState.NONE;
         this.rand = new Random();
         this.listeners = new ArrayList<>();
-
         String mobName = (mob.getCustomName() == null) ? mob.getName() : mob.getCustomName();
         this.mobChatTag = String.format("<%s>", mobName);
     }
@@ -165,7 +167,8 @@ public class NegotiationProcess implements NegotiationSelectionListener
         playerActionLockListener = new EntityActionLockListener(plugin, player);
         playerInvincibilityListener = new EntityInvincibilityListener(plugin, player);
         playerInvalidatedListener = new EntityInvalidatedListener(plugin, player);
-        playerInvalidatedListener.addListener(entity -> stop(NegotiationState.FINISHED_ERROR_ENTITY_LOST));
+        playerInvalidatedHandler = entity -> stop(NegotiationState.FINISHED_ERROR_ENTITY_LOST);
+        playerInvalidatedListener.addListener(playerInvalidatedHandler);
         playerActionLockListener.start();
         playerInvincibilityListener.start();
         playerInvalidatedListener.start();
@@ -173,7 +176,8 @@ public class NegotiationProcess implements NegotiationSelectionListener
         mobActionLockListener = new EntityActionLockListener(plugin, mob);
         mobInvincibilityListener = new EntityInvincibilityListener(plugin, mob);
         mobInvalidatedListener = new EntityInvalidatedListener(plugin, mob);
-        mobInvalidatedListener.addListener(entity -> stop(NegotiationState.FINISHED_ERROR_ENTITY_LOST));
+        mobInvalidatedHandler = entity -> stop(NegotiationState.FINISHED_ERROR_ENTITY_LOST);
+        mobInvalidatedListener.addListener(mobInvalidatedHandler);
         mobActionLockListener.start();
         mobInvincibilityListener.start();
         mobInvalidatedListener.start();
@@ -250,10 +254,12 @@ public class NegotiationProcess implements NegotiationSelectionListener
     {
         MobNegotiationPlugin plugin = MobNegotiationPlugin.getInstance();
 
+        playerInvalidatedListener.removeListener(playerInvalidatedHandler);
         playerInvalidatedListener.stop();
         playerActionLockListener.stop();
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> playerInvincibilityListener.stop(), PluginConfig.getNegotiationDmgGracePeriod());
 
+        mobInvalidatedListener.removeListener(mobInvalidatedHandler);
         mobInvalidatedListener.stop();
         mobActionLockListener.stop();
         mobInvincibilityListener.stop();
