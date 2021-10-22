@@ -110,34 +110,17 @@ public class NegotiationMenu implements IContainerNegotiationView
      */
     public BaseComponent[] getFormattedComponent()
     {
-        ComponentBuilder promptBuilder = new ComponentBuilder().append("\n");
+        ComponentBuilder promptBuilder = new ComponentBuilder();
+        boolean hasElements = getChildren().size() > 0;
+
         if (headerText != null)
-            promptBuilder.append(headerText).append("\n\n").color(headerTextColour).reset();
+        {
+            String verticalSpacer = (hasElements) ? "\n" : "";
+            promptBuilder.append(verticalSpacer).append(headerText).append(verticalSpacer).color(headerTextColour).reset();
+        }
 
-        /*
-        HashMap<NegotiationResponseType, Integer> typePriority = new HashMap<>();
-        typePriority.put(NegotiationResponseType.SPEECH, 2);
-        typePriority.put(NegotiationResponseType.ATTACK, 1);
-        typePriority.put(NegotiationResponseType.CANCEL, 0);
-
-        List<INegotiationView> sortedChildren = new ArrayList<>(getChildren());
-        sortedChildren.sort((primaryView, secondaryView) ->
-                      {
-                          if (primaryView instanceof NegotiationButton && secondaryView instanceof NegotiationButton)
-                          {
-                              NegotiationResponseType primaryType = ((NegotiationButton) primaryView).getItemType();
-                              NegotiationResponseType secondaryType = ((NegotiationButton) secondaryView).getItemType();
-                              return typePriority.get(primaryType).compareTo(typePriority.get(secondaryType));
-                          }
-                          else if ((primaryView instanceof NegotiationButton) && !(secondaryView instanceof NegotiationButton))
-                              return 1;
-                          else if (!(primaryView instanceof NegotiationButton) && (secondaryView instanceof NegotiationButton))
-                              return -1;
-                          else
-                              return 0;
-                      });
-
-         */
+        if (hasElements)
+            promptBuilder.append("\n");
         for (INegotiationView child : getChildren())
         {
             promptBuilder
