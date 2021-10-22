@@ -1,4 +1,4 @@
-package com.zazsona.mobnegotiation.script;
+package com.zazsona.mobnegotiation.model.script;
 
 public class NegotiationScriptResponseNode
 {

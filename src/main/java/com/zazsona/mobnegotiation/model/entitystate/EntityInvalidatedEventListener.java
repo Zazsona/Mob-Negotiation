@@ -1,4 +1,4 @@
-package com.zazsona.mobnegotiation.entitystate;
+package com.zazsona.mobnegotiation.model.entitystate;
 
 import org.bukkit.entity.Entity;
 

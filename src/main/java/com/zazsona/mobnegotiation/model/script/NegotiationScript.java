@@ -1,4 +1,4 @@
-package com.zazsona.mobnegotiation.script;
+package com.zazsona.mobnegotiation.model.script;
 
 import java.util.ArrayList;
 import java.util.List;

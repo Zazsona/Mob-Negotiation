@@ -1,4 +1,4 @@
-package com.zazsona.mobnegotiation.script;
+package com.zazsona.mobnegotiation.model.script;
 
 import com.google.gson.Gson;
 import org.bukkit.entity.EntityType;

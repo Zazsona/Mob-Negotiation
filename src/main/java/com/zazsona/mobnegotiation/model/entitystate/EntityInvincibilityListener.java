@@ -1,12 +1,9 @@
-package com.zazsona.mobnegotiation.entitystate;
+package com.zazsona.mobnegotiation.model.entitystate;
 
-import com.zazsona.mobnegotiation.NegotiationProcess;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Creature;
 import org.bukkit.entity.Entity;
-import org.bukkit.entity.Mob;
-import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;

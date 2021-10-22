@@ -1,4 +1,4 @@
-package com.zazsona.mobnegotiation;
+package com.zazsona.mobnegotiation.model;
 
 import com.zazsona.mobnegotiation.MobNegotiationPlugin;
 import org.bukkit.plugin.Plugin;

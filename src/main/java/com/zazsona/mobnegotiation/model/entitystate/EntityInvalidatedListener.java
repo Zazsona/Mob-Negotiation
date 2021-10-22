@@ -1,4 +1,4 @@
-package com.zazsona.mobnegotiation.entitystate;
+package com.zazsona.mobnegotiation.model.entitystate;
 
 import com.zazsona.mobnegotiation.MobNegotiationPlugin;
 import org.bukkit.entity.Entity;
@@ -19,7 +19,7 @@ import java.util.List;
  */
 public class EntityInvalidatedListener extends EntityListener implements Listener
 {
-    private List<EntityInvalidatedEventListener> listeners;
+    private final List<EntityInvalidatedEventListener> listeners;
 
     public EntityInvalidatedListener(Plugin plugin, Entity entity)
     {

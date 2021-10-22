@@ -1,4 +1,4 @@
-package com.zazsona.mobnegotiation;
+package com.zazsona.mobnegotiation.model;
 
 public enum PersonalityType
 {

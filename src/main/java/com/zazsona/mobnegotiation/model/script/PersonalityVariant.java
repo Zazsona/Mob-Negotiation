@@ -1,6 +1,6 @@
-package com.zazsona.mobnegotiation.script;
+package com.zazsona.mobnegotiation.model.script;
 
-import com.zazsona.mobnegotiation.PersonalityType;
+import com.zazsona.mobnegotiation.model.PersonalityType;
 
 /**
  * A class representing an object with alternatives for each {@link PersonalityType}
