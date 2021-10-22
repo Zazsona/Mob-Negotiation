@@ -1,16 +1,15 @@
-package com.zazsona.mobnegotiation;
+package com.zazsona.mobnegotiation.model;
 
-import com.google.gson.Gson;
-import com.zazsona.mobnegotiation.NegotiationPromptItem.NegotiationPromptItemType;
-import com.zazsona.mobnegotiation.command.NegotiationSelectionListener;
-import com.zazsona.mobnegotiation.command.NegotiationResponseCommand;
-import com.zazsona.mobnegotiation.entitystate.EntityActionLockListener;
-import com.zazsona.mobnegotiation.entitystate.EntityInvalidatedEventListener;
-import com.zazsona.mobnegotiation.entitystate.EntityInvalidatedListener;
-import com.zazsona.mobnegotiation.entitystate.EntityInvincibilityListener;
-import com.zazsona.mobnegotiation.script.NegotiationScript;
-import com.zazsona.mobnegotiation.script.NegotiationScriptLoader;
-import net.md_5.bungee.api.ChatMessageType;
+import com.zazsona.mobnegotiation.MobNegotiationPlugin;
+import com.zazsona.mobnegotiation.model.entitystate.EntityActionLockListener;
+import com.zazsona.mobnegotiation.model.entitystate.EntityInvalidatedEventListener;
+import com.zazsona.mobnegotiation.model.entitystate.EntityInvalidatedListener;
+import com.zazsona.mobnegotiation.model.entitystate.EntityInvincibilityListener;
+import com.zazsona.mobnegotiation.model.exception.InvalidParticipantsException;
+import com.zazsona.mobnegotiation.model.script.NegotiationScript;
+import com.zazsona.mobnegotiation.model.script.NegotiationScriptLoader;
+import com.zazsona.mobnegotiation.model.script.NegotiationScriptNode;
+import com.zazsona.mobnegotiation.model.script.NegotiationScriptResponseNode;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -18,20 +17,24 @@ import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import java.io.*;
 import java.security.InvalidParameterException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.UUID;
+import java.util.*;
 import java.util.logging.Level;
 
-public class NegotiationProcess implements NegotiationSelectionListener
+public class Negotiation
 {
+    private final String POWER_TEXT = "Lend me your power.";
+    private final String ITEM_TEXT = "I want items.";
+    private final String ATTACK_TEXT = "All Out Attack";
+    private final String CANCEL_TEXT = "Return to Battle";
+
     private String negotiationId;
     private Player player;
-    private NegotiationResponseCommand responseCommand;
+    private String playerName;
     private Mob mob;
+    private String mobName;
+    private PersonalityType mobPersonality;
+    private INegotiationEntityEligibilityChecker eligibilityChecker;
     private NegotiationState state;
     private Random rand;
     private ArrayList<NegotiationEventListener> listeners;
@@ -45,21 +48,21 @@ public class NegotiationProcess implements NegotiationSelectionListener
     private EntityInvalidatedListener mobInvalidatedListener;
     private EntityInvalidatedEventListener mobInvalidatedHandler;
 
-    private NegotiationPrompt currentPrompt;
     private NegotiationScript script;
-    private String mobChatTag;
+    private NegotiationScriptNode scriptNode;
+    private NegotiationStage stage;
 
-    public NegotiationProcess(Player player, Mob mob, NegotiationResponseCommand responseCommand)
+    public Negotiation(Player player, Mob mob, INegotiationEntityEligibilityChecker eligibilityChecker)
     {
         this.negotiationId = UUID.randomUUID().toString();
         this.player = player;
-        this.responseCommand = responseCommand;
+        this.eligibilityChecker = eligibilityChecker;
         this.mob = mob;
         this.state = NegotiationState.NONE;
         this.rand = new Random();
         this.listeners = new ArrayList<>();
-        String mobName = (mob.getCustomName() == null) ? mob.getName() : mob.getCustomName();
-        this.mobChatTag = String.format("<%s>", mobName);
+        this.mobName = (mob.getCustomName() == null) ? mob.getName() : mob.getCustomName();
+        this.playerName = player.getName();
     }
 
     /**
@@ -69,15 +72,6 @@ public class NegotiationProcess implements NegotiationSelectionListener
     public String getNegotiationId()
     {
         return negotiationId;
-    }
-
-    /**
-     * Gets the current {@link NegotiationPrompt}
-     * @return the prompt, or null if none has been created
-     */
-    public NegotiationPrompt getCurrentPrompt()
-    {
-        return currentPrompt;
     }
 
     /**
@@ -130,28 +124,51 @@ public class NegotiationProcess implements NegotiationSelectionListener
     /**
      * Initialises the negotiation process and, if successful, presents the UI to the player.
      * @throws InvalidParameterException Negotiating entity is unable to negotiate
+     * @return the negotiation stage to present
      */
-    public void start()
+    public NegotiationStage start()
     {
         try
         {
             this.state = NegotiationState.INITIALISING;
             this.updateListeners();
+
+            this.script = NegotiationScriptLoader.loadScript(mob.getType());
+            List<NegotiationScriptNode> trees = this.script.getPowerTrees();
+            this.scriptNode = trees.get(rand.nextInt(trees.size()));
             initialiseEntities();
-            beginNegotiation();
         }
-        catch (IOException e)
+        catch (InvalidParticipantsException e)
+        {
+            // This is an error we can handle without disturbing administrative users
+            stop(NegotiationState.FINISHED_ERROR_INITIALISATION_FAILURE);
+        }
+        catch (Exception e)
         {
             MobNegotiationPlugin.getInstance().getLogger().log(Level.SEVERE, "Error while initialising negotiation:", e);
             stop(NegotiationState.FINISHED_ERROR_INITIALISATION_FAILURE);
+            return null;
+        }
+
+        try
+        {
+            return beginNegotiation();
+        }
+        catch (Exception e)
+        {
+            MobNegotiationPlugin.getInstance().getLogger().log(Level.SEVERE, "Error during negotiation:", e);
+            stop(NegotiationState.FINISHED_ERROR_UNKNOWN);
+            return null;
         }
     }
 
     /**
      * Prepares the entities for negotiation, setting their positions and starting listeners
      */
-    private void initialiseEntities() throws IOException
+    private void initialiseEntities() throws InvalidParticipantsException
     {
+        if (eligibilityChecker.canEntitiesNegotiate(player, mob))
+            throw new InvalidParticipantsException();
 
         // Positioning
         Location playerLocationTarget = player.getLocation();
@@ -182,9 +199,17 @@ public class NegotiationProcess implements NegotiationSelectionListener
         mobInvincibilityListener.start();
         mobInvalidatedListener.start();
 
-        // UI
-        script = NegotiationScriptLoader.loadScript(mob.getType());
-        responseCommand.addListener(this);
+        // Mob Personality
+        long entityIdMsb = mob.getUniqueId().getMostSignificantBits();
+        long personalityCode = entityIdMsb % 100;
+        if (personalityCode % 2 == 0 && personalityCode < 50)
+            this.mobPersonality = PersonalityType.UPBEAT;
+        else if (personalityCode % 2 == 0 && personalityCode >= 50)
+            this.mobPersonality = PersonalityType.GLOOMY;
+        else if (personalityCode % 2 != 0 && personalityCode < 50)
+            this.mobPersonality = PersonalityType.IRRITABLE;
+        else if (personalityCode % 2 != 0 && personalityCode >= 50)
+            this.mobPersonality = PersonalityType.TIMID;
     }
 
     /**
@@ -213,30 +238,108 @@ public class NegotiationProcess implements NegotiationSelectionListener
     /**
      * Presents the negotiation UI to the user and marks the negotiation state as "STARTED"
      */
-    private void beginNegotiation()
+    private NegotiationStage beginNegotiation()
     {
         MobNegotiationPlugin.getInstance().getLogger().info(String.format("%s started negotiation with %s.", player.getName(), mob.getName()));
         this.state = NegotiationState.STARTED;
         this.updateListeners();
 
-        List<String> alertMessages = PluginConfig.getNegotiationAlertMessages();
-        String alertMessage = alertMessages.get(rand.nextInt(alertMessages.size()));
-        String alertFormat = "" + ChatColor.RED + ChatColor.BOLD;
-        String formattedAlertMessage = alertFormat + alertMessage;
-        player.sendTitle(formattedAlertMessage, null, 2, 30, 7);
-        player.sendMessage(String.format("%s %s", mobChatTag, formattedAlertMessage));
-        player.sendMessage(String.format("%s %s", mobChatTag, script.getGreetingMessage().getUpbeat()));
-
-        this.currentPrompt = new NegotiationPrompt();
-        this.currentPrompt
-                .addItem(new NegotiationPromptItem("Lend me your power.", NegotiationPromptItemType.SPEECH))
-                .addItem(new NegotiationPromptItem("I want items.", NegotiationPromptItemType.SPEECH))
-                .addItem(new NegotiationPromptItem("All Out Attack", NegotiationPromptItemType.ATTACK))
-                .addItem(new NegotiationPromptItem("Return to battle", NegotiationPromptItemType.CANCEL));
-
-        player.spigot().sendMessage(ChatMessageType.CHAT, this.currentPrompt.getFormattedComponent(negotiationId));
-        //Bukkit.getScheduler().runTaskLater(MobNegotiationPlugin.getInstance(), () -> stop(NegotiationState.FINISHED_CANCEL), 80);
+        String mobMessage = script.getGreetingMessage().getVariant(mobPersonality);
+        this.stage = new NegotiationStage(negotiationId, playerName, mobName, mobMessage);
+        NegotiationResponse powerResponse = new NegotiationResponse(POWER_TEXT, NegotiationResponseType.SPEECH);
+        NegotiationResponse itemResponse = new NegotiationResponse(ITEM_TEXT, NegotiationResponseType.SPEECH);
+        NegotiationResponse attackResponse = new NegotiationResponse(ATTACK_TEXT, NegotiationResponseType.ATTACK);
+        NegotiationResponse cancelResponse = new NegotiationResponse(CANCEL_TEXT, NegotiationResponseType.CANCEL);
+        stage.getResponses().add(powerResponse);
+        stage.getResponses().add(itemResponse);
+        stage.getResponses().add(attackResponse);
+        stage.getResponses().add(cancelResponse);
+        return stage;
     }
+
+    public NegotiationStage nextStage(NegotiationResponse response)
+    {
+        String responseText = response.getText();
+        if (state == NegotiationState.STARTED)
+        {
+            if (responseText.equals(POWER_TEXT))
+            {
+                NegotiationStage stage = convertScriptNodeToNegotiationStage(scriptNode);
+                this.stage = stage;
+                this.state = NegotiationState.ACTIVE_POWER;
+                this.updateListeners();
+                return stage;
+            }
+            else if (responseText.equals(ITEM_TEXT))
+            {
+                stop(NegotiationState.FINISHED_ITEM);
+            }
+            else if (responseText.equals(ATTACK_TEXT))
+            {
+                attack();
+            }
+            else if (responseText.equals(CANCEL_TEXT))
+            {
+                stop(NegotiationState.FINISHED_CANCEL);
+            }
+        }
+
+        if (state == NegotiationState.ACTIVE_POWER)
+        {
+            return nextScriptStage(responseText);
+        }
+        return null;
+    }
+
+    private NegotiationStage nextScriptStage(String responseText)
+    {
+        NegotiationScriptResponseNode selectedResponse = null;
+        for (NegotiationScriptResponseNode responseNode : scriptNode.getResponses())
+        {
+            if (responseNode.getText().equals(responseText))
+                selectedResponse = responseNode;
+        }
+
+        float roll = rand.nextFloat() * 100;
+        if (selectedResponse != null && roll < selectedResponse.getSuccessRates().getVariant(mobPersonality))
+        {
+            List<NegotiationScriptNode> children = this.scriptNode.getChildren();
+            if (children.size() > 0)
+            {
+                NegotiationScriptNode childNode = children.get(rand.nextInt(children.size()));
+                NegotiationStage stage = convertScriptNodeToNegotiationStage(childNode);
+                String mobMessage = stage.getMobMessage();
+                stage.setMobMessage(selectedResponse.getSuccessResponses().getVariant(mobPersonality) + "\n" + mobMessage);
+                this.scriptNode = childNode;
+                this.stage = stage;
+            }
+            else
+            {
+                String mobMessage = selectedResponse.getSuccessResponses().getVariant(mobPersonality) + "\n" + this.script.getPowerSuccessMessage().getVariant(mobPersonality);
+                this.stage = new NegotiationStage(negotiationId, playerName, mobName, mobMessage);
+                stop(NegotiationState.FINISHED_POWER);
+            }
+        }
+        else
+        {
+            String mobMessage = selectedResponse.getFailureResponses().getVariant(mobPersonality);
+            this.stage = new NegotiationStage(negotiationId, playerName, mobName, mobMessage);
+            stop(NegotiationState.FINISHED_POWER);
+        }
+        return stage;
+    }
+
+    private NegotiationStage convertScriptNodeToNegotiationStage(NegotiationScriptNode scriptNode)
+    {
+        String mobMessage = scriptNode.getText();
+        NegotiationStage stage = new NegotiationStage(negotiationId, playerName, mobName, mobMessage);
+        for (NegotiationScriptResponseNode responseNode : scriptNode.getResponses())
+            stage.getResponses().add(new NegotiationResponse(responseNode.getText(), NegotiationResponseType.SPEECH));
+        stage.getResponses().add(new NegotiationResponse(ATTACK_TEXT, NegotiationResponseType.ATTACK));
+        stage.getResponses().add(new NegotiationResponse(CANCEL_TEXT, NegotiationResponseType.CANCEL));
+        return stage;
+    }
+
 
     /**
      * Forces negotiations to immediately stop with the "FINISHED_CANCEL" state.
@@ -252,6 +355,9 @@ public class NegotiationProcess implements NegotiationSelectionListener
      */
     private void stop(NegotiationState terminatingState)
     {
+        if (state.isTerminating())
+            return;
+
         MobNegotiationPlugin plugin = MobNegotiationPlugin.getInstance();
 
         playerInvalidatedListener.removeListener(playerInvalidatedHandler);
@@ -263,7 +369,6 @@ public class NegotiationProcess implements NegotiationSelectionListener
         mobInvalidatedListener.stop();
         mobActionLockListener.stop();
         mobInvincibilityListener.stop();
-        responseCommand.removeListener(this);
 
         this.state = terminatingState;
         this.updateListeners();
@@ -275,12 +380,13 @@ public class NegotiationProcess implements NegotiationSelectionListener
      */
     private void attack()
     {
+        this.state = NegotiationState.ACTIVE_ATTACK;
+        this.updateListeners();
+
         final Location originalPlayerLoc = player.getLocation();
         final boolean originalPlayerVisibility = player.isInvisible();
         final int ticksInterval = 8; // Do not set this too high, or the anti-cheat fly checker will throw a fit.
-        //final int minSlashes = 3;
-        //final int maxSlashes = 3;
-        final int slashes = 3;//r.nextInt((maxSlashes - minSlashes) + 1) + minSlashes;
+        final int slashes = 3;
         final double offsetMaxHorizRange = 2.0f;
         final double offsetMinHorizRange = 0.75f;
         final double offsetMaxVertRange = mob.getHeight() * 1.5f;
@@ -364,7 +470,7 @@ public class NegotiationProcess implements NegotiationSelectionListener
         playerActionLockListener.setLockedLocation(playerLocation);
         player.teleport(playerLocation);
         player.setInvisible(visibilityState);
-        stop();
+        stop(NegotiationState.FINISHED_ATTACK);
     }
 
     /**
@@ -407,20 +513,6 @@ public class NegotiationProcess implements NegotiationSelectionListener
             catch (Exception e)
             {
                 MobNegotiationPlugin.getInstance().getLogger().log(Level.SEVERE, "Error while handling negotiation listener:", e);
-            }
-        }
-    }
-
-    @Override
-    public void onNegotiationItemSelected(NegotiationProcess negotiation, NegotiationPrompt prompt, NegotiationPromptItem item)
-    {
-        if (negotiation == this && prompt == currentPrompt && currentPrompt.hasItem(item))
-        {
-            switch (item.getItemType())
-            {
-                case SPEECH -> stop(NegotiationState.FINISHED_POWER);
-                case ATTACK -> attack();
-                case CANCEL -> stop();
             }
         }
     }
