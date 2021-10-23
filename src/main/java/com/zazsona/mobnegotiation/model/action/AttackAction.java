@@ -10,17 +10,13 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 import org.bukkit.util.Vector;
 
-import java.util.ArrayList;
 import java.util.Random;
 
-public class AttackAction implements IAction
+public class AttackAction extends Action
 {
-    private Player player;
-    private Mob mob;
     private EntityActionLockListener playerActionLock;
     private EntityInvincibilityListener mobInvincibility;
     private EntityInvalidatedListener mobInvalidator;
-    private ArrayList<IActionListener> listeners;
 
     private boolean active;
     private Location originalPlayerLocation;
@@ -30,23 +26,19 @@ public class AttackAction implements IAction
 
     public AttackAction(Player player, Mob mob)
     {
-        this.player = player;
-        this.mob = mob;
+        super(player, mob);
         this.playerActionLock = null;
         this.mobInvincibility = null;
         this.mobInvalidator = null;
-        this.listeners = new ArrayList<>();
         this.active = false;
     }
 
     public AttackAction(Player player, Mob mob, EntityActionLockListener playerActionLock, EntityInvincibilityListener mobInvincibility, EntityInvalidatedListener mobInvalidator)
     {
-        this.player = player;
-        this.mob = mob;
+        super(player, mob);
         this.playerActionLock = playerActionLock;
         this.mobInvincibility = mobInvincibility;
         this.mobInvalidator = mobInvalidator;
-        this.listeners = new ArrayList<>();
         this.active = false;
     }
 
@@ -58,9 +50,7 @@ public class AttackAction implements IAction
     {
         if (active)
             throw new IllegalCallerException("This action is already active.");
-        for (int i = listeners.size() - 1; i > -1; i--)
-            listeners.get(i).onActionStart();
-
+        runOnStartListeners();
         originalPlayerLocation = player.getLocation();
         originalPlayerVisibility = player.isInvisible();
         player.setInvisible(true);
@@ -74,18 +64,6 @@ public class AttackAction implements IAction
         for (int i = 0; i < slashes; i++)
             slashTask = Bukkit.getScheduler().runTaskLater(MobNegotiationPlugin.getInstance(), () -> runAttackSlash(ticksInterval, offsetMaxHorizRange, offsetMinHorizRange, offsetMaxVertRange, offsetMinVertRange), i * ticksInterval);
         finalSlashTask = Bukkit.getScheduler().runTaskLater(MobNegotiationPlugin.getInstance(), this::runFinalAttackExplosion, slashes * ticksInterval);
-    }
-
-    @Override
-    public void addListener(IActionListener listener)
-    {
-        listeners.add(listener);
-    }
-
-    @Override
-    public boolean removeListener(IActionListener listener)
-    {
-        return listeners.remove(listener);
     }
 
     /**
@@ -108,9 +86,7 @@ public class AttackAction implements IAction
             slashTask.cancel();
             finalSlashTask.cancel();
             active = false;
-
-            for (int i = listeners.size() - 1; i > -1; i--)
-                listeners.get(i).onActionComplete();
+            runOnCompleteListeners();
         }
     }
 

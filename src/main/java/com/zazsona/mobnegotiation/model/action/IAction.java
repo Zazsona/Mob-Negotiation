@@ -14,4 +14,8 @@ public interface IAction
     void stop();
 
     boolean isActive();
+
+    Player getPlayer();
+
+    Mob getMob();
 }

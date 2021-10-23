@@ -2,7 +2,7 @@ package com.zazsona.mobnegotiation.model.action;
 
 public interface IActionListener
 {
-    void onActionStart();
+    void onActionStart(IAction action);
 
-    void onActionComplete();
+    void onActionComplete(IAction action);
 }
