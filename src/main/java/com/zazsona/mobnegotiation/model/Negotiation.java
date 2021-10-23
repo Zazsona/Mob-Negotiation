@@ -1,6 +1,9 @@
 package com.zazsona.mobnegotiation.model;
 
 import com.zazsona.mobnegotiation.MobNegotiationPlugin;
+import com.zazsona.mobnegotiation.model.action.AttackAction;
+import com.zazsona.mobnegotiation.model.action.IAction;
+import com.zazsona.mobnegotiation.model.action.IActionListener;
 import com.zazsona.mobnegotiation.model.entitystate.EntityActionLockListener;
 import com.zazsona.mobnegotiation.model.entitystate.EntityInvalidatedEventListener;
 import com.zazsona.mobnegotiation.model.entitystate.EntityInvalidatedListener;
@@ -37,6 +40,7 @@ public class Negotiation
     private INegotiationEntityEligibilityChecker eligibilityChecker;
     private NegotiationState state;
     private Random rand;
+    private IAction action;
     private ArrayList<NegotiationEventListener> listeners;
 
     private EntityActionLockListener playerActionLockListener;
@@ -276,7 +280,24 @@ public class Negotiation
             }
             else if (responseText.equals(ATTACK_TEXT))
             {
-                attack();
+                this.action = new AttackAction(player, mob, playerActionLockListener, mobInvincibilityListener, mobInvalidatedListener);
+                this.action.addListener(new IActionListener()
+                {
+                    @Override
+                    public void onActionStart()
+                    {
+                        state = NegotiationState.ACTIVE_ATTACK;
+                        updateListeners();
+                    }
+
+                    @Override
+                    public void onActionComplete()
+                    {
+                        action.removeListener(this);
+                        stop(NegotiationState.FINISHED_ATTACK);
+                    }
+                });
+                this.action.execute();
             }
             else if (responseText.equals(CANCEL_TEXT))
             {
@@ -358,6 +379,7 @@ public class Negotiation
         if (state.isTerminating())
             return;
 
+        this.state = terminatingState;
         MobNegotiationPlugin plugin = MobNegotiationPlugin.getInstance();
 
         playerInvalidatedListener.removeListener(playerInvalidatedHandler);
@@ -370,134 +392,14 @@ public class Negotiation
         mobActionLockListener.stop();
         mobInvincibilityListener.stop();
 
-        this.state = terminatingState;
+        if (action != null && action.isActive())
+            action.stop();
+
         this.updateListeners();
         plugin.getLogger().info(String.format("%s completed negotiation with %s.", player.getName(), mob.getName()));
     }
 
-    /**
-     * Executes the all out attack
-     */
-    private void attack()
-    {
-        this.state = NegotiationState.ACTIVE_ATTACK;
-        this.updateListeners();
 
-        final Location originalPlayerLoc = player.getLocation();
-        final boolean originalPlayerVisibility = player.isInvisible();
-        final int ticksInterval = 8; // Do not set this too high, or the anti-cheat fly checker will throw a fit.
-        final int slashes = 3;
-        final double offsetMaxHorizRange = 2.0f;
-        final double offsetMinHorizRange = 0.75f;
-        final double offsetMaxVertRange = mob.getHeight() * 1.5f;
-        final double offsetMinVertRange = 0.25f;
-        player.setInvisible(true);
-        for (int i = 0; i < slashes; i++)
-            Bukkit.getScheduler().runTaskLater(MobNegotiationPlugin.getInstance(), () -> runAttackSlash(ticksInterval, offsetMaxHorizRange, offsetMinHorizRange, offsetMaxVertRange, offsetMinVertRange), i * ticksInterval);
-
-        Bukkit.getScheduler().runTaskLater(MobNegotiationPlugin.getInstance(), () -> runFinalAttackSlash(originalPlayerLoc, originalPlayerVisibility), slashes * ticksInterval);
-    }
-
-    /**
-     * Performs a "slash" animation for the All Out Attack
-     * @param tickTime the time in which to animate the slash
-     * @param offsetMaxHorizRange the maximum horizontal range of the slash from the mob
-     * @param offsetMinHorizRange the minimum horizontal range of the slash from the mob
-     * @param offsetMaxVertRange the maximum vertical range of the slash from the mob
-     * @param offsetMinVertRange the minimum vertical range of the slash from the mob
-     */
-    private void runAttackSlash(int tickTime, double offsetMaxHorizRange, double offsetMinHorizRange, double offsetMaxVertRange, double offsetMinVertRange)
-    {
-        Random r = new Random();
-        World world = mob.getWorld();
-        Location mobLocation = mob.getLocation();
-        Location mobMidpoint = mobLocation.clone();
-        mobMidpoint.setY(mobMidpoint.getY() + (mob.getHeight() / 2.0f));
-
-        Location playerLocation = player.getLocation();
-        Location playerMidpoint = playerLocation.clone();
-        playerMidpoint.setY(playerMidpoint.getY() + (player.getHeight() / 2.0f));
-
-        float mobYaw = mobLocation.getYaw();
-        float directionRadius = 45;
-        boolean negativeX = playerLocation.getX() > mobLocation.getX();
-        boolean negativeZ = playerLocation.getZ() > mobLocation.getZ();
-        if ((mobYaw < 90 + directionRadius && mobYaw > 90 - directionRadius) || (mobYaw < 270 + directionRadius && mobYaw > 270 - directionRadius))
-            negativeX = r.nextBoolean();
-        else                                // Make sure we always have an opposing side for better visuals, but still random for variety
-            negativeZ = r.nextBoolean();
-        double xOffset = ((r.nextFloat() * (offsetMaxHorizRange - offsetMinHorizRange)) + offsetMinHorizRange) * (negativeX ? -1 : 1); // Generate a random number in the range, then randomise negative flip.
-        double yOffset = ((r.nextFloat() * (offsetMaxVertRange - offsetMinVertRange)) + offsetMinVertRange); // No negatives to prevent underground values
-        double zOffset = ((r.nextFloat() * (offsetMaxHorizRange - offsetMinHorizRange)) + offsetMinHorizRange) * (negativeZ ? -1 : 1); // Generate a random number in the range, then randomise negative flip.
-        Location attackLocation = new Location(mobLocation.getWorld(), mobLocation.getX() + xOffset, mobLocation.getY() + yOffset, mobLocation.getZ() + zOffset);
-
-        Location targetPlayerLoc = attackLocation.clone();
-        targetPlayerLoc.setY(targetPlayerLoc.getY() - (player.getHeight() / 2.0f));
-        Vector gradientDirection = mobLocation.toVector().subtract(targetPlayerLoc.toVector());
-        targetPlayerLoc.setDirection(gradientDirection);
-
-        Location targetPlayerMidpoint = targetPlayerLoc.clone();
-        targetPlayerMidpoint.setY(targetPlayerMidpoint.getY() + (player.getHeight() / 2.0f));
-
-        world.spawnParticle(Particle.REDSTONE, attackLocation, 5, 0.3f, 0.3f, 0.3f, new Particle.DustOptions(Color.GRAY, 2.0f));
-        world.spawnParticle(Particle.EXPLOSION_LARGE, mobMidpoint, 1);
-        world.playEffect(attackLocation, Effect.BLAZE_SHOOT, null);
-        drawAttackLine(tickTime, 0.1f, world, playerMidpoint.toVector(), mobMidpoint.toVector(), targetPlayerMidpoint.toVector());
-        playerActionLockListener.setLockedLocation(targetPlayerLoc);
-        player.teleport(targetPlayerLoc);
-    }
-
-    /**
-     * Performs the final slash of the All Out Attack, killing the mob and resetting the player.
-     * @param playerLocation the position to return the player to
-     * @param visibilityState the visibility state to set the player to
-     */
-    private void runFinalAttackSlash(Location playerLocation, boolean visibilityState)
-    {
-        World world = mob.getWorld();
-        Location mobLocation = mob.getLocation();
-        Location mobMidpoint = mobLocation.clone();
-        mobMidpoint.setY(mobMidpoint.getY() + (mob.getHeight() / 2.0f));
-
-        mobInvincibilityListener.stop();
-        mobInvalidatedListener.stop();
-        mob.damage(mob.getHealth());
-        world.spawnParticle(Particle.EXPLOSION_LARGE, mobMidpoint, 1);
-        world.playSound(mobMidpoint, Sound.ENTITY_GENERIC_EXPLODE, 1.0f, 1.0f);
-
-        Vector gradientDirection = mobLocation.toVector().subtract(playerLocation.toVector());
-        playerLocation.setDirection(gradientDirection);
-        playerActionLockListener.setLockedLocation(playerLocation);
-        player.teleport(playerLocation);
-        player.setInvisible(visibilityState);
-        stop(NegotiationState.FINISHED_ATTACK);
-    }
-
-    /**
-     * Draws the line effect for an ALl Out Attack
-     * @param drawTimeTicks the time it takes to draw the line over all points
-     * @param particleStep a step value between 0.0 and 1.0 for how frequently particles should be placed
-     * @param world the world to spawn in
-     * @param points the vectors defining the line
-     */
-    private void drawAttackLine(int drawTimeTicks, double particleStep, World world, Vector... points)
-    {
-        for (int i = 0; i < points.length - 1; i++)
-        {
-            Vector lineStart = points[i];
-            Vector lineEnd = points[i + 1];
-            Vector lineDifference = lineEnd.clone().subtract(lineStart);
-            int ticksPerStep = Math.round((float) (drawTimeTicks * particleStep));
-            for (double step = 0.0f; step < 1.0f; step += particleStep)
-            {
-                Vector position = lineDifference.clone().multiply(step).add(lineStart);
-                Bukkit.getScheduler().runTaskLater(
-                        MobNegotiationPlugin.getInstance(),
-                        () -> world.spawnParticle(Particle.REDSTONE, position.getX(), position.getY(), position.getZ(), 1, new Particle.DustOptions(Color.BLACK, 2.0f)),
-                        ticksPerStep);
-            }
-        }
-    }
 
     /**
      * Notifies all subscribed listeners of a state update
