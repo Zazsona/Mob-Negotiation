@@ -50,11 +50,11 @@ public class AttackAction extends Action
     {
         if (active)
             throw new IllegalCallerException("This action is already active.");
+        active = true;
         runOnStartListeners();
         originalPlayerLocation = player.getLocation();
         originalPlayerVisibility = player.isInvisible();
         player.setInvisible(true);
-        active = true;
         final int ticksInterval = 8; // Do not set this too high, or the anti-cheat fly checker will throw a fit.
         final int slashes = 3;
         final double offsetMaxHorizRange = 2.0f;

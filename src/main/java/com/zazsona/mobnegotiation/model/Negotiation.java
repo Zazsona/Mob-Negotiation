@@ -4,6 +4,7 @@ import com.zazsona.mobnegotiation.MobNegotiationPlugin;
 import com.zazsona.mobnegotiation.model.action.AttackAction;
 import com.zazsona.mobnegotiation.model.action.IAction;
 import com.zazsona.mobnegotiation.model.action.IActionListener;
+import com.zazsona.mobnegotiation.model.action.PowerNegotiationAction;
 import com.zazsona.mobnegotiation.model.entitystate.EntityActionLockListener;
 import com.zazsona.mobnegotiation.model.entitystate.EntityInvalidatedEventListener;
 import com.zazsona.mobnegotiation.model.entitystate.EntityInvalidatedListener;
@@ -53,7 +54,6 @@ public class Negotiation
     private EntityInvalidatedEventListener mobInvalidatedHandler;
 
     private NegotiationScript script;
-    private NegotiationScriptNode scriptNode;
     private NegotiationStage stage;
 
     public Negotiation(Player player, Mob mob, INegotiationEntityEligibilityChecker eligibilityChecker)
@@ -138,8 +138,6 @@ public class Negotiation
             this.updateListeners();
 
             this.script = NegotiationScriptLoader.loadScript(mob.getType());
-            List<NegotiationScriptNode> trees = this.script.getPowerTrees();
-            this.scriptNode = trees.get(rand.nextInt(trees.size()));
             initialiseEntities();
         }
         catch (InvalidParticipantsException e)
@@ -268,10 +266,9 @@ public class Negotiation
         {
             if (responseText.equals(POWER_TEXT))
             {
-                NegotiationStage stage = convertScriptNodeToNegotiationStage(scriptNode);
-                this.stage = stage;
-                this.state = NegotiationState.ACTIVE_POWER;
-                this.updateListeners();
+                this.action = createPowerNegotiationAction();
+                this.action.execute();
+                this.stage = convertScriptNodeToNegotiationStage(((PowerNegotiationAction) this.action).getCurrentNode());
                 return stage;
             }
             else if (responseText.equals(ITEM_TEXT))
@@ -280,23 +277,7 @@ public class Negotiation
             }
             else if (responseText.equals(ATTACK_TEXT))
             {
-                this.action = new AttackAction(player, mob, playerActionLockListener, mobInvincibilityListener, mobInvalidatedListener);
-                this.action.addListener(new IActionListener()
-                {
-                    @Override
-                    public void onActionStart()
-                    {
-                        state = NegotiationState.ACTIVE_ATTACK;
-                        updateListeners();
-                    }
-
-                    @Override
-                    public void onActionComplete()
-                    {
-                        action.removeListener(this);
-                        stop(NegotiationState.FINISHED_ATTACK);
-                    }
-                });
+                this.action = createAttackAction();
                 this.action.execute();
             }
             else if (responseText.equals(CANCEL_TEXT))
@@ -305,62 +286,83 @@ public class Negotiation
             }
         }
 
-        if (state == NegotiationState.ACTIVE_POWER)
+        if (state == NegotiationState.ACTIVE_POWER && action instanceof PowerNegotiationAction)
         {
-            return nextScriptStage(responseText);
+            PowerNegotiationAction powerNegotiationAction = (PowerNegotiationAction) action;
+            NegotiationScriptNode node = powerNegotiationAction.getNextNode(responseText);
+            if (node != null)
+            {
+                this.stage = convertScriptNodeToNegotiationStage(node);
+                return stage;
+            }
         }
         return null;
     }
 
-    private NegotiationStage nextScriptStage(String responseText)
+    /**
+     * Creates a new {@link AttackAction} with relevant listeners for updating negotiation state.
+     * @return the action
+     */
+    private AttackAction createAttackAction()
     {
-        NegotiationScriptResponseNode selectedResponse = null;
-        for (NegotiationScriptResponseNode responseNode : scriptNode.getResponses())
+        AttackAction attackAction = new AttackAction(player, mob, playerActionLockListener, mobInvincibilityListener, mobInvalidatedListener);
+        attackAction.addListener(new IActionListener()
         {
-            if (responseNode.getText().equals(responseText))
-                selectedResponse = responseNode;
-        }
-
-        float roll = rand.nextFloat() * 100;
-        if (selectedResponse != null && roll < selectedResponse.getSuccessRates().getVariant(mobPersonality))
-        {
-            List<NegotiationScriptNode> children = this.scriptNode.getChildren();
-            if (children.size() > 0)
+            @Override
+            public void onActionStart(IAction action)
             {
-                NegotiationScriptNode childNode = children.get(rand.nextInt(children.size()));
-                NegotiationStage stage = convertScriptNodeToNegotiationStage(childNode);
-                String mobMessage = stage.getMobMessage();
-                stage.setMobMessage(selectedResponse.getSuccessResponses().getVariant(mobPersonality) + "\n" + mobMessage);
-                this.scriptNode = childNode;
-                this.stage = stage;
+                state = NegotiationState.ACTIVE_ATTACK;
+                updateListeners();
             }
-            else
+
+            @Override
+            public void onActionComplete(IAction action)
             {
-                String mobMessage = selectedResponse.getSuccessResponses().getVariant(mobPersonality) + "\n" + this.script.getPowerSuccessMessage().getVariant(mobPersonality);
-                this.stage = new NegotiationStage(negotiationId, playerName, mobName, mobMessage);
+                action.removeListener(this);
+                stop(NegotiationState.FINISHED_ATTACK);
+            }
+        });
+        return attackAction;
+    }
+
+    /**
+     * Creates a new {@link PowerNegotiationAction} with relevant listeners for updating negotiation state.
+     * @return the action
+     */
+    private PowerNegotiationAction createPowerNegotiationAction()
+    {
+        PowerNegotiationAction powerNegotiationAction = new PowerNegotiationAction(player, mob, script, mobPersonality);
+        powerNegotiationAction.addListener(new IActionListener()
+        {
+            @Override
+            public void onActionStart(IAction action)
+            {
+                state = NegotiationState.ACTIVE_POWER;
+                updateListeners();
+            }
+
+            @Override
+            public void onActionComplete(IAction action)
+            {
+                action.removeListener(this);
                 stop(NegotiationState.FINISHED_POWER);
             }
-        }
-        else
-        {
-            String mobMessage = selectedResponse.getFailureResponses().getVariant(mobPersonality);
-            this.stage = new NegotiationStage(negotiationId, playerName, mobName, mobMessage);
-            stop(NegotiationState.FINISHED_POWER);
-        }
-        return stage;
+        });
+        return powerNegotiationAction;
     }
 
     private NegotiationStage convertScriptNodeToNegotiationStage(NegotiationScriptNode scriptNode)
     {
-        String mobMessage = scriptNode.getText();
-        NegotiationStage stage = new NegotiationStage(negotiationId, playerName, mobName, mobMessage);
-        for (NegotiationScriptResponseNode responseNode : scriptNode.getResponses())
-            stage.getResponses().add(new NegotiationResponse(responseNode.getText(), NegotiationResponseType.SPEECH));
-        stage.getResponses().add(new NegotiationResponse(ATTACK_TEXT, NegotiationResponseType.ATTACK));
-        stage.getResponses().add(new NegotiationResponse(CANCEL_TEXT, NegotiationResponseType.CANCEL));
+        NegotiationStage stage = new NegotiationStage(negotiationId, playerName, mobName, scriptNode.getText());
+        if (scriptNode.getResponses() != null)
+        {
+            for (NegotiationScriptResponseNode responseNode : scriptNode.getResponses())
+                stage.getResponses().add(new NegotiationResponse(responseNode.getText(), NegotiationResponseType.SPEECH));
+            //stage.getResponses().add(new NegotiationResponse(ATTACK_TEXT, NegotiationResponseType.ATTACK));
+            stage.getResponses().add(new NegotiationResponse(CANCEL_TEXT, NegotiationResponseType.CANCEL));
+        }
         return stage;
     }
-
 
     /**
      * Forces negotiations to immediately stop with the "FINISHED_CANCEL" state.
@@ -398,8 +400,6 @@ public class Negotiation
         this.updateListeners();
         plugin.getLogger().info(String.format("%s completed negotiation with %s.", player.getName(), mob.getName()));
     }
-
-
 
     /**
      * Notifies all subscribed listeners of a state update
