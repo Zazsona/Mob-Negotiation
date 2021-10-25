@@ -8,26 +8,19 @@ public class NegotiationStage
     private String negotiationId;
     private String playerName;
     private String mobName;
+    private PersonalityType mobPersonality;
     private String mobMessage;
     private ArrayList<NegotiationResponse> responses;
 
-    public NegotiationStage(String negotiationId, String playerName, String mobName, String mobMessage, NegotiationResponse... responses)
+    public NegotiationStage(String negotiationId, String playerName, String mobName, PersonalityType mobPersonality, String mobMessage, NegotiationResponse... responses)
     {
         this.negotiationId = negotiationId;
         this.playerName = playerName;
         this.mobName = mobName;
+        this.mobPersonality = mobPersonality;
         this.mobMessage = mobMessage;
         this.responses = new ArrayList<>();
         this.responses.addAll(Arrays.asList(responses));
-    }
-
-    public NegotiationStage(String negotiationId, String playerName, String mobName, String mobMessage)
-    {
-        this.negotiationId = negotiationId;
-        this.playerName = playerName;
-        this.mobName = mobName;
-        this.mobMessage = mobMessage;
-        this.responses = new ArrayList<>();
     }
 
     /**
@@ -68,6 +61,21 @@ public class NegotiationStage
     public void setMobName(String mobName)
     {
         this.mobName = mobName;
+    }
+
+    /**
+     * Gets mobPersonality
+     *
+     * @return mobPersonality
+     */
+    public PersonalityType getMobPersonality()
+    {
+        return mobPersonality;
+    }
+
+    public void setMobPersonality(PersonalityType mobPersonality)
+    {
+        this.mobPersonality = mobPersonality;
     }
 
     /**

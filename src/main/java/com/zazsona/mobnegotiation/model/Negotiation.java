@@ -130,7 +130,7 @@ public class Negotiation
      * @throws InvalidParameterException Negotiating entity is unable to negotiate
      * @return the negotiation stage to present
      */
-    public NegotiationStage start()
+    public NegotiationStage start() // TODO: Don't forget the idle timeout.
     {
         try
         {
@@ -247,7 +247,7 @@ public class Negotiation
         this.updateListeners();
 
         String mobMessage = script.getGreetingMessage().getVariant(mobPersonality);
-        this.stage = new NegotiationStage(negotiationId, playerName, mobName, mobMessage);
+        this.stage = new NegotiationStage(negotiationId, playerName, mobName, mobPersonality, mobMessage);
         NegotiationResponse powerResponse = new NegotiationResponse(POWER_TEXT, NegotiationResponseType.SPEECH);
         NegotiationResponse itemResponse = new NegotiationResponse(ITEM_TEXT, NegotiationResponseType.SPEECH);
         NegotiationResponse attackResponse = new NegotiationResponse(ATTACK_TEXT, NegotiationResponseType.ATTACK);
@@ -354,7 +354,7 @@ public class Negotiation
 
     private NegotiationStage convertScriptNodeToNegotiationStage(NegotiationScriptNode scriptNode)
     {
-        NegotiationStage stage = new NegotiationStage(negotiationId, playerName, mobName, scriptNode.getText());
+        NegotiationStage stage = new NegotiationStage(negotiationId, playerName, mobName, mobPersonality, scriptNode.getText());
         if (scriptNode.getResponses() != null)
         {
             for (NegotiationScriptResponseNode responseNode : scriptNode.getResponses())
@@ -376,7 +376,7 @@ public class Negotiation
      * Forces negotiations to immediately stop and reports the provided state
      * @param terminatingState the state to inform as the termination reason. This should only be states where isTerminating() is true.
      */
-    private void stop(NegotiationState terminatingState)
+    private void stop(NegotiationState terminatingState) // TODO: Set cooldown
     {
         if (state.isTerminating())
             return;

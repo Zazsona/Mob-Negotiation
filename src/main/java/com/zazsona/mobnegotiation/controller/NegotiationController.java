@@ -8,6 +8,7 @@ import com.zazsona.mobnegotiation.view.interfaces.IClickableNegotiationView;
 import com.zazsona.mobnegotiation.view.interfaces.INegotiationView;
 import com.zazsona.mobnegotiation.view.interfaces.IViewInteractionExecutor;
 import net.md_5.bungee.api.ChatColor;
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -26,7 +27,6 @@ public class NegotiationController implements Listener
     private INegotiationEntityEligibilityChecker eligibilityChecker;
     private IViewInteractionExecutor interactionExecutor;
     private HashMap<String, NegotiationMenu> negotiationIdMenuMap;
-
     private Random random;
 
     public NegotiationController(INegotiationRepository repository, INegotiationEntityEligibilityChecker eligibilityChecker, IViewInteractionExecutor interactionExecutor)
@@ -76,7 +76,7 @@ public class NegotiationController implements Listener
         player.sendTitle(formattedAlertMessage, null, 2, 30, 7);
     }
 
-    private NegotiationMenu convertNegotiationStageToMenu(NegotiationStage stage, Player player)
+    private NegotiationMenu convertNegotiationStageToMenu(NegotiationStage stage, Player player) // TODO: Make text red on failure, green on success.
     {
         NegotiationMenu negotiationMenu = new NegotiationMenu(interactionExecutor);
         String headerText = (stage.getMobMessage() != null) ? formatMobMessageToHeader(stage) : null;
@@ -119,7 +119,7 @@ public class NegotiationController implements Listener
 
     private String formatMobMessageToHeader(NegotiationStage stage)
     {
-        String mobChatTag = String.format("<%s> ", stage.getMobName());
+        String mobChatTag = String.format("<%s %s> ", WordUtils.capitalizeFully(stage.getMobPersonality().toString()), stage.getMobName());
         String mobMessage = stage.getMobMessage();
         String[] lines = mobMessage.split("\n");
         StringBuilder stringBuilder = new StringBuilder();
