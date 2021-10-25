@@ -126,9 +126,24 @@ public class NegotiationController implements Listener
         String mobMessage = stage.getMobMessage();
         String[] lines = mobMessage.split("\n");
         StringBuilder stringBuilder = new StringBuilder();
-        for (String line : lines)
-            stringBuilder.append(mobChatTag).append(line).append("\n");
+        for (int i = 0; i < lines.length; i++)
+        {
+            stringBuilder.append(mobChatTag);
+            if (i == lines.length - 1 && stage.getState().isTerminating())
+                stringBuilder.append(getFinalMessageColour(stage));
+            stringBuilder.append(lines[i]).append("\n");
+        }
         return stringBuilder.toString().trim();
+    }
+
+    private ChatColor getFinalMessageColour(NegotiationStage stage)
+    {
+        return switch (stage.getState())
+                {
+                    case FINISHED_POWER_GIVEN -> ChatColor.GREEN;
+                    case FINISHED_POWER_REJECTED -> ChatColor.RED;
+                    default -> ChatColor.WHITE;
+                };
     }
 
     private ChatColor getResponseTypeColour(NegotiationResponseType type)
