@@ -1,12 +1,14 @@
 package com.zazsona.mobnegotiation.model.action;
 
 import com.zazsona.mobnegotiation.model.PersonalityType;
+import com.zazsona.mobnegotiation.model.PluginConfig;
 import com.zazsona.mobnegotiation.model.script.NegotiationScript;
 import com.zazsona.mobnegotiation.model.script.NegotiationScriptNode;
 import com.zazsona.mobnegotiation.model.script.NegotiationScriptResponseNode;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
+import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -64,20 +66,21 @@ public class PowerNegotiationAction extends Action
         if (roll < selectedResponse.getSuccessRates().getVariant(mobPersonality))
         {
             List<NegotiationScriptNode> children = this.scriptNode.getChildren();
-            if (children.size() > 0)
+            if (children.size() > 0) // Negotiation On-going
             {
                 NegotiationScriptNode childNode = children.get(rand.nextInt(children.size()));
                 this.scriptNode = childNode;
             }
-            else
+            else // Negotiation Successful
             {
                 String mobMessage = selectedResponse.getSuccessResponses().getVariant(mobPersonality) + "\n" + this.script.getPowerSuccessMessage().getVariant(mobPersonality);
                 NegotiationScriptNode node = new NegotiationScriptNode(mobMessage, null, null);
                 this.scriptNode = node;
+                givePower();
                 stop();
             }
         }
-        else
+        else // Negotiation Failed
         {
             String mobMessage = selectedResponse.getFailureResponses().getVariant(mobPersonality);
             NegotiationScriptNode node = new NegotiationScriptNode(mobMessage, null, null);
@@ -121,5 +124,20 @@ public class PowerNegotiationAction extends Action
     public boolean isActive()
     {
         return active;
+    }
+
+    /**
+     * Gives the player the mob's power(s) and adds to givenPowers.
+     */
+    private void givePower()
+    {
+        PotionEffectType powerType = PluginConfig.getOfferedPower(mob.getType());
+        if (powerType != null)
+        {
+            int ticks = 20 * 60 * 7; // 7 Minutes
+            PotionEffect power = new PotionEffect(powerType, ticks, 0);
+            player.addPotionEffect(power);
+            givenPowers.add(power);
+        }
     }
 }
