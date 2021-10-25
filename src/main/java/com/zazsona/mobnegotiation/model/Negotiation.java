@@ -262,6 +262,11 @@ public class Negotiation
     public NegotiationStage nextStage(NegotiationResponse response)
     {
         String responseText = response.getText();
+        if (!state.isTerminating() && responseText.equals(CANCEL_TEXT))
+        {
+            stop(NegotiationState.FINISHED_CANCEL);
+        }
+
         if (state == NegotiationState.STARTED)
         {
             if (responseText.equals(POWER_TEXT))
@@ -279,10 +284,6 @@ public class Negotiation
             {
                 this.action = createAttackAction();
                 this.action.execute();
-            }
-            else if (responseText.equals(CANCEL_TEXT))
-            {
-                stop(NegotiationState.FINISHED_CANCEL);
             }
         }
 
@@ -358,7 +359,6 @@ public class Negotiation
         {
             for (NegotiationScriptResponseNode responseNode : scriptNode.getResponses())
                 stage.getResponses().add(new NegotiationResponse(responseNode.getText(), NegotiationResponseType.SPEECH));
-            //stage.getResponses().add(new NegotiationResponse(ATTACK_TEXT, NegotiationResponseType.ATTACK));
             stage.getResponses().add(new NegotiationResponse(CANCEL_TEXT, NegotiationResponseType.CANCEL));
         }
         return stage;

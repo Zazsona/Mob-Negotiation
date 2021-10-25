@@ -134,7 +134,7 @@ public class NegotiationController implements Listener
         {
             case SPEECH -> ChatColor.WHITE;
             case ATTACK -> ChatColor.RED;
-            case CANCEL -> ChatColor.DARK_GRAY;
+            case CANCEL -> ChatColor.GRAY;
         };
     }
 
