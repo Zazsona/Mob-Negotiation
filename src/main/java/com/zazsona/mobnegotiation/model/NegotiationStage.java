@@ -6,15 +6,17 @@ import java.util.Arrays;
 public class NegotiationStage
 {
     private String negotiationId;
+    private NegotiationState state;
     private String playerName;
     private String mobName;
     private PersonalityType mobPersonality;
     private String mobMessage;
     private ArrayList<NegotiationResponse> responses;
 
-    public NegotiationStage(String negotiationId, String playerName, String mobName, PersonalityType mobPersonality, String mobMessage, NegotiationResponse... responses)
+    public NegotiationStage(String negotiationId, NegotiationState state, String playerName, String mobName, PersonalityType mobPersonality, String mobMessage, NegotiationResponse... responses)
     {
         this.negotiationId = negotiationId;
+        this.state = state;
         this.playerName = playerName;
         this.mobName = mobName;
         this.mobPersonality = mobPersonality;
@@ -31,6 +33,21 @@ public class NegotiationStage
     public String getNegotiationId()
     {
         return negotiationId;
+    }
+
+    /**
+     * Gets state
+     *
+     * @return state
+     */
+    public NegotiationState getState()
+    {
+        return state;
+    }
+
+    public void setState(NegotiationState state)
+    {
+        this.state = state;
     }
 
     /**

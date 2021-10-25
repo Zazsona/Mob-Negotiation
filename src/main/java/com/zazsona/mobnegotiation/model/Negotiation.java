@@ -250,7 +250,7 @@ public class Negotiation
         this.updateListeners();
 
         String mobMessage = script.getGreetingMessage().getVariant(mobPersonality);
-        this.stage = new NegotiationStage(negotiationId, playerName, mobName, mobPersonality, mobMessage);
+        this.stage = new NegotiationStage(negotiationId, state, playerName, mobName, mobPersonality, mobMessage);
         NegotiationResponse powerResponse = new NegotiationResponse(POWER_TEXT, NegotiationResponseType.SPEECH);
         NegotiationResponse itemResponse = new NegotiationResponse(ITEM_TEXT, NegotiationResponseType.SPEECH);
         NegotiationResponse attackResponse = new NegotiationResponse(ATTACK_TEXT, NegotiationResponseType.ATTACK);
@@ -348,8 +348,10 @@ public class Negotiation
             @Override
             public void onActionComplete(IAction action)
             {
-                action.removeListener(this);
-                stop(NegotiationState.FINISHED_POWER);
+                PowerNegotiationAction pnAction = (PowerNegotiationAction) action;
+                pnAction.removeListener(this);
+                NegotiationState endState = (pnAction.getGivenPowers().size() > 0) ? NegotiationState.FINISHED_POWER_GIVEN : NegotiationState.FINISHED_POWER_REJECTED;
+                stop(endState);
             }
         });
         return powerNegotiationAction;
@@ -357,7 +359,7 @@ public class Negotiation
 
     private NegotiationStage convertScriptNodeToNegotiationStage(NegotiationScriptNode scriptNode)
     {
-        NegotiationStage stage = new NegotiationStage(negotiationId, playerName, mobName, mobPersonality, scriptNode.getText());
+        NegotiationStage stage = new NegotiationStage(negotiationId, state, playerName, mobName, mobPersonality, scriptNode.getText());
         if (scriptNode.getResponses() != null)
         {
             for (NegotiationScriptResponseNode responseNode : scriptNode.getResponses())
