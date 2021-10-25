@@ -4,9 +4,9 @@ import com.zazsona.mobnegotiation.model.PersonalityType;
 import com.zazsona.mobnegotiation.model.script.NegotiationScript;
 import com.zazsona.mobnegotiation.model.script.NegotiationScriptNode;
 import com.zazsona.mobnegotiation.model.script.NegotiationScriptResponseNode;
-import org.bukkit.Effect;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.potion.PotionEffect;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,7 +20,7 @@ public class PowerNegotiationAction extends Action
     private boolean active;
     private NegotiationScriptNode scriptNode;
     private Random rand;
-    private ArrayList<Effect> givenPowers;
+    private ArrayList<PotionEffect> givenPowers;
 
     public PowerNegotiationAction(Player player, Mob mob, NegotiationScript script, PersonalityType mobPersonality)
     {
@@ -91,7 +91,7 @@ public class PowerNegotiationAction extends Action
      * Gets the powers given to the associated player through this power negotiation
      * @return the bestowed powers.
      */
-    public List<Effect> getGivenPowers()
+    public List<PotionEffect> getGivenPowers()
     {
         return givenPowers;
     }

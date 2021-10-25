@@ -2,10 +2,15 @@ package com.zazsona.mobnegotiation;
 
 import com.zazsona.mobnegotiation.controller.NegotiationController;
 import com.zazsona.mobnegotiation.model.NegotiationEntityEligibilityChecker;
+import com.zazsona.mobnegotiation.model.PluginConfig;
 import com.zazsona.mobnegotiation.repository.NegotiationRepository;
 import com.zazsona.mobnegotiation.view.NegotiationViewInteractionExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.potion.PotionEffectType;
+
+import java.io.IOException;
+import java.util.logging.Level;
 
 public class MobNegotiationPlugin extends JavaPlugin
 {
@@ -22,11 +27,17 @@ public class MobNegotiationPlugin extends JavaPlugin
     @Override
     public void onLoad()
     {
-        super.onLoad();
-        pluginName = getDescription().getName();
-        getConfig().options().copyDefaults(true);
-        getConfig().options().copyHeader(true);
-        saveConfig();
+        try
+        {
+            super.onLoad();
+            pluginName = getDescription().getName();
+            PluginConfig.initialiseConfigs(this);
+        }
+        catch (IOException e)
+        {
+            getLogger().log(Level.SEVERE, "Failed to initialise configs: ", e);
+            Bukkit.getPluginManager().disablePlugin(this);
+        }
     }
 
     @Override

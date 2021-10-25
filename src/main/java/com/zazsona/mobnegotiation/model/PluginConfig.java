@@ -1,19 +1,44 @@
 package com.zazsona.mobnegotiation.model;
 
 import com.zazsona.mobnegotiation.MobNegotiationPlugin;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.potion.PotionEffectType;
 
+import java.io.*;
+import java.util.HashMap;
 import java.util.List;
+import java.util.logging.Logger;
 
 public class PluginConfig
 {
-    public static final String VERSION_KEY = "version";
-    public static final String PLUGIN_ENABLED_KEY = "plugin-enabled";
-    public static final String NEGOTIATION_RATE_KEY = "negotiation-rate";
-    public static final String NEGOTIATION_IDLE_TIMEOUT_KEY = "negotiation-idle-timeout-ticks";
-    public static final String NEGOTIATION_COOLDOWN_KEY = "negotiation-cooldown-ticks";
-    public static final String NEGOTIATION_DMG_GRACE_KEY = "negotiation-damage-grace-ticks";
-    public static final String NEGOTIATION_ALERT_MSGS_KEY = "negotiation-alert-messages";
+    public static final String CFG_VERSION_KEY = "version";
+    public static final String CFG_PLUGIN_ENABLED_KEY = "plugin-enabled";
+    public static final String CFG_NEGOTIATION_RATE_KEY = "negotiation-rate";
+    public static final String CFG_NEGOTIATION_IDLE_TIMEOUT_KEY = "negotiation-idle-timeout-ticks";
+    public static final String CFG_NEGOTIATION_COOLDOWN_KEY = "negotiation-cooldown-ticks";
+    public static final String CFG_NEGOTIATION_DMG_GRACE_KEY = "negotiation-damage-grace-ticks";
+    public static final String CFG_NEGOTIATION_ALERT_MSGS_KEY = "negotiation-alert-messages";
+
+    private static final String PWR_FILE = "powers.yml";
+    public static final String PWR_VERSION_KEY = "version";
+    private static final HashMap<EntityType, PotionEffectType> entityPowersMap = new HashMap<>();
+
+    /**
+     * Crates and loads configs as required.
+     * @param plugin the context
+     */
+    public static void initialiseConfigs(Plugin plugin) throws IOException
+    {
+        plugin.getConfig().options().copyDefaults(true);
+        plugin.getConfig().options().copyHeader(true);
+        plugin.saveConfig();
+
+        File powerFileDir = new File(plugin.getDataFolder().getAbsolutePath()+"/"+PWR_FILE);
+        updateConfigFile(PWR_FILE, PWR_VERSION_KEY, powerFileDir, PWR_VERSION_KEY);
+        loadEntityPowers(plugin.getLogger(), powerFileDir, PWR_VERSION_KEY);
+    }
 
     /**
      * Saves the config
@@ -30,7 +55,7 @@ public class PluginConfig
     public static void setVersion(String version)
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
-        plugin.getConfig().set(VERSION_KEY, version);
+        plugin.getConfig().set(CFG_VERSION_KEY, version);
         save();
     }
 
@@ -41,7 +66,7 @@ public class PluginConfig
     public static String getConfigVersion()
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
-        return plugin.getConfig().getString(VERSION_KEY);
+        return plugin.getConfig().getString(CFG_VERSION_KEY);
     }
 
     /**
@@ -51,7 +76,7 @@ public class PluginConfig
     public static void setPluginEnabled(boolean newEnabled)
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
-        plugin.getConfig().set(PLUGIN_ENABLED_KEY, newEnabled);
+        plugin.getConfig().set(CFG_PLUGIN_ENABLED_KEY, newEnabled);
         save();
     }
 
@@ -62,7 +87,7 @@ public class PluginConfig
     public static boolean isPluginEnabled()
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
-        return plugin.getConfig().getBoolean(PLUGIN_ENABLED_KEY);
+        return plugin.getConfig().getBoolean(CFG_PLUGIN_ENABLED_KEY);
     }
 
     /**
@@ -72,7 +97,7 @@ public class PluginConfig
     public static void setNegotiationRate(double percentage)
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
-        plugin.getConfig().set(NEGOTIATION_RATE_KEY, percentage);
+        plugin.getConfig().set(CFG_NEGOTIATION_RATE_KEY, percentage);
         save();
     }
 
@@ -83,7 +108,7 @@ public class PluginConfig
     public static double getNegotiationRate()
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
-        return plugin.getConfig().getDouble(NEGOTIATION_RATE_KEY);
+        return plugin.getConfig().getDouble(CFG_NEGOTIATION_RATE_KEY);
     }
 
     /**
@@ -93,7 +118,7 @@ public class PluginConfig
     public static void setNegotiationTimeoutTicks(int ticks)
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
-        plugin.getConfig().set(NEGOTIATION_IDLE_TIMEOUT_KEY, ticks);
+        plugin.getConfig().set(CFG_NEGOTIATION_IDLE_TIMEOUT_KEY, ticks);
         save();
     }
 
@@ -104,7 +129,7 @@ public class PluginConfig
     public static int getNegotiationTimeoutTicks()
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
-        return plugin.getConfig().getInt(NEGOTIATION_IDLE_TIMEOUT_KEY);
+        return plugin.getConfig().getInt(CFG_NEGOTIATION_IDLE_TIMEOUT_KEY);
     }
 
     /**
@@ -114,7 +139,7 @@ public class PluginConfig
     public static void setNegotiationCooldownTicks(int ticks)
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
-        plugin.getConfig().set(NEGOTIATION_COOLDOWN_KEY, ticks);
+        plugin.getConfig().set(CFG_NEGOTIATION_COOLDOWN_KEY, ticks);
         save();
     }
 
@@ -125,7 +150,7 @@ public class PluginConfig
     public static int getNegotiationCooldownTicks()
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
-        return plugin.getConfig().getInt(NEGOTIATION_COOLDOWN_KEY);
+        return plugin.getConfig().getInt(CFG_NEGOTIATION_COOLDOWN_KEY);
     }
 
     /**
@@ -136,7 +161,7 @@ public class PluginConfig
     public static void setNegotiationDmgGracePeriod(int ticks)
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
-        plugin.getConfig().set(NEGOTIATION_DMG_GRACE_KEY, ticks);
+        plugin.getConfig().set(CFG_NEGOTIATION_DMG_GRACE_KEY, ticks);
         save();
     }
 
@@ -148,7 +173,7 @@ public class PluginConfig
     public static int getNegotiationDmgGracePeriod()
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
-        return plugin.getConfig().getInt(NEGOTIATION_DMG_GRACE_KEY);
+        return plugin.getConfig().getInt(CFG_NEGOTIATION_DMG_GRACE_KEY);
     }
 
     /**
@@ -158,7 +183,7 @@ public class PluginConfig
     public static void setNegotiationAlertMessages(List<String> messages)
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
-        plugin.getConfig().set(NEGOTIATION_ALERT_MSGS_KEY, messages);
+        plugin.getConfig().set(CFG_NEGOTIATION_ALERT_MSGS_KEY, messages);
         save();
     }
 
@@ -169,7 +194,90 @@ public class PluginConfig
     public static List<String> getNegotiationAlertMessages()
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
-        return plugin.getConfig().getStringList(NEGOTIATION_ALERT_MSGS_KEY);
+        return plugin.getConfig().getStringList(CFG_NEGOTIATION_ALERT_MSGS_KEY);
     }
 
+    /**
+     * Gets the power type offered by this entity
+     * @param entity the entity to get the paired power for
+     * @return the power as a potion effect type, or null if none is assigned.
+     */
+    public static PotionEffectType getOfferedPower(EntityType entity)
+    {
+        return entityPowersMap.getOrDefault(entity, null);
+    }
+
+    /**
+     * Creates or updates a config file, preserving existing settings.
+     * @param internalDir the location of the config file in resources
+     * @param internalVersionKey the YAML key for identifying the current internal file version
+     * @param targetDir the location to create the file
+     * @param targetVersionKey the YAML key for identifying the target file version, ignored if file does not exist
+     * @throws IOException error creating file or accessing source file
+     */
+    private static void updateConfigFile(String internalDir, String internalVersionKey, File targetDir, String targetVersionKey) throws IOException
+    {
+        boolean writeRequired = false;
+        InputStream inputStream = PluginConfig.class.getClassLoader().getResourceAsStream(internalDir);
+        InputStreamReader reader = new InputStreamReader(inputStream);
+        YamlConfiguration powersConfig = YamlConfiguration.loadConfiguration(reader);
+        String internalVersion = powersConfig.getString(internalVersionKey);
+
+        if (targetDir.exists())
+        {
+            YamlConfiguration existingConfig = YamlConfiguration.loadConfiguration(targetDir);
+            String existingVersion = existingConfig.getString(targetVersionKey);
+            if (existingVersion == null || internalVersion.compareTo(existingVersion) > 0)
+            {
+                writeRequired = true;
+                for (String key : existingConfig.getKeys(true))
+                {
+                    if (!existingConfig.isConfigurationSection(key) && !key.equals(targetVersionKey))
+                    {
+                        Object value = existingConfig.get(key); // Maintain existing entries as to not remove user settings
+                        powersConfig.set(key, value);
+                    }
+                }
+            }
+        }
+        else
+            writeRequired = true;
+
+        if (writeRequired)
+            powersConfig.save(targetDir);
+    }
+
+    /**
+     * Clears any existing entries and loads the entity effect pairings offered during power negotiation
+     * @param logger logger for error output
+     * @param powersDir the powers file
+     */
+    private static void loadEntityPowers(Logger logger, File powersDir, String versionKey)
+    {
+        if (entityPowersMap.size() > 0)
+            entityPowersMap.clear();
+
+        YamlConfiguration powersConfig = YamlConfiguration.loadConfiguration(powersDir);
+        for (String key : powersConfig.getKeys(false))
+        {
+            try
+            {
+                if (!key.equals(versionKey))
+                {
+                    String mobName = key.toUpperCase();
+                    String effectName = powersConfig.getString(key);
+                    EntityType entityType = EntityType.valueOf(mobName);
+                    PotionEffectType effectType = PotionEffectType.getByName(effectName); // Doesn't throw IAException.
+                    if (effectType != null)                                               // So we'll make our own!
+                        entityPowersMap.put(entityType, effectType);
+                    else
+                        throw new IllegalArgumentException();
+                }
+            }
+            catch (IllegalArgumentException e)
+            {
+                logger.warning(String.format("Invalid power entry: %s. Are the mob and effect names valid?", key));
+            }
+        }
+    }
 }
