@@ -1,6 +1,7 @@
 package com.zazsona.mobnegotiation.controller;
 
 import com.zazsona.mobnegotiation.model.*;
+import com.zazsona.mobnegotiation.repository.ICooldownRespository;
 import com.zazsona.mobnegotiation.repository.INegotiationRepository;
 import com.zazsona.mobnegotiation.view.NegotiationButton;
 import com.zazsona.mobnegotiation.view.NegotiationMenu;
@@ -23,15 +24,17 @@ import java.util.Random;
 
 public class NegotiationController implements Listener
 {
-    private INegotiationRepository repository;
+    private INegotiationRepository negotiationRepo;
+    private ICooldownRespository cooldownRepo;
     private INegotiationEntityEligibilityChecker eligibilityChecker;
     private IViewInteractionExecutor interactionExecutor;
     private HashMap<String, NegotiationMenu> negotiationIdMenuMap;
     private Random random;
 
-    public NegotiationController(INegotiationRepository repository, INegotiationEntityEligibilityChecker eligibilityChecker, IViewInteractionExecutor interactionExecutor)
+    public NegotiationController(INegotiationRepository negotiationRepo, ICooldownRespository cooldownRepo, INegotiationEntityEligibilityChecker eligibilityChecker, IViewInteractionExecutor interactionExecutor)
     {
-        this.repository = repository;
+        this.negotiationRepo = negotiationRepo;
+        this.cooldownRepo = cooldownRepo;
         this.eligibilityChecker = eligibilityChecker;
         this.interactionExecutor = interactionExecutor;
         this.negotiationIdMenuMap = new HashMap<>();
@@ -50,11 +53,11 @@ public class NegotiationController implements Listener
             Player player = (Player) e.getDamager();
             Mob mob = (Mob) e.getEntity();
             double roll = (random.nextDouble() * 100);
-            if (roll < PluginConfig.getNegotiationRate() && eligibilityChecker.canEntitiesNegotiate(player, mob))
+            if (roll < PluginConfig.getNegotiationRate() && !cooldownRepo.isPlayerInCooldown(player) && eligibilityChecker.canEntitiesNegotiate(player, mob))
             {
                 e.setDamage(0.0f);
-                Negotiation negotiation = new Negotiation(player, mob, eligibilityChecker);
-                repository.addNegotiation(negotiation);
+                Negotiation negotiation = new Negotiation(player, mob, eligibilityChecker, cooldownRepo);
+                negotiationRepo.addNegotiation(negotiation);
                 NegotiationStage stage = negotiation.start();
                 if (stage != null)
                 {
@@ -92,7 +95,7 @@ public class NegotiationController implements Listener
             button.addListener(clickedButton ->
                                {
                                    String negotiationId = stage.getNegotiationId();
-                                   Negotiation negotiation = repository.getNegotiation(negotiationId);
+                                   Negotiation negotiation = negotiationRepo.getNegotiation(negotiationId);
                                    NegotiationMenu menu = negotiationIdMenuMap.get(negotiationId);
                                    if (negotiation != null && menu != null)
                                    {

@@ -3,11 +3,11 @@ package com.zazsona.mobnegotiation;
 import com.zazsona.mobnegotiation.controller.NegotiationController;
 import com.zazsona.mobnegotiation.model.NegotiationEntityEligibilityChecker;
 import com.zazsona.mobnegotiation.model.PluginConfig;
+import com.zazsona.mobnegotiation.repository.CooldownRespository;
 import com.zazsona.mobnegotiation.repository.NegotiationRepository;
 import com.zazsona.mobnegotiation.view.NegotiationViewInteractionExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.potion.PotionEffectType;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -47,8 +47,9 @@ public class MobNegotiationPlugin extends JavaPlugin
         NegotiationViewInteractionExecutor responseCommand = NegotiationViewInteractionExecutor.getInstance();
         getCommand(NegotiationViewInteractionExecutor.COMMAND_KEY).setExecutor(responseCommand);
         NegotiationRepository negotiationRepository = NegotiationRepository.getInstance();
+        CooldownRespository cooldownRespository = CooldownRespository.getInstance();
         NegotiationEntityEligibilityChecker negotiationEntityEligibilityChecker = new NegotiationEntityEligibilityChecker();
-        NegotiationController negotiationController = new NegotiationController(negotiationRepository, negotiationEntityEligibilityChecker, responseCommand);
+        NegotiationController negotiationController = new NegotiationController(negotiationRepository, cooldownRespository, negotiationEntityEligibilityChecker, responseCommand);
         getServer().getPluginManager().registerEvents(negotiationController, this);
     }
 

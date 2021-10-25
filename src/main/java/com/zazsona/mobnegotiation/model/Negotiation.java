@@ -14,6 +14,7 @@ import com.zazsona.mobnegotiation.model.script.NegotiationScript;
 import com.zazsona.mobnegotiation.model.script.NegotiationScriptLoader;
 import com.zazsona.mobnegotiation.model.script.NegotiationScriptNode;
 import com.zazsona.mobnegotiation.model.script.NegotiationScriptResponseNode;
+import com.zazsona.mobnegotiation.repository.ICooldownRespository;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
@@ -39,6 +40,7 @@ public class Negotiation
     private String mobName;
     private PersonalityType mobPersonality;
     private INegotiationEntityEligibilityChecker eligibilityChecker;
+    private ICooldownRespository cooldownRespository;
     private NegotiationState state;
     private Random rand;
     private IAction action;
@@ -56,11 +58,12 @@ public class Negotiation
     private NegotiationScript script;
     private NegotiationStage stage;
 
-    public Negotiation(Player player, Mob mob, INegotiationEntityEligibilityChecker eligibilityChecker)
+    public Negotiation(Player player, Mob mob, INegotiationEntityEligibilityChecker eligibilityChecker, ICooldownRespository cooldownRespository)
     {
         this.negotiationId = UUID.randomUUID().toString();
         this.player = player;
         this.eligibilityChecker = eligibilityChecker;
+        this.cooldownRespository = cooldownRespository;
         this.mob = mob;
         this.state = NegotiationState.NONE;
         this.rand = new Random();
@@ -396,6 +399,9 @@ public class Negotiation
 
         if (action != null && action.isActive())
             action.stop();
+
+        if (!terminatingState.isErroneous())
+            cooldownRespository.setCooldown(player, PluginConfig.getNegotiationCooldownTicks());
 
         this.updateListeners();
         plugin.getLogger().info(String.format("%s completed negotiation with %s.", player.getName(), mob.getName()));
