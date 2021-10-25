@@ -134,7 +134,7 @@ public class PowerNegotiationAction extends Action
         PotionEffectType powerType = PluginConfig.getOfferedPower(mob.getType());
         if (powerType != null)
         {
-            int ticks = 20 * 60 * 7; // 7 Minutes
+            int ticks = PluginConfig.getPowerDurationTicks();
             PotionEffect power = new PotionEffect(powerType, ticks, 0);
             player.addPotionEffect(power);
             givenPowers.add(power);

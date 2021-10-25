@@ -16,6 +16,7 @@ public class PluginConfig
     public static final String CFG_VERSION_KEY = "version";
     public static final String CFG_PLUGIN_ENABLED_KEY = "plugin-enabled";
     public static final String CFG_NEGOTIATION_RATE_KEY = "negotiation-rate";
+    public static final String CFG_POWER_DURATION_KEY = "power-effect-duration-ticks";
     public static final String CFG_NEGOTIATION_IDLE_TIMEOUT_KEY = "negotiation-idle-timeout-ticks";
     public static final String CFG_NEGOTIATION_COOLDOWN_KEY = "negotiation-cooldown-ticks";
     public static final String CFG_NEGOTIATION_DMG_GRACE_KEY = "negotiation-damage-grace-ticks";
@@ -105,10 +106,31 @@ public class PluginConfig
      * Gets the rate, as a percentage, that negotiations should occur
      * @return the chance of a negotiation occurring
      */
-    public static double getNegotiationRate()
+    public static double getNegotiationRate() // TODO: Remember not to leave this at 100%.
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
         return plugin.getConfig().getDouble(CFG_NEGOTIATION_RATE_KEY);
+    }
+
+    /**
+     * Sets the number of ticks a PotionEffect bestowed as a "power" by a mob lasts.
+     * @param ticks the ticks to last
+     */
+    public static void setPowerDurationTicks(int ticks)
+    {
+        Plugin plugin = MobNegotiationPlugin.getInstance();
+        plugin.getConfig().set(CFG_POWER_DURATION_KEY, ticks);
+        save();
+    }
+
+    /**
+     * Gets the number of ticks a PotionEffect bestowed as a "power" by a mob lasts.
+     * @return the ticks to last
+     */
+    public static int getPowerDurationTicks()
+    {
+        Plugin plugin = MobNegotiationPlugin.getInstance();
+        return plugin.getConfig().getInt(CFG_POWER_DURATION_KEY);
     }
 
     /**
