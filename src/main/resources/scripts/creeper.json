@@ -6,16 +6,16 @@
     "gloomy": "Look, jussst... End me."
   },
   "initialItemOfferMessage": {
-    "upbeat": "I just ssso happen to have thisss %s ssspare.",
-    "timid": "Isss thisss %s enough?",
-    "irritable": "Take thisss %s and go would you?",
-    "gloomy": "Thisss %s is probably the best thing I have..."
+    "upbeat": "I just ssso happen to have thisss %ITEM% ssspare.",
+    "timid": "Isss thisss %ITEM% enough?",
+    "irritable": "Take thisss %ITEM% and go would you?",
+    "gloomy": "Thisss %ITEM% is probably the best thing I have..."
   },
   "furtherItemOfferMessage": {
-    "upbeat": "Alright, let'sss upgrade that to this %s.",
-    "timid": "What!? How about thisss %s?",
-    "irritable": "Don't be ssso cocky. Take this %s.",
-    "gloomy": "Oh... what about this %s?"
+    "upbeat": "Alright, let'sss upgrade that to this %ITEM%.",
+    "timid": "What!? How about thisss %ITEM%?",
+    "irritable": "Don't be ssso cocky. Take this %ITEM%.",
+    "gloomy": "Oh... what about this %ITEM%?"
   },
   "refuseItemDemandMessage": {
     "upbeat": "Inssstead, let'sss party.",
@@ -24,10 +24,10 @@
     "gloomy": "My life'sss not worth any more. Take it inssstead."
   },
   "powerSuccessMessage": {
-    "upbeat": "I had fun. Here, enjoy thisss power.",
-    "timid": "Thanksss for the chat. Here, take thisss power.",
-    "irritable": "Well, that'sss my time. Thanksss. Take thisss power.",
-    "gloomy": "Thingsss to do. Wasssn't bad to chat, take thisss power."
+    "upbeat": "I had fun. Here, enjoy thisss %POWER% power.",
+    "timid": "Thanksss for the chat. Here, take thisss power of %POWER%.",
+    "irritable": "Well, that'sss my time. Thanksss. Take thisss %POWER% power.",
+    "gloomy": "Hey, it wasssn't bad to chat. Thanksss. Take thisss power of %POWER%."
   },
   "powerTrees": [
     {

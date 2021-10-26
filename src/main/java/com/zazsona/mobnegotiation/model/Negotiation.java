@@ -381,7 +381,7 @@ public class Negotiation
      * Forces negotiations to immediately stop and reports the provided state
      * @param terminatingState the state to inform as the termination reason. This should only be states where isTerminating() is true.
      */
-    private void stop(NegotiationState terminatingState) // TODO: Set cooldown
+    private void stop(NegotiationState terminatingState)
     {
         if (state.isTerminating())
             return;

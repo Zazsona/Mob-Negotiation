@@ -5,6 +5,7 @@ import com.zazsona.mobnegotiation.model.PluginConfig;
 import com.zazsona.mobnegotiation.model.script.NegotiationScript;
 import com.zazsona.mobnegotiation.model.script.NegotiationScriptNode;
 import com.zazsona.mobnegotiation.model.script.NegotiationScriptResponseNode;
+import org.apache.commons.lang.WordUtils;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -16,6 +17,8 @@ import java.util.Random;
 
 public class PowerNegotiationAction extends Action
 {
+    private static final String POWER_PLACEHOLDER_TEXT = "%POWER%";
+
     private NegotiationScript script;
     private PersonalityType mobPersonality;
 
@@ -73,10 +76,13 @@ public class PowerNegotiationAction extends Action
             }
             else // Negotiation Successful
             {
-                String mobMessage = selectedResponse.getSuccessResponses().getVariant(mobPersonality) + "\n" + this.script.getPowerSuccessMessage().getVariant(mobPersonality);
+                PotionEffect power = givePower();
+                String powerName = (power == null) ? "Nothingness" : WordUtils.capitalizeFully(power.getType().getName().replace("_", " "));
+                String responseSuccess = selectedResponse.getSuccessResponses().getVariant(mobPersonality);
+                String powerSuccess = this.script.getPowerSuccessMessage().getVariant(mobPersonality).replace(POWER_PLACEHOLDER_TEXT, powerName);
+                String mobMessage = responseSuccess + "\n" + powerSuccess;
                 NegotiationScriptNode node = new NegotiationScriptNode(mobMessage, null, null);
                 this.scriptNode = node;
-                givePower();
                 stop();
             }
         }
@@ -129,7 +135,7 @@ public class PowerNegotiationAction extends Action
     /**
      * Gives the player the mob's power(s) and adds to givenPowers.
      */
-    private void givePower()
+    private PotionEffect givePower()
     {
         PotionEffectType powerType = PluginConfig.getOfferedPower(mob.getType());
         if (powerType != null)
@@ -138,6 +144,8 @@ public class PowerNegotiationAction extends Action
             PotionEffect power = new PotionEffect(powerType, ticks, 0);
             player.addPotionEffect(power);
             givenPowers.add(power);
+            return power;
         }
+        return null;
     }
 }
