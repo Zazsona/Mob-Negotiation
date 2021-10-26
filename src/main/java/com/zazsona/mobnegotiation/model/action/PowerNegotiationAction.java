@@ -17,8 +17,6 @@ import java.util.Random;
 
 public class PowerNegotiationAction extends Action
 {
-    private static final String POWER_PLACEHOLDER_TEXT = "%POWER%";
-
     private NegotiationScript script;
     private PersonalityType mobPersonality;
 
@@ -76,13 +74,12 @@ public class PowerNegotiationAction extends Action
             }
             else // Negotiation Successful
             {
-                PotionEffect power = givePower();
-                String powerName = (power == null) ? "Nothingness" : WordUtils.capitalizeFully(power.getType().getName().replace("_", " "));
                 String responseSuccess = selectedResponse.getSuccessResponses().getVariant(mobPersonality);
-                String powerSuccess = this.script.getPowerSuccessMessage().getVariant(mobPersonality).replace(POWER_PLACEHOLDER_TEXT, powerName);
+                String powerSuccess = this.script.getPowerSuccessMessage().getVariant(mobPersonality);
                 String mobMessage = responseSuccess + "\n" + powerSuccess;
                 NegotiationScriptNode node = new NegotiationScriptNode(mobMessage, null, null);
                 this.scriptNode = node;
+                givePower();
                 stop();
             }
         }
