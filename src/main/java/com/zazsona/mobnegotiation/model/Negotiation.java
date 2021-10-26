@@ -35,15 +35,14 @@ public class Negotiation
 
     private String negotiationId;
     private Player player;
-    private String playerName;
     private Mob mob;
-    private String mobName;
     private PersonalityType mobPersonality;
+    private NegotiationState state;
+    private IAction action;
+    private NegotiationPrompt prompt;
+    private NegotiationScript script;
     private INegotiationEntityEligibilityChecker eligibilityChecker;
     private ICooldownRespository cooldownRespository;
-    private NegotiationState state;
-    private Random rand;
-    private IAction action;
     private ArrayList<NegotiationEventListener> listeners;
 
     private EntityActionLockListener playerActionLockListener;
@@ -55,9 +54,6 @@ public class Negotiation
     private EntityInvalidatedListener mobInvalidatedListener;
     private EntityInvalidatedEventListener mobInvalidatedHandler;
 
-    private NegotiationScript script;
-    private NegotiationStage stage;
-
     public Negotiation(Player player, Mob mob, INegotiationEntityEligibilityChecker eligibilityChecker, ICooldownRespository cooldownRespository)
     {
         this.negotiationId = UUID.randomUUID().toString();
@@ -66,10 +62,19 @@ public class Negotiation
         this.cooldownRespository = cooldownRespository;
         this.mob = mob;
         this.state = NegotiationState.NONE;
-        this.rand = new Random();
         this.listeners = new ArrayList<>();
-        this.mobName = (mob.getCustomName() == null) ? mob.getName() : mob.getCustomName();
-        this.playerName = player.getName();
+
+        // Mob Personality
+        long entityIdMsb = mob.getUniqueId().getMostSignificantBits();
+        long personalityCode = entityIdMsb % 100;
+        if (personalityCode % 2 == 0 && personalityCode < 50)
+            this.mobPersonality = PersonalityType.UPBEAT;
+        else if (personalityCode % 2 == 0 && personalityCode >= 50)
+            this.mobPersonality = PersonalityType.GLOOMY;
+        else if (personalityCode % 2 != 0 && personalityCode < 50)
+            this.mobPersonality = PersonalityType.IRRITABLE;
+        else if (personalityCode % 2 != 0 && personalityCode >= 50)
+            this.mobPersonality = PersonalityType.TIMID;
     }
 
     /**
@@ -109,6 +114,33 @@ public class Negotiation
     }
 
     /**
+     * Gets the current action
+     * @return the action, or null if none has been selected
+     */
+    public IAction getAction()
+    {
+        return action;
+    }
+
+    /**
+     * Gets mobPersonality
+     * @return the personality of the mob
+     */
+    public PersonalityType getMobPersonality()
+    {
+        return mobPersonality;
+    }
+
+    /**
+     * Gets the current prompt
+     * @return the prompt, containing the mob message and accepted responses, or null if negotiation has not begun.
+     */
+    public NegotiationPrompt getCurrentPrompt()
+    {
+        return prompt;
+    }
+
+    /**
      * Adds a listener to handle negotiation state change events
      * @param listener the listener to add
      * @return boolean on success
@@ -133,7 +165,7 @@ public class Negotiation
      * @throws InvalidParameterException Negotiating entity is unable to negotiate
      * @return the negotiation stage to present
      */
-    public NegotiationStage start() // TODO: Don't forget the idle timeout.
+    public NegotiationPrompt start() // TODO: Don't forget the idle timeout.
     {
         try
         {
@@ -203,18 +235,6 @@ public class Negotiation
         mobActionLockListener.start();
         mobInvincibilityListener.start();
         mobInvalidatedListener.start();
-
-        // Mob Personality
-        long entityIdMsb = mob.getUniqueId().getMostSignificantBits();
-        long personalityCode = entityIdMsb % 100;
-        if (personalityCode % 2 == 0 && personalityCode < 50)
-            this.mobPersonality = PersonalityType.UPBEAT;
-        else if (personalityCode % 2 == 0 && personalityCode >= 50)
-            this.mobPersonality = PersonalityType.GLOOMY;
-        else if (personalityCode % 2 != 0 && personalityCode < 50)
-            this.mobPersonality = PersonalityType.IRRITABLE;
-        else if (personalityCode % 2 != 0 && personalityCode >= 50)
-            this.mobPersonality = PersonalityType.TIMID;
     }
 
     /**
@@ -243,26 +263,23 @@ public class Negotiation
     /**
      * Presents the negotiation UI to the user and marks the negotiation state as "STARTED"
      */
-    private NegotiationStage beginNegotiation()
+    private NegotiationPrompt beginNegotiation()
     {
         MobNegotiationPlugin.getInstance().getLogger().info(String.format("%s started negotiation with %s.", player.getName(), mob.getName()));
         this.state = NegotiationState.STARTED;
         this.updateListeners();
 
         String mobMessage = script.getGreetingMessage().getVariant(mobPersonality);
-        this.stage = new NegotiationStage(negotiationId, state, playerName, mobName, mobPersonality, mobMessage);
-        NegotiationResponse powerResponse = new NegotiationResponse(POWER_TEXT, NegotiationResponseType.SPEECH);
-        NegotiationResponse itemResponse = new NegotiationResponse(ITEM_TEXT, NegotiationResponseType.SPEECH);
-        NegotiationResponse attackResponse = new NegotiationResponse(ATTACK_TEXT, NegotiationResponseType.ATTACK);
-        NegotiationResponse cancelResponse = new NegotiationResponse(CANCEL_TEXT, NegotiationResponseType.CANCEL);
-        stage.getResponses().add(powerResponse);
-        stage.getResponses().add(itemResponse);
-        stage.getResponses().add(attackResponse);
-        stage.getResponses().add(cancelResponse);
-        return stage;
+        ArrayList<NegotiationResponse> responses = new ArrayList<>();
+        responses.add(new NegotiationResponse(POWER_TEXT, NegotiationResponseType.SPEECH));
+        responses.add(new NegotiationResponse(ITEM_TEXT, NegotiationResponseType.SPEECH));
+        responses.add(new NegotiationResponse(ATTACK_TEXT, NegotiationResponseType.ATTACK));
+        responses.add(new NegotiationResponse(CANCEL_TEXT, NegotiationResponseType.CANCEL));
+        this.prompt = new NegotiationPrompt(mobMessage, responses);
+        return prompt;
     }
 
-    public NegotiationStage nextStage(NegotiationResponse response)
+    public NegotiationPrompt nextPrompt(NegotiationResponse response)
     {
         String responseText = response.getText();
         if (!state.isTerminating() && responseText.equals(CANCEL_TEXT))
@@ -276,8 +293,8 @@ public class Negotiation
             {
                 this.action = createPowerNegotiationAction();
                 this.action.execute();
-                this.stage = convertScriptNodeToNegotiationStage(((PowerNegotiationAction) this.action).getCurrentNode());
-                return stage;
+                this.prompt = convertScriptNodeToPrompt(((PowerNegotiationAction) this.action).getCurrentNode());
+                return prompt;
             }
             else if (responseText.equals(ITEM_TEXT))
             {
@@ -296,8 +313,8 @@ public class Negotiation
             NegotiationScriptNode node = powerNegotiationAction.getNextNode(responseText);
             if (node != null)
             {
-                this.stage = convertScriptNodeToNegotiationStage(node);
-                return stage;
+                this.prompt = convertScriptNodeToPrompt(node);
+                return prompt;
             }
         }
         return null;
@@ -357,16 +374,16 @@ public class Negotiation
         return powerNegotiationAction;
     }
 
-    private NegotiationStage convertScriptNodeToNegotiationStage(NegotiationScriptNode scriptNode)
+    private NegotiationPrompt convertScriptNodeToPrompt(NegotiationScriptNode scriptNode)
     {
-        NegotiationStage stage = new NegotiationStage(negotiationId, state, playerName, mobName, mobPersonality, scriptNode.getText());
+        ArrayList<NegotiationResponse> responses = new ArrayList<>();
         if (scriptNode.getResponses() != null)
         {
             for (NegotiationScriptResponseNode responseNode : scriptNode.getResponses())
-                stage.getResponses().add(new NegotiationResponse(responseNode.getText(), NegotiationResponseType.SPEECH));
-            stage.getResponses().add(new NegotiationResponse(CANCEL_TEXT, NegotiationResponseType.CANCEL));
+                responses.add(new NegotiationResponse(responseNode.getText(), NegotiationResponseType.SPEECH));
+            responses.add(new NegotiationResponse(CANCEL_TEXT, NegotiationResponseType.CANCEL));
         }
-        return stage;
+        return new NegotiationPrompt(scriptNode.getText(), responses);
     }
 
     /**
