@@ -5,6 +5,7 @@ import com.zazsona.mobnegotiation.model.action.IAction;
 import com.zazsona.mobnegotiation.model.action.PowerNegotiationAction;
 import com.zazsona.mobnegotiation.repository.ICooldownRespository;
 import com.zazsona.mobnegotiation.repository.INegotiationRepository;
+import com.zazsona.mobnegotiation.repository.IPersonalityNamesRepository;
 import com.zazsona.mobnegotiation.view.NegotiationButton;
 import com.zazsona.mobnegotiation.view.NegotiationMenu;
 import com.zazsona.mobnegotiation.view.interfaces.IClickableNegotiationView;
@@ -32,15 +33,17 @@ public class NegotiationController implements Listener
 
     private INegotiationRepository negotiationRepo;
     private ICooldownRespository cooldownRepo;
+    private IPersonalityNamesRepository personalityNamesRepo;
     private INegotiationEntityEligibilityChecker eligibilityChecker;
     private IViewInteractionExecutor interactionExecutor;
     private HashMap<String, NegotiationMenu> negotiationIdMenuMap;
     private Random random;
 
-    public NegotiationController(INegotiationRepository negotiationRepo, ICooldownRespository cooldownRepo, INegotiationEntityEligibilityChecker eligibilityChecker, IViewInteractionExecutor interactionExecutor)
+    public NegotiationController(INegotiationRepository negotiationRepo, ICooldownRespository cooldownRepo, IPersonalityNamesRepository personalityNamesRepo, INegotiationEntityEligibilityChecker eligibilityChecker, IViewInteractionExecutor interactionExecutor)
     {
         this.negotiationRepo = negotiationRepo;
         this.cooldownRepo = cooldownRepo;
+        this.personalityNamesRepo = personalityNamesRepo;
         this.eligibilityChecker = eligibilityChecker;
         this.interactionExecutor = interactionExecutor;
         this.negotiationIdMenuMap = new HashMap<>();
@@ -129,8 +132,11 @@ public class NegotiationController implements Listener
     private String createHeaderText(Negotiation negotiation)
     {
         Mob mob = negotiation.getMob();
+        List<String> personalityNames = personalityNamesRepo.getNames(negotiation.getMobPersonality());
+        int personalityNameIndex = (Math.abs((int) mob.getUniqueId().getMostSignificantBits()) % personalityNames.size());
         String mobName = (mob.getCustomName() == null) ? mob.getName() : mob.getCustomName();
-        String mobChatTag = String.format("<%s %s> ", WordUtils.capitalizeFully(negotiation.getMobPersonality().toString()), mobName);
+        String personalityName = personalityNames.get(personalityNameIndex); // Random, but consistent for single mob
+        String mobChatTag = String.format("<%s %s> ", personalityName, mobName);
         String mobMessage = negotiation.getCurrentPrompt().getMobMessage();
         String[] lines = mobMessage.split("\n");
         StringBuilder stringBuilder = new StringBuilder();
