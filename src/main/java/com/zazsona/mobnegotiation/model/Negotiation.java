@@ -368,10 +368,25 @@ public class Negotiation
                 PowerNegotiationAction pnAction = (PowerNegotiationAction) action;
                 pnAction.removeListener(this);
                 NegotiationState endState = (pnAction.getGivenPowers().size() > 0) ? NegotiationState.FINISHED_POWER_GIVEN : NegotiationState.FINISHED_POWER_REJECTED;
+                if (endState == NegotiationState.FINISHED_POWER_GIVEN)
+                    executeMobExit();
                 stop(endState);
             }
         });
         return powerNegotiationAction;
+    }
+
+    /**
+     * Removes the mob associated with this negotiation with particle animations.
+     */
+    private void executeMobExit()
+    {
+        World world = mob.getWorld();
+        Location particleLocation = mob.getLocation();
+        particleLocation.setY(particleLocation.getY() + (mob.getHeight() / 2.0f));
+        mob.remove();
+        world.spawnParticle(Particle.REDSTONE, particleLocation, 10, 0.5f, 0.5f, 0.5f, new Particle.DustOptions(Color.WHITE, 5.0f));
+        world.playSound(particleLocation, Sound.BLOCK_SAND_FALL, 1.0f, 1.0f);
     }
 
     private NegotiationPrompt convertScriptNodeToPrompt(NegotiationScriptNode scriptNode)
