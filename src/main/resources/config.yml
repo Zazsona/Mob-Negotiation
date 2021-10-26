@@ -6,7 +6,8 @@
 #  negotiation-idle-timeout-ticks : Ticks without a player response before negotiation ends
 #  negotiation-cooldown-ticks : Minimum ticks before a player can get another negotiation
 #  negotiation-damage-grace-ticks : The amount of ticks a player is invincible for after a negotiation to allow them to move safely
-#  negotiation-alert-messages : Alert message spread on the player's screen when a negotiation is triggered
+#  mob-chat-tag: How the mob's name appears in chat. Use %PERSONALITY% and %NAME% to stand in for those values. Minecraft colour formatting codes are also supported.
+#  alert-messages : Alert message spread on the player's screen when a negotiation is triggered
 #  ========================================================================
 
 version: 1.0
@@ -16,7 +17,8 @@ power-effect-duration-ticks: 6000
 negotiation-idle-timeout-ticks: 600
 negotiation-cooldown-ticks: 3600
 negotiation-damage-grace-ticks: 30
-negotiation-alert-messages:
+mob-chat-tag: "<%PERSONALITY% %NAME%>"
+alert-messages:
   - "WAIT, WAIT!"
   - "HOLD UP!"
   - "HANG ON!"

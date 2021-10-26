@@ -28,6 +28,8 @@ import java.util.Random;
 public class NegotiationController implements Listener
 {
     private static final ChatColor DEFAULT_CHAT_COLOUR = ChatColor.WHITE;
+    private static final String PERSONALITY_PLACEHOLDER_TEXT = "%PERSONALITY%";
+    private static final String NAME_PLACEHOLDER_TEXT = "%NAME%";
     private static final String POWER_PLACEHOLDER_TEXT = "%POWER%";
     private static final String ITEM_PLACEHOLDER_TEXT = "%ITEM%";
 
@@ -131,12 +133,8 @@ public class NegotiationController implements Listener
 
     private String createHeaderText(Negotiation negotiation)
     {
-        Mob mob = negotiation.getMob();
-        List<String> personalityNames = personalityNamesRepo.getNames(negotiation.getMobPersonality());
-        int personalityNameIndex = (Math.abs((int) mob.getUniqueId().getMostSignificantBits()) % personalityNames.size());
-        String mobName = (mob.getCustomName() == null) ? mob.getName() : mob.getCustomName();
-        String personalityName = personalityNames.get(personalityNameIndex); // Random, but consistent for single mob
-        String mobChatTag = String.format("<%s %s> ", personalityName, mobName);
+        String mobChatTagTemplate = PluginConfig.getMobChatTag();
+        String mobChatTag = fillPlaceholderValues(mobChatTagTemplate, negotiation).trim() + " ";
         String mobMessage = negotiation.getCurrentPrompt().getMobMessage();
         String[] lines = mobMessage.split("\n");
         StringBuilder stringBuilder = new StringBuilder();
@@ -144,7 +142,9 @@ public class NegotiationController implements Listener
         {
             String line = lines[i];
             ChatColor lineColour = getHeaderLineColour(line, negotiation);
-            line = fillPlaceholderValues(line, lineColour, negotiation);
+            line = line.replace(POWER_PLACEHOLDER_TEXT, ChatColor.GOLD + POWER_PLACEHOLDER_TEXT + lineColour);
+            line = line.replace(ITEM_PLACEHOLDER_TEXT, ChatColor.GOLD + ITEM_PLACEHOLDER_TEXT + lineColour);
+            line = fillPlaceholderValues(line, negotiation);
             stringBuilder.append(mobChatTag).append(lineColour).append(line).append("\n");
         }
         return stringBuilder.toString().trim();
@@ -169,9 +169,22 @@ public class NegotiationController implements Listener
         return ChatColor.WHITE;
     }
 
-    private String fillPlaceholderValues(String line, ChatColor lineColour, Negotiation negotiation)
+    private String fillPlaceholderValues(String line, Negotiation negotiation)
     {
-        final ChatColor keyColour = ChatColor.GOLD;
+        if (line.contains(NAME_PLACEHOLDER_TEXT))
+        {
+            Mob mob = negotiation.getMob();
+            String mobName = (mob.getCustomName() == null) ? mob.getName() : mob.getCustomName();
+            line = line.replace(NAME_PLACEHOLDER_TEXT, mobName);
+        }
+        if (line.contains(PERSONALITY_PLACEHOLDER_TEXT))
+        {
+            Mob mob = negotiation.getMob();
+            List<String> personalityNames = personalityNamesRepo.getNames(negotiation.getMobPersonality());
+            int personalityNameIndex = (Math.abs((int) mob.getUniqueId().getMostSignificantBits()) % personalityNames.size());
+            String personalityName = personalityNames.get(personalityNameIndex); // Random, but consistent for single mob
+            line = line.replace(PERSONALITY_PLACEHOLDER_TEXT, personalityName);
+        }
         if (line.contains(POWER_PLACEHOLDER_TEXT))
         {
             IAction action = negotiation.getAction();
@@ -182,7 +195,7 @@ public class NegotiationController implements Listener
                 {
                     String powerName = pnAction.getGivenPowers().get(0).getType().getName();
                     String formattedPowerName = WordUtils.capitalizeFully(powerName.replace("_", " "));
-                    line = line.replace(POWER_PLACEHOLDER_TEXT, keyColour + formattedPowerName + lineColour);
+                    line = line.replace(POWER_PLACEHOLDER_TEXT, formattedPowerName);
                 }
             }
         }

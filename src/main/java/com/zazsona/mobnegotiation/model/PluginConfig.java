@@ -20,7 +20,8 @@ public class PluginConfig
     public static final String CFG_NEGOTIATION_IDLE_TIMEOUT_KEY = "negotiation-idle-timeout-ticks";
     public static final String CFG_NEGOTIATION_COOLDOWN_KEY = "negotiation-cooldown-ticks";
     public static final String CFG_NEGOTIATION_DMG_GRACE_KEY = "negotiation-damage-grace-ticks";
-    public static final String CFG_NEGOTIATION_ALERT_MSGS_KEY = "negotiation-alert-messages";
+    public static final String CFG_MOB_CHAT_TAG_KEY = "mob-chat-tag";
+    public static final String CFG_ALERT_MSGS_KEY = "alert-messages";
 
     private static final String PWR_FILE = "powers.yml";
     public static final String PWR_VERSION_KEY = "version";
@@ -199,13 +200,34 @@ public class PluginConfig
     }
 
     /**
+     * Sets how the mob's name and personality are displayed
+     * @param chatTag the display style
+     */
+    public static void setMobChatTag(String chatTag)
+    {
+        Plugin plugin = MobNegotiationPlugin.getInstance();
+        plugin.getConfig().set(CFG_MOB_CHAT_TAG_KEY, chatTag);
+        save();
+    }
+
+    /**
+     * Gets how the mob's name and personality are displayed
+     * @return the display style, with %PERSONALITY% and %NAME% as placeholders.
+     */
+    public static String getMobChatTag()
+    {
+        Plugin plugin = MobNegotiationPlugin.getInstance();
+        return plugin.getConfig().getString(CFG_MOB_CHAT_TAG_KEY);
+    }
+
+    /**
      * Sets the messages displayed on the player's screen when a negotiation begins
      * @param messages the messages to display
      */
     public static void setNegotiationAlertMessages(List<String> messages)
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
-        plugin.getConfig().set(CFG_NEGOTIATION_ALERT_MSGS_KEY, messages);
+        plugin.getConfig().set(CFG_ALERT_MSGS_KEY, messages);
         save();
     }
 
@@ -216,7 +238,7 @@ public class PluginConfig
     public static List<String> getNegotiationAlertMessages()
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
-        return plugin.getConfig().getStringList(CFG_NEGOTIATION_ALERT_MSGS_KEY);
+        return plugin.getConfig().getStringList(CFG_ALERT_MSGS_KEY);
     }
 
     /**
