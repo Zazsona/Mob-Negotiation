@@ -138,7 +138,7 @@ public class PluginConfig
      * Sets the number of ticks a player has to respond in before a negotiation is cancelled
      * @param ticks the ticks to allow idling for
      */
-    public static void setNegotiationTimeoutTicks(int ticks)
+    public static void setNegotiationIdleTimeoutTicks(int ticks)
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
         plugin.getConfig().set(CFG_NEGOTIATION_IDLE_TIMEOUT_KEY, ticks);
@@ -149,7 +149,7 @@ public class PluginConfig
      * Gets the number of ticks a player has to respond in before a negotiation is cancelled
      * @return the ticks to allow idling for
      */
-    public static int getNegotiationTimeoutTicks()
+    public static int getNegotiationIdleTimeoutTicks()
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
         return plugin.getConfig().getInt(CFG_NEGOTIATION_IDLE_TIMEOUT_KEY);

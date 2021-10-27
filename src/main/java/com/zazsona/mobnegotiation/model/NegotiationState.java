@@ -13,6 +13,7 @@ public enum NegotiationState
     FINISHED_ITEM(true, false),
     FINISHED_ATTACK(true, false),
     FINISHED_CANCEL(true, false),
+    FINISHED_TIMEOUT(true, false),
     FINISHED_ERROR_INITIALISATION_FAILURE(true, true),
     FINISHED_ERROR_ENTITY_LOST(true, true),
     FINISHED_ERROR_UNKNOWN(true, true);

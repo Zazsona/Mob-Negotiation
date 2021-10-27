@@ -28,31 +28,31 @@ import java.util.logging.Level;
 
 public class Negotiation
 {
-    private final String POWER_TEXT = "Lend me your power.";
-    private final String ITEM_TEXT = "I want items.";
-    private final String ATTACK_TEXT = "All Out Attack";
-    private final String CANCEL_TEXT = "Return to Battle";
+    protected final String POWER_TEXT = "Lend me your power.";
+    protected final String ITEM_TEXT = "I want items.";
+    protected final String ATTACK_TEXT = "All Out Attack";
+    protected final String CANCEL_TEXT = "Return to Battle";
 
-    private String negotiationId;
-    private Player player;
-    private Mob mob;
-    private PersonalityType mobPersonality;
-    private NegotiationState state;
-    private IAction action;
-    private NegotiationPrompt prompt;
-    private NegotiationScript script;
-    private INegotiationEntityEligibilityChecker eligibilityChecker;
-    private ICooldownRespository cooldownRespository;
-    private ArrayList<NegotiationEventListener> listeners;
+    protected String negotiationId;
+    protected Player player;
+    protected Mob mob;
+    protected PersonalityType mobPersonality;
+    protected NegotiationState state;
+    protected IAction action;
+    protected NegotiationPrompt prompt;
+    protected NegotiationScript script;
+    protected INegotiationEntityEligibilityChecker eligibilityChecker;
+    protected ICooldownRespository cooldownRespository;
+    protected ArrayList<NegotiationEventListener> listeners;
 
-    private EntityActionLockListener playerActionLockListener;
-    private EntityInvincibilityListener playerInvincibilityListener;
-    private EntityInvalidatedListener playerInvalidatedListener;
-    private EntityInvalidatedEventListener playerInvalidatedHandler;
-    private EntityActionLockListener mobActionLockListener;
-    private EntityInvincibilityListener mobInvincibilityListener;
-    private EntityInvalidatedListener mobInvalidatedListener;
-    private EntityInvalidatedEventListener mobInvalidatedHandler;
+    protected EntityActionLockListener playerActionLockListener;
+    protected EntityInvincibilityListener playerInvincibilityListener;
+    protected EntityInvalidatedListener playerInvalidatedListener;
+    protected EntityInvalidatedEventListener playerInvalidatedHandler;
+    protected EntityActionLockListener mobActionLockListener;
+    protected EntityInvincibilityListener mobInvincibilityListener;
+    protected EntityInvalidatedListener mobInvalidatedListener;
+    protected EntityInvalidatedEventListener mobInvalidatedHandler;
 
     public Negotiation(Player player, Mob mob, INegotiationEntityEligibilityChecker eligibilityChecker, ICooldownRespository cooldownRespository)
     {
@@ -202,7 +202,7 @@ public class Negotiation
     /**
      * Prepares the entities for negotiation, setting their positions and starting listeners
      */
-    private void initialiseEntities() throws InvalidParticipantsException
+    protected void initialiseEntities() throws InvalidParticipantsException
     {
         if (eligibilityChecker.canEntitiesNegotiate(player, mob))
             throw new InvalidParticipantsException();
@@ -263,7 +263,7 @@ public class Negotiation
     /**
      * Presents the negotiation UI to the user and marks the negotiation state as "STARTED"
      */
-    private NegotiationPrompt beginNegotiation()
+    protected NegotiationPrompt beginNegotiation()
     {
         MobNegotiationPlugin.getInstance().getLogger().info(String.format("%s started negotiation with %s.", player.getName(), mob.getName()));
         this.state = NegotiationState.STARTED;
@@ -379,7 +379,7 @@ public class Negotiation
     /**
      * Removes the mob associated with this negotiation with particle animations.
      */
-    private void executeMobExit()
+    protected void executeMobExit()
     {
         World world = mob.getWorld();
         Location particleLocation = mob.getLocation();
@@ -389,7 +389,7 @@ public class Negotiation
         world.playSound(particleLocation, Sound.BLOCK_SAND_FALL, 1.0f, 1.0f);
     }
 
-    private NegotiationPrompt convertScriptNodeToPrompt(NegotiationScriptNode scriptNode)
+    protected NegotiationPrompt convertScriptNodeToPrompt(NegotiationScriptNode scriptNode)
     {
         ArrayList<NegotiationResponse> responses = new ArrayList<>();
         if (scriptNode.getResponses() != null)
@@ -413,7 +413,7 @@ public class Negotiation
      * Forces negotiations to immediately stop and reports the provided state
      * @param terminatingState the state to inform as the termination reason. This should only be states where isTerminating() is true.
      */
-    private void stop(NegotiationState terminatingState)
+    protected void stop(NegotiationState terminatingState)
     {
         if (state.isTerminating())
             return;

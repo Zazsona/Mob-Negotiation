@@ -27,7 +27,6 @@ import java.util.Random;
 
 public class NegotiationController implements Listener
 {
-    private static final ChatColor DEFAULT_CHAT_COLOUR = ChatColor.WHITE;
     private static final String PERSONALITY_PLACEHOLDER_TEXT = "%PERSONALITY%";
     private static final String NAME_PLACEHOLDER_TEXT = "%NAME%";
     private static final String POWER_PLACEHOLDER_TEXT = "%POWER%";
@@ -67,7 +66,7 @@ public class NegotiationController implements Listener
             if (roll < PluginConfig.getNegotiationRate() && !cooldownRepo.isPlayerInCooldown(player) && eligibilityChecker.canEntitiesNegotiate(player, mob))
             {
                 e.setDamage(0.0f);
-                Negotiation negotiation = new Negotiation(player, mob, eligibilityChecker, cooldownRepo);
+                Negotiation negotiation = new TimedNegotiation(player, mob, eligibilityChecker, cooldownRepo, PluginConfig.getNegotiationIdleTimeoutTicks());
                 negotiationRepo.addNegotiation(negotiation);
                 negotiation.start();
                 if (!negotiation.getState().isErroneous())
