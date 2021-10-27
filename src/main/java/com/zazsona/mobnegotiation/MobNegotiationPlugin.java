@@ -47,10 +47,10 @@ public class MobNegotiationPlugin extends JavaPlugin
         super.onEnable();
         NegotiationViewInteractionExecutor responseCommand = NegotiationViewInteractionExecutor.getInstance();
         getCommand(NegotiationViewInteractionExecutor.COMMAND_KEY).setExecutor(responseCommand);
-        NegotiationRepository negotiationRepository = NegotiationRepository.getInstance();
-        CooldownRespository cooldownRespository = CooldownRespository.getInstance();
+        NegotiationRepository negotiationRepository = new NegotiationRepository();
+        CooldownRespository cooldownRespository = new CooldownRespository();
         PersonalityNamesRepository personalityNamesRepository = new PersonalityNamesRepository();
-        NegotiationEntityEligibilityChecker negotiationEntityEligibilityChecker = new NegotiationEntityEligibilityChecker();
+        NegotiationEntityEligibilityChecker negotiationEntityEligibilityChecker = new NegotiationEntityEligibilityChecker(negotiationRepository, cooldownRespository);
         NegotiationController negotiationController = new NegotiationController(negotiationRepository, cooldownRespository, personalityNamesRepository, negotiationEntityEligibilityChecker, responseCommand);
         getServer().getPluginManager().registerEvents(negotiationController, this);
     }

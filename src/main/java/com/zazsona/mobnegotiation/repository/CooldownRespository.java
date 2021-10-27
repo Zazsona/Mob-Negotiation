@@ -9,19 +9,11 @@ import java.util.HashMap;
 
 public class CooldownRespository implements ICooldownRespository
 {
-    private static CooldownRespository instance;
     private final Object lock;
     private final HashMap<Player, Integer> playerCooldownMap;
     private final HashMap<Player, BukkitTask> playerCooldownTimerMap;
 
-    public static CooldownRespository getInstance()
-    {
-        if (instance == null)
-            instance = new CooldownRespository();
-        return instance;
-    }
-
-    private CooldownRespository()
+    public CooldownRespository()
     {
         this.lock = new Object();
         this.playerCooldownMap = new HashMap<>();

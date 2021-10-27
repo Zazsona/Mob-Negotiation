@@ -14,18 +14,10 @@ import java.util.HashMap;
  */
 public class NegotiationRepository implements INegotiationRepository
 {
-    private static NegotiationRepository instance;
     private HashMap<String, Negotiation> negotiations;
     private NegotiationEventListener negotiationEventListener;
 
-    public static NegotiationRepository getInstance()
-    {
-        if (instance == null)
-            instance = new NegotiationRepository();
-        return instance;
-    }
-
-    private NegotiationRepository()
+    public NegotiationRepository()
     {
         this.negotiations = new HashMap<>();
         this.negotiationEventListener = negotiation ->

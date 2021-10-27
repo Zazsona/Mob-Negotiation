@@ -20,10 +20,10 @@ public class NegotiationEntityEligibilityChecker implements INegotiationEntityEl
     private INegotiationRepository negotiationRepository;
     private ICooldownRespository cooldownRespository;
 
-    public NegotiationEntityEligibilityChecker()
+    public NegotiationEntityEligibilityChecker(INegotiationRepository negotiationRepository, ICooldownRespository cooldownRespository)
     {
-        this.negotiationRepository = NegotiationRepository.getInstance();
-        this.cooldownRespository = CooldownRespository.getInstance();
+        this.negotiationRepository = negotiationRepository;
+        this.cooldownRespository = cooldownRespository;
     }
 
     /**
