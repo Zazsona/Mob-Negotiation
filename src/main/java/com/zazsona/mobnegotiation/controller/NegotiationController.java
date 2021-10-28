@@ -37,7 +37,9 @@ public class NegotiationController implements Listener
     private IPersonalityNamesRepository personalityNamesRepo;
     private INegotiationEntityEligibilityChecker eligibilityChecker;
     private IViewInteractionExecutor interactionExecutor;
-    private HashMap<String, NegotiationMenu> negotiationIdMenuMap;
+    private HashMap<Negotiation, NegotiationMenu> menuMap;
+    private NegotiationPromptUpdateListener promptListener;
+    private NegotiationStateListener stateListener;
     private Random random;
 
     public NegotiationController(INegotiationRepository negotiationRepo, ICooldownRespository cooldownRepo, IPersonalityNamesRepository personalityNamesRepo, INegotiationEntityEligibilityChecker eligibilityChecker, IViewInteractionExecutor interactionExecutor)
@@ -47,7 +49,9 @@ public class NegotiationController implements Listener
         this.personalityNamesRepo = personalityNamesRepo;
         this.eligibilityChecker = eligibilityChecker;
         this.interactionExecutor = interactionExecutor;
-        this.negotiationIdMenuMap = new HashMap<>();
+        this.menuMap = new HashMap<>();
+        this.promptListener = this::displayPrompt;
+        this.stateListener = this::handleNegotiationTermination;
         this.random = new Random();
     }
 
@@ -67,14 +71,65 @@ public class NegotiationController implements Listener
             {
                 e.setDamage(0.0f);
                 Negotiation negotiation = new TimedNegotiation(player, mob, eligibilityChecker, cooldownRepo, PluginConfig.getNegotiationIdleTimeoutTicks());
+                negotiation.addListener(promptListener);
+                negotiation.addListener(stateListener);
                 negotiationRepo.addNegotiation(negotiation);
                 negotiation.start();
-                if (!negotiation.getState().isErroneous())
+            }
+        }
+    }
+
+    private void displayPrompt(Negotiation negotiation, NegotiationPrompt prompt) // TODO: Fix the bug where successes aren't displayed when a new node is available
+    {
+        if (prompt == null)
+            return;
+        if (negotiation.getState() == NegotiationState.STARTED)
+            displayAlertTitle(negotiation.getPlayer());
+        NegotiationMenu negotiationMenu = new NegotiationMenu(interactionExecutor);
+        String headerText = (prompt.getMobMessage() != null) ? createHeaderText(negotiation, prompt) : null;
+        negotiationMenu.setHeaderText(headerText);
+
+        ArrayList<NegotiationResponse> responses = prompt.getResponses();
+        for (NegotiationResponse response : responses)
+        {
+            String icon = getResponseTypeIcon(response.getType());
+            ChatColor colour = getResponseTypeColour(response.getType());
+            NegotiationButton button = new NegotiationButton(response.getText(), icon, colour, negotiationMenu);
+            button.addListener((clickedButton -> handleButtonClick(negotiationMenu, negotiation, response)));
+            negotiationMenu.addChild(button);
+        }
+        menuMap.put(negotiation, negotiationMenu);
+        Player player = negotiation.getPlayer();
+        player.spigot().sendMessage(negotiationMenu.getFormattedComponent());
+    }
+
+    private void handleButtonClick(NegotiationMenu menu, Negotiation negotiation, NegotiationResponse response)
+    {
+        if (!negotiation.getState().isTerminating() && menu != null)
+        {
+            for (INegotiationView child : menu.getChildren())
+            {
+                if (child instanceof IClickableNegotiationView)
+                    ((IClickableNegotiationView) child).clearListeners();
+            }
+        }
+        negotiation.nextPrompt(response);
+    }
+
+    private void handleNegotiationTermination(Negotiation negotiation)
+    {
+        if (negotiation.getState().isTerminating())
+        {
+            negotiation.removeListener(promptListener);
+            negotiation.removeListener(stateListener);
+
+            NegotiationMenu menu = menuMap.remove(negotiation);
+            if (menu != null)
+            {
+                for (INegotiationView child : menu.getChildren())
                 {
-                    displayAlertTitle(player);
-                    NegotiationMenu menu = convertNegotiationToMenu(negotiation, player);
-                    negotiationIdMenuMap.put(negotiation.getNegotiationId(), menu);
-                    player.spigot().sendMessage(menu.getFormattedComponent());
+                    if (child instanceof IClickableNegotiationView)
+                        ((IClickableNegotiationView) child).clearListeners();
                 }
             }
         }
@@ -89,83 +144,33 @@ public class NegotiationController implements Listener
         player.sendTitle(formattedAlertMessage, null, 2, 30, 7);
     }
 
-    private NegotiationMenu convertNegotiationToMenu(Negotiation negotiation, Player player)
-    {
-        String negotiationId = negotiation.getNegotiationId();
-        NegotiationPrompt prompt = negotiation.getCurrentPrompt();
-        NegotiationMenu negotiationMenu = new NegotiationMenu(interactionExecutor);
-        String headerText = (prompt.getMobMessage() != null) ? createHeaderText(negotiation) : null;
-        negotiationMenu.setHeaderText(headerText);
-
-        ArrayList<NegotiationResponse> responses = prompt.getResponses();
-        for (NegotiationResponse response : responses)
-        {
-            String icon = getResponseTypeIcon(response.getType());
-            ChatColor colour = getResponseTypeColour(response.getType());
-            NegotiationButton button = new NegotiationButton(response.getText(), icon, colour, negotiationMenu);
-            negotiationMenu.addChild(button);
-            button.addListener(clickedButton ->
-                               {
-                                   NegotiationMenu menu = negotiationIdMenuMap.get(negotiationId);
-                                   if (negotiation != null && menu != null)
-                                   {
-                                       for (INegotiationView child : menu.getChildren())
-                                       {
-                                           if (child instanceof IClickableNegotiationView)
-                                               ((IClickableNegotiationView) child).clearListeners();
-                                       }
-
-                                       NegotiationPrompt nextPrompt = negotiation.nextPrompt(response);
-                                       if (nextPrompt != null)
-                                       {
-                                           NegotiationMenu nextMenu = convertNegotiationToMenu(negotiation, player);
-                                           negotiationIdMenuMap.put(negotiationId, nextMenu);
-                                           player.spigot().sendMessage(nextMenu.getFormattedComponent());
-                                       }
-                                       else
-                                           negotiationIdMenuMap.remove(negotiationId);
-                                   }
-                               });
-        }
-        return negotiationMenu;
-    }
-
-    private String createHeaderText(Negotiation negotiation)
+    private String createHeaderText(Negotiation negotiation, NegotiationPrompt prompt)
     {
         String mobChatTagTemplate = PluginConfig.getMobChatTag();
         String mobChatTag = fillPlaceholderValues(mobChatTagTemplate, negotiation).trim() + " ";
-        String mobMessage = negotiation.getCurrentPrompt().getMobMessage();
+        String mobMessage = prompt.getMobMessage();
         String[] lines = mobMessage.split("\n");
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < lines.length; i++)
         {
             String line = lines[i];
-            ChatColor lineColour = getHeaderLineColour(line, negotiation);
-            line = line.replace(POWER_PLACEHOLDER_TEXT, ChatColor.GOLD + POWER_PLACEHOLDER_TEXT + lineColour);
-            line = line.replace(ITEM_PLACEHOLDER_TEXT, ChatColor.GOLD + ITEM_PLACEHOLDER_TEXT + lineColour);
+            String moodFormatting = (i == lines.length - 1) ? getMoodFormatting(prompt.getMobMood()) : getMoodFormatting(Mood.NEUTRAL); // Only format last line
+            line = line.replace(POWER_PLACEHOLDER_TEXT, ChatColor.GOLD + POWER_PLACEHOLDER_TEXT + moodFormatting);
+            line = line.replace(ITEM_PLACEHOLDER_TEXT, ChatColor.GOLD + ITEM_PLACEHOLDER_TEXT + moodFormatting);
             line = fillPlaceholderValues(line, negotiation);
-            stringBuilder.append(mobChatTag).append(lineColour).append(line).append("\n");
+            stringBuilder.append(mobChatTag).append(moodFormatting).append(line).append("\n");
         }
         return stringBuilder.toString().trim();
     }
 
-    private ChatColor getHeaderLineColour(String line, Negotiation negotiation)
+    private String getMoodFormatting(Mood mood)
     {
-        if (negotiation.getState().isTerminating())
-        {
-            String[] mobMessageLines = negotiation.getCurrentPrompt().getMobMessage().split("\n");
-            boolean isFinalLine = (line.equals(mobMessageLines[mobMessageLines.length - 1]));
-            if (isFinalLine)
-            {
-                return switch (negotiation.getState())
-                        {
-                            case FINISHED_POWER_GIVEN -> ChatColor.GREEN;
-                            case FINISHED_POWER_REJECTED -> ChatColor.RED;
-                            default -> ChatColor.WHITE;
-                        };
-            }
-        }
-        return ChatColor.WHITE;
+        return switch (mood)
+                {
+                    case ANGRY -> ""+ChatColor.RED;
+                    case HAPPY -> ""+ChatColor.GREEN;
+                    default -> ""+ChatColor.WHITE;
+                };
     }
 
     private String fillPlaceholderValues(String line, Negotiation negotiation)
