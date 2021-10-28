@@ -79,7 +79,7 @@ public class NegotiationController implements Listener
         }
     }
 
-    private void displayPrompt(Negotiation negotiation, NegotiationPrompt prompt) // TODO: Fix the bug where successes aren't displayed when a new node is available
+    private void displayPrompt(Negotiation negotiation, NegotiationPrompt prompt)
     {
         if (prompt == null)
             return;

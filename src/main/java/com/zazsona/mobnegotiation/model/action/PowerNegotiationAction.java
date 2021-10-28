@@ -69,8 +69,11 @@ public class PowerNegotiationAction extends Action
             List<NegotiationScriptNode> children = this.scriptNode.getChildren();
             if (children.size() > 0) // Negotiation On-going
             {
+                String responseSuccess = selectedResponse.getSuccessResponses().getVariant(mobPersonality);
                 NegotiationScriptNode childNode = children.get(rand.nextInt(children.size()));
-                this.scriptNode = childNode;
+                String mobMessage = responseSuccess + "\n" + childNode.getText();
+                NegotiationScriptNode node = new NegotiationScriptNode(mobMessage, childNode.getResponses(), childNode.getMood(), childNode.getChildren());
+                this.scriptNode = node;
                 runNodeLoadListeners(this.scriptNode);
             }
             else // Negotiation Successful
