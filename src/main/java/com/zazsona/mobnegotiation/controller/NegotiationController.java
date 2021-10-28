@@ -6,6 +6,7 @@ import com.zazsona.mobnegotiation.model.action.PowerNegotiationAction;
 import com.zazsona.mobnegotiation.repository.ICooldownRespository;
 import com.zazsona.mobnegotiation.repository.INegotiationRepository;
 import com.zazsona.mobnegotiation.repository.IPersonalityNamesRepository;
+import com.zazsona.mobnegotiation.repository.ITalkSoundsRepository;
 import com.zazsona.mobnegotiation.view.NegotiationButton;
 import com.zazsona.mobnegotiation.view.NegotiationMenu;
 import com.zazsona.mobnegotiation.view.interfaces.IClickableNegotiationView;
@@ -13,6 +14,7 @@ import com.zazsona.mobnegotiation.view.interfaces.INegotiationView;
 import com.zazsona.mobnegotiation.view.interfaces.IViewInteractionExecutor;
 import net.md_5.bungee.api.ChatColor;
 import org.apache.commons.lang.WordUtils;
+import org.bukkit.Sound;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -35,6 +37,7 @@ public class NegotiationController implements Listener
     private INegotiationRepository negotiationRepo;
     private ICooldownRespository cooldownRepo;
     private IPersonalityNamesRepository personalityNamesRepo;
+    private ITalkSoundsRepository taskSoundsRepo;
     private INegotiationEntityEligibilityChecker eligibilityChecker;
     private IViewInteractionExecutor interactionExecutor;
     private HashMap<Negotiation, NegotiationMenu> menuMap;
@@ -42,11 +45,12 @@ public class NegotiationController implements Listener
     private NegotiationStateListener stateListener;
     private Random random;
 
-    public NegotiationController(INegotiationRepository negotiationRepo, ICooldownRespository cooldownRepo, IPersonalityNamesRepository personalityNamesRepo, INegotiationEntityEligibilityChecker eligibilityChecker, IViewInteractionExecutor interactionExecutor)
+    public NegotiationController(INegotiationRepository negotiationRepo, ICooldownRespository cooldownRepo, IPersonalityNamesRepository personalityNamesRepo, ITalkSoundsRepository talkSoundsRepo, INegotiationEntityEligibilityChecker eligibilityChecker, IViewInteractionExecutor interactionExecutor)
     {
         this.negotiationRepo = negotiationRepo;
         this.cooldownRepo = cooldownRepo;
         this.personalityNamesRepo = personalityNamesRepo;
+        this.taskSoundsRepo = talkSoundsRepo;
         this.eligibilityChecker = eligibilityChecker;
         this.interactionExecutor = interactionExecutor;
         this.menuMap = new HashMap<>();
@@ -99,12 +103,16 @@ public class NegotiationController implements Listener
             negotiationMenu.addChild(button);
         }
         menuMap.put(negotiation, negotiationMenu);
+        Mob mob = negotiation.getMob();
         Player player = negotiation.getPlayer();
+        player.playSound(mob.getLocation(), taskSoundsRepo.getSound(mob.getType()), 1.0f, 1.0f);
         player.spigot().sendMessage(negotiationMenu.getFormattedComponent());
     }
 
     private void handleButtonClick(NegotiationMenu menu, Negotiation negotiation, NegotiationResponse response)
     {
+        Player player = negotiation.getPlayer();
+        player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.25f, 1.0f);
         if (!negotiation.getState().isTerminating() && menu != null)
         {
             for (INegotiationView child : menu.getChildren())

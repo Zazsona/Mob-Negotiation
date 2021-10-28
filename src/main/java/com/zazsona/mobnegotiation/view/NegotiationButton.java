@@ -93,7 +93,7 @@ public class NegotiationButton implements IClickableNegotiationView
      */
     public INegotiationView getParent()
     {
-        return null;
+        return parent;
     }
 
     /**
