@@ -1,11 +1,11 @@
 package com.zazsona.mobnegotiation.model.action;
 
+import com.zazsona.mobnegotiation.model.Mood;
 import com.zazsona.mobnegotiation.model.PersonalityType;
 import com.zazsona.mobnegotiation.model.PluginConfig;
 import com.zazsona.mobnegotiation.model.script.NegotiationScript;
 import com.zazsona.mobnegotiation.model.script.NegotiationScriptNode;
 import com.zazsona.mobnegotiation.model.script.NegotiationScriptResponseNode;
-import org.apache.commons.lang.WordUtils;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
@@ -49,7 +49,7 @@ public class PowerNegotiationAction extends Action
      * @param responseText the response to select
      * @return the next node, or null if none is available.
      */
-    public NegotiationScriptNode getNextNode(String responseText)
+    public NegotiationScriptNode nextNode(String responseText)
     {
         if (this.scriptNode.getResponses() == null || this.scriptNode.getText() == null)
             return null;
@@ -71,23 +71,26 @@ public class PowerNegotiationAction extends Action
             {
                 NegotiationScriptNode childNode = children.get(rand.nextInt(children.size()));
                 this.scriptNode = childNode;
+                runNodeLoadListeners(this.scriptNode);
             }
             else // Negotiation Successful
             {
                 String responseSuccess = selectedResponse.getSuccessResponses().getVariant(mobPersonality);
                 String powerSuccess = this.script.getPowerSuccessMessage().getVariant(mobPersonality);
                 String mobMessage = responseSuccess + "\n" + powerSuccess;
-                NegotiationScriptNode node = new NegotiationScriptNode(mobMessage, null, null);
+                NegotiationScriptNode node = new NegotiationScriptNode(mobMessage, null, Mood.HAPPY, null);
                 this.scriptNode = node;
                 givePower();
+                runNodeLoadListeners(this.scriptNode);
                 stop();
             }
         }
         else // Negotiation Failed
         {
             String mobMessage = selectedResponse.getFailureResponses().getVariant(mobPersonality);
-            NegotiationScriptNode node = new NegotiationScriptNode(mobMessage, null, null);
+            NegotiationScriptNode node = new NegotiationScriptNode(mobMessage, null, Mood.ANGRY, null);
             this.scriptNode = node;
+            runNodeLoadListeners(this.scriptNode);
             stop();
         }
         return this.scriptNode;
@@ -144,5 +147,20 @@ public class PowerNegotiationAction extends Action
             return power;
         }
         return null;
+    }
+
+    /**
+     * Runs all listeners for alerting when a new node is loaded.
+     */
+    protected void runNodeLoadListeners(NegotiationScriptNode node)
+    {
+        for (int i = listeners.size() - 1; i > -1; i--)
+        {
+            IActionListener listener = listeners.get(i);
+            if (listener instanceof IPowerNegotiationActionListener)
+            {
+                ((IPowerNegotiationActionListener) listener).onNodeLoaded(node);
+            }
+        }
     }
 }
