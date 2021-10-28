@@ -5,11 +5,13 @@ import java.util.ArrayList;
 public class NegotiationPrompt
 {
     private String mobMessage;
+    private Mood mobMood;
     private ArrayList<NegotiationResponse> responses;
 
-    public NegotiationPrompt(String mobMessage, ArrayList<NegotiationResponse> responses)
+    public NegotiationPrompt(String mobMessage, Mood mood, ArrayList<NegotiationResponse> responses)
     {
         this.mobMessage = mobMessage;
+        this.mobMood = mood;
         this.responses = responses;
     }
 
@@ -20,6 +22,15 @@ public class NegotiationPrompt
     public String getMobMessage()
     {
         return mobMessage;
+    }
+
+    /**
+     * Gets mobMood
+     * @return mobMood
+     */
+    public Mood getMobMood()
+    {
+        return mobMood;
     }
 
     /**

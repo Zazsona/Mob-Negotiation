@@ -32,6 +32,7 @@
   "powerTrees": [
     {
       "text": "Destruction is what you ssseek? I thought humans were creatorsss?",
+      "mood": "NEUTRAL",
       "responses": [
         {
           "text": "Figured I'd give it a go.",
@@ -100,6 +101,7 @@
       "children": [
         {
           "text": "Ssso, have you ever heard of... A Creeper that buildsss?",
+          "mood": "NEUTRAL",
           "responses": [
             {
               "text": "Anyone can be a builder.",
@@ -168,6 +170,7 @@
         },
         {
           "text": "At any rate, it seemsss your sssearch for power comesss from flawsss of the human?",
+          "mood": "NEUTRAL",
           "responses": [
             {
               "text": "Shuddup...",
