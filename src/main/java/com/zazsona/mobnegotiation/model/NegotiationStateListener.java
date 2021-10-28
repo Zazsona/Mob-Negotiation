@@ -2,7 +2,7 @@ package com.zazsona.mobnegotiation.model;
 
 import com.zazsona.mobnegotiation.model.Negotiation;
 
-public interface NegotiationEventListener
+public interface NegotiationStateListener
 {
     /**
      * An event fired whenever the state of a {@link Negotiation} is updated.

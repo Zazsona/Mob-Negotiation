@@ -1,6 +1,6 @@
 package com.zazsona.mobnegotiation.repository;
 
-import com.zazsona.mobnegotiation.model.NegotiationEventListener;
+import com.zazsona.mobnegotiation.model.NegotiationStateListener;
 import com.zazsona.mobnegotiation.model.Negotiation;
 import com.zazsona.mobnegotiation.model.NegotiationState;
 import org.bukkit.entity.Player;
@@ -15,12 +15,12 @@ import java.util.HashMap;
 public class NegotiationRepository implements INegotiationRepository
 {
     private HashMap<String, Negotiation> negotiations;
-    private NegotiationEventListener negotiationEventListener;
+    private NegotiationStateListener negotiationStateListener;
 
     public NegotiationRepository()
     {
         this.negotiations = new HashMap<>();
-        this.negotiationEventListener = negotiation ->
+        this.negotiationStateListener = negotiation ->
         {
             NegotiationState state = negotiation.getState();
             if (state.isTerminating())
@@ -30,6 +30,7 @@ public class NegotiationRepository implements INegotiationRepository
 
     /**
      * Adds a negotiation to the holder, cancelling and removing any previous entries for the associated player.
+     * This negotiation will automatically be removed when it reaches a terminating state.
      * @param negotiation the negotiation to add
      */
     @Override
@@ -38,7 +39,7 @@ public class NegotiationRepository implements INegotiationRepository
         if (negotiations.containsKey(negotiation.getNegotiationId()))
             getNegotiation(negotiation.getNegotiationId()).stop();
 
-        negotiation.addEventListener(negotiationEventListener);
+        negotiation.addListener(negotiationStateListener);
         negotiations.put(negotiation.getNegotiationId(), negotiation);
     }
 
@@ -55,7 +56,7 @@ public class NegotiationRepository implements INegotiationRepository
         else if (hasNegotiation(negotiation.getNegotiationId()))
         {
             negotiations.remove(negotiation.getNegotiationId());
-            negotiation.removeEventListener(negotiationEventListener);
+            negotiation.removeListener(negotiationStateListener);
         }
     }
 
