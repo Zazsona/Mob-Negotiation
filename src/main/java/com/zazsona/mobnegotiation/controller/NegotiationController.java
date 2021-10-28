@@ -70,15 +70,20 @@ public class NegotiationController implements Listener
         {
             Player player = (Player) e.getDamager();
             Mob mob = (Mob) e.getEntity();
-            double roll = (random.nextDouble() * 100);
-            if (roll < PluginConfig.getNegotiationRate() && !cooldownRepo.isPlayerInCooldown(player) && eligibilityChecker.canEntitiesNegotiate(player, mob))
+            double mobRemainingHealth = mob.getHealth() - e.getFinalDamage();
+            if (mobRemainingHealth <= PluginConfig.getNegotiationHealthThreshold())
             {
-                e.setDamage(0.0f);
-                Negotiation negotiation = new TimedNegotiation(player, mob, eligibilityChecker, cooldownRepo, PluginConfig.getNegotiationIdleTimeoutTicks());
-                negotiation.addListener(promptListener);
-                negotiation.addListener(stateListener);
-                negotiationRepo.addNegotiation(negotiation);
-                negotiation.start();
+                double roll = (random.nextDouble() * 100);
+                if (roll < PluginConfig.getNegotiationRate() && !cooldownRepo.isPlayerInCooldown(player) && eligibilityChecker.canEntitiesNegotiate(player, mob))
+                {
+                    double damageDealt = (mobRemainingHealth <= 0.0f) ? mob.getHealth() - 1.0f : e.getFinalDamage();
+                    e.setDamage(damageDealt);
+                    Negotiation negotiation = new TimedNegotiation(player, mob, eligibilityChecker, cooldownRepo, PluginConfig.getNegotiationIdleTimeoutTicks());
+                    negotiation.addListener(promptListener);
+                    negotiation.addListener(stateListener);
+                    negotiationRepo.addNegotiation(negotiation);
+                    negotiation.start();
+                }
             }
         }
     }

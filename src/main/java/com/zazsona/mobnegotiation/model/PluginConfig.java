@@ -16,6 +16,7 @@ public class PluginConfig
     public static final String CFG_VERSION_KEY = "version";
     public static final String CFG_PLUGIN_ENABLED_KEY = "plugin-enabled";
     public static final String CFG_NEGOTIATION_RATE_KEY = "negotiation-rate";
+    public static final String CFG_NEGOTIATION_HP_THRESHOLD_KEY = "negotiation-hp-threshold";
     public static final String CFG_POWER_DURATION_KEY = "power-effect-duration-ticks";
     public static final String CFG_NEGOTIATION_IDLE_TIMEOUT_KEY = "negotiation-idle-timeout-ticks";
     public static final String CFG_NEGOTIATION_COOLDOWN_KEY = "negotiation-cooldown-ticks";
@@ -111,6 +112,27 @@ public class PluginConfig
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
         return plugin.getConfig().getDouble(CFG_NEGOTIATION_RATE_KEY);
+    }
+
+    /**
+     * Sets the maximum amount of HP a mob can have following an attack to be able to negotiate.
+     * @param health the remaining health
+     */
+    public static void setNegotiationHealthThreshold(double health)
+    {
+        Plugin plugin = MobNegotiationPlugin.getInstance();
+        plugin.getConfig().set(CFG_NEGOTIATION_HP_THRESHOLD_KEY, health);
+        save();
+    }
+
+    /**
+     * Gets the maximum amount of HP a mob can have following an attack to be able to negotiate.
+     * @return the remaining health
+     */
+    public static double getNegotiationHealthThreshold()
+    {
+        Plugin plugin = MobNegotiationPlugin.getInstance();
+        return plugin.getConfig().getDouble(CFG_NEGOTIATION_HP_THRESHOLD_KEY);
     }
 
     /**

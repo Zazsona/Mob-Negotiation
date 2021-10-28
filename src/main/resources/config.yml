@@ -2,17 +2,19 @@
 #  version : Plugin version. Don't edit this unless you want things to go higgledy-piggledy.
 #  plugin-enabled : Toggles the plugin
 #  negotiation-rate : % chance of negotiation occurring, if conditions are met
+#  negotiation-hp-threshold : Sets the remaining health of a mob following an attack required to be able to negotiate. Set to 0.0 to only negotiate on fatal hits.
 #  power-effect-duration-ticks : The number of ticks a bestowed power lasts
 #  negotiation-idle-timeout-ticks : Ticks without a player response before negotiation ends
 #  negotiation-cooldown-ticks : Minimum ticks before a player can get another negotiation
 #  negotiation-damage-grace-ticks : The amount of ticks a player is invincible for after a negotiation to allow them to move safely
-#  mob-chat-tag: How the mob's name appears in chat. Use %PERSONALITY% and %NAME% to stand in for those values. Minecraft colour formatting codes are also supported.
+#  mob-chat-tag : How the mob's name appears in chat. Use %PERSONALITY% and %NAME% to stand in for those values. Minecraft colour formatting codes are also supported.
 #  alert-messages : Alert message spread on the player's screen when a negotiation is triggered
 #  ========================================================================
 
 version: 1.0
 plugin-enabled: true
 negotiation-rate: 100.0
+negotiation-hp-threshold: 0.0
 power-effect-duration-ticks: 6000
 negotiation-idle-timeout-ticks: 600
 negotiation-cooldown-ticks: 3600
