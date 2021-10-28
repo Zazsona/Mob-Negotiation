@@ -19,23 +19,21 @@ public class TimedNegotiation extends Negotiation
     }
 
     @Override
-    protected NegotiationPrompt beginNegotiation()
+    protected void beginNegotiation()
     {
         stopIdleTimer();
-        NegotiationPrompt prompt = super.beginNegotiation();
-        if (prompt != null && prompt.getResponses().size() > 0)
+        super.beginNegotiation();
+        if (state.isTerminating() && prompt.getResponses().size() > 0)
             startIdleTimer();
-        return prompt;
     }
 
     @Override
-    public NegotiationPrompt nextPrompt(NegotiationResponse response)
+    public void nextPrompt(NegotiationResponse response)
     {
         stopIdleTimer();
-        NegotiationPrompt prompt = super.nextPrompt(response);
-        if (prompt != null && prompt.getResponses().size() > 0)
+        super.nextPrompt(response);
+        if (!state.isTerminating() && prompt.getResponses().size() > 0)
             startIdleTimer();
-        return prompt;
     }
 
     @Override

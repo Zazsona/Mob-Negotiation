@@ -1,10 +1,7 @@
 package com.zazsona.mobnegotiation.model;
 
 import com.zazsona.mobnegotiation.MobNegotiationPlugin;
-import com.zazsona.mobnegotiation.model.action.AttackAction;
-import com.zazsona.mobnegotiation.model.action.IAction;
-import com.zazsona.mobnegotiation.model.action.IActionListener;
-import com.zazsona.mobnegotiation.model.action.PowerNegotiationAction;
+import com.zazsona.mobnegotiation.model.action.*;
 import com.zazsona.mobnegotiation.model.entitystate.EntityActionLockListener;
 import com.zazsona.mobnegotiation.model.entitystate.EntityInvalidatedEventListener;
 import com.zazsona.mobnegotiation.model.entitystate.EntityInvalidatedListener;
@@ -43,7 +40,8 @@ public class Negotiation
     protected NegotiationScript script;
     protected INegotiationEntityEligibilityChecker eligibilityChecker;
     protected ICooldownRespository cooldownRespository;
-    protected ArrayList<NegotiationEventListener> listeners;
+    protected ArrayList<NegotiationStateListener> stateListeners;
+    protected ArrayList<NegotiationPromptUpdateListener> promptUpdateListeners;
 
     protected EntityActionLockListener playerActionLockListener;
     protected EntityInvincibilityListener playerInvincibilityListener;
@@ -62,7 +60,8 @@ public class Negotiation
         this.cooldownRespository = cooldownRespository;
         this.mob = mob;
         this.state = NegotiationState.NONE;
-        this.listeners = new ArrayList<>();
+        this.stateListeners = new ArrayList<>();
+        this.promptUpdateListeners = new ArrayList<>();
 
         // Mob Personality
         long entityIdMsb = mob.getUniqueId().getMostSignificantBits();
@@ -145,9 +144,9 @@ public class Negotiation
      * @param listener the listener to add
      * @return boolean on success
      */
-    public boolean addEventListener(NegotiationEventListener listener)
+    public boolean addListener(NegotiationStateListener listener)
     {
-        return listeners.add(listener);
+        return stateListeners.add(listener);
     }
 
     /**
@@ -155,22 +154,41 @@ public class Negotiation
      * @param listener the listener to remove
      * @return boolean on success
      */
-    public boolean removeEventListener(NegotiationEventListener listener)
+    public boolean removeListener(NegotiationStateListener listener)
     {
-        return listeners.remove(listener);
+        return stateListeners.remove(listener);
+    }
+
+    /**
+     * Adds a listener to handle negotiation prompt update events
+     * @param listener the listener to add
+     * @return boolean on success
+     */
+    public boolean addListener(NegotiationPromptUpdateListener listener)
+    {
+        return promptUpdateListeners.add(listener);
+    }
+
+    /**
+     * Removes a listener from handling negotiation prompt update events
+     * @param listener the listener to remove
+     * @return boolean on success
+     */
+    public boolean removeListener(NegotiationPromptUpdateListener listener)
+    {
+        return promptUpdateListeners.remove(listener);
     }
 
     /**
      * Initialises the negotiation process and, if successful, presents the UI to the player.
      * @throws InvalidParameterException Negotiating entity is unable to negotiate
-     * @return the negotiation stage to present
      */
-    public NegotiationPrompt start() // TODO: Don't forget the idle timeout.
+    public void start()
     {
         try
         {
             this.state = NegotiationState.INITIALISING;
-            this.updateListeners();
+            this.updateStateListeners();
 
             this.script = NegotiationScriptLoader.loadScript(mob.getType());
             initialiseEntities();
@@ -184,18 +202,16 @@ public class Negotiation
         {
             MobNegotiationPlugin.getInstance().getLogger().log(Level.SEVERE, "Error while initialising negotiation:", e);
             stop(NegotiationState.FINISHED_ERROR_INITIALISATION_FAILURE);
-            return null;
         }
 
         try
         {
-            return beginNegotiation();
+            beginNegotiation();
         }
         catch (Exception e)
         {
             MobNegotiationPlugin.getInstance().getLogger().log(Level.SEVERE, "Error during negotiation:", e);
             stop(NegotiationState.FINISHED_ERROR_UNKNOWN);
-            return null;
         }
     }
 
@@ -263,11 +279,11 @@ public class Negotiation
     /**
      * Presents the negotiation UI to the user and marks the negotiation state as "STARTED"
      */
-    protected NegotiationPrompt beginNegotiation()
+    protected void beginNegotiation()
     {
         MobNegotiationPlugin.getInstance().getLogger().info(String.format("%s started negotiation with %s.", player.getName(), mob.getName()));
         this.state = NegotiationState.STARTED;
-        this.updateListeners();
+        this.updateStateListeners();
 
         String mobMessage = script.getGreetingMessage().getVariant(mobPersonality);
         ArrayList<NegotiationResponse> responses = new ArrayList<>();
@@ -275,26 +291,25 @@ public class Negotiation
         responses.add(new NegotiationResponse(ITEM_TEXT, NegotiationResponseType.SPEECH));
         responses.add(new NegotiationResponse(ATTACK_TEXT, NegotiationResponseType.ATTACK));
         responses.add(new NegotiationResponse(CANCEL_TEXT, NegotiationResponseType.CANCEL));
-        this.prompt = new NegotiationPrompt(mobMessage, responses);
-        return prompt;
+        this.prompt = new NegotiationPrompt(mobMessage, Mood.NEUTRAL, responses);
+        updatePromptListeners(this.prompt);
     }
 
-    public NegotiationPrompt nextPrompt(NegotiationResponse response)
+    public void nextPrompt(NegotiationResponse response)
     {
         String responseText = response.getText();
         if (!state.isTerminating() && responseText.equals(CANCEL_TEXT))
         {
             stop(NegotiationState.FINISHED_CANCEL);
         }
-
-        if (state == NegotiationState.STARTED)
+        else if (state == NegotiationState.STARTED)
         {
             if (responseText.equals(POWER_TEXT))
             {
                 this.action = createPowerNegotiationAction();
                 this.action.execute();
                 this.prompt = convertScriptNodeToPrompt(((PowerNegotiationAction) this.action).getCurrentNode());
-                return prompt;
+                updatePromptListeners(this.prompt);
             }
             else if (responseText.equals(ITEM_TEXT))
             {
@@ -306,18 +321,16 @@ public class Negotiation
                 this.action.execute();
             }
         }
-
-        if (state == NegotiationState.ACTIVE_POWER && action instanceof PowerNegotiationAction)
+        else if (state == NegotiationState.ACTIVE_POWER && action instanceof PowerNegotiationAction)
         {
             PowerNegotiationAction powerNegotiationAction = (PowerNegotiationAction) action;
-            NegotiationScriptNode node = powerNegotiationAction.getNextNode(responseText);
-            if (node != null)
-            {
-                this.prompt = convertScriptNodeToPrompt(node);
-                return prompt;
-            }
+            powerNegotiationAction.nextNode(responseText);
         }
-        return null;
+        else if (this.prompt != null)
+        {
+            this.prompt = null;
+            updatePromptListeners(null);
+        }
     }
 
     /**
@@ -333,7 +346,7 @@ public class Negotiation
             public void onActionStart(IAction action)
             {
                 state = NegotiationState.ACTIVE_ATTACK;
-                updateListeners();
+                updateStateListeners();
             }
 
             @Override
@@ -353,13 +366,23 @@ public class Negotiation
     private PowerNegotiationAction createPowerNegotiationAction()
     {
         PowerNegotiationAction powerNegotiationAction = new PowerNegotiationAction(player, mob, script, mobPersonality);
-        powerNegotiationAction.addListener(new IActionListener()
+        powerNegotiationAction.addListener(new IPowerNegotiationActionListener()
         {
             @Override
             public void onActionStart(IAction action)
             {
                 state = NegotiationState.ACTIVE_POWER;
-                updateListeners();
+                updateStateListeners();
+            }
+
+            @Override
+            public void onNodeLoaded(NegotiationScriptNode node)
+            {
+                if (node != null)
+                {
+                    prompt = convertScriptNodeToPrompt(node);
+                    updatePromptListeners(prompt);
+                }
             }
 
             @Override
@@ -398,7 +421,7 @@ public class Negotiation
                 responses.add(new NegotiationResponse(responseNode.getText(), NegotiationResponseType.SPEECH));
             responses.add(new NegotiationResponse(CANCEL_TEXT, NegotiationResponseType.CANCEL));
         }
-        return new NegotiationPrompt(scriptNode.getText(), responses);
+        return new NegotiationPrompt(scriptNode.getText(), scriptNode.getMood(), responses);
     }
 
     /**
@@ -437,20 +460,38 @@ public class Negotiation
         if (!terminatingState.isErroneous())
             cooldownRespository.setCooldown(player, PluginConfig.getNegotiationCooldownTicks());
 
-        this.updateListeners();
+        this.updateStateListeners();
         plugin.getLogger().info(String.format("%s completed negotiation with %s.", player.getName(), mob.getName()));
     }
 
     /**
      * Notifies all subscribed listeners of a state update
      */
-    private void updateListeners()
+    private void updateStateListeners()
     {
-        for (int i = listeners.size() - 1; i >= 0; i--)
+        for (int i = stateListeners.size() - 1; i >= 0; i--)
         {
             try
             {
-                listeners.get(i).onNegotiationStateUpdate(this);
+                stateListeners.get(i).onNegotiationStateUpdate(this);
+            }
+            catch (Exception e)
+            {
+                MobNegotiationPlugin.getInstance().getLogger().log(Level.SEVERE, "Error while handling negotiation listener:", e);
+            }
+        }
+    }
+
+    /**
+     * Notifies all subscribed listeners of a prompt update
+     */
+    private void updatePromptListeners(NegotiationPrompt prompt)
+    {
+        for (int i = promptUpdateListeners.size() - 1; i >= 0; i--)
+        {
+            try
+            {
+                promptUpdateListeners.get(i).onNegotiationPromptChanged(this, prompt);
             }
             catch (Exception e)
             {
