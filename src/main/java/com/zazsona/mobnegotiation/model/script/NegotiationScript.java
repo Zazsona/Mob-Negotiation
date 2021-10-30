@@ -12,6 +12,12 @@ public class NegotiationScript
     private PersonalityVariant<String> furtherItemOfferMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
     private PersonalityVariant<String> acceptedItemOfferMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
     private PersonalityVariant<String> refuseItemDemandMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
+
+    private PersonalityVariant<String> initialMoneyOfferMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
+    private PersonalityVariant<String> furtherMoneyOfferMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
+    private PersonalityVariant<String> acceptedMoneyOfferMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
+    private PersonalityVariant<String> refuseMoneyDemandMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
+
     private PersonalityVariant<String> powerSuccessMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
     private List<NegotiationScriptNode> powerTrees = new ArrayList<>();
 
@@ -20,13 +26,22 @@ public class NegotiationScript
 
     }
 
-    public NegotiationScript(PersonalityVariant<String> greetingMessage, PersonalityVariant<String> initialItemOfferMessage, PersonalityVariant<String> furtherItemOfferMessage, PersonalityVariant<String> acceptedItemOfferMessage, PersonalityVariant<String> refuseItemDemandMessage, PersonalityVariant<String> powerSuccessMessage, List<NegotiationScriptNode> powerTrees)
+    public NegotiationScript(PersonalityVariant<String> greetingMessage,
+                             PersonalityVariant<String> initialItemOfferMessage, PersonalityVariant<String> furtherItemOfferMessage, PersonalityVariant<String> acceptedItemOfferMessage, PersonalityVariant<String> refuseItemDemandMessage,
+                             PersonalityVariant<String> initialMoneyOfferMessage, PersonalityVariant<String> furtherMoneyOfferMessage, PersonalityVariant<String> acceptedMoneyOfferMessage, PersonalityVariant<String> refuseMoneyDemandMessage,
+                             PersonalityVariant<String> powerSuccessMessage, List<NegotiationScriptNode> powerTrees)
     {
         this.greetingMessage = greetingMessage;
         this.initialItemOfferMessage = initialItemOfferMessage;
         this.furtherItemOfferMessage = furtherItemOfferMessage;
         this.acceptedItemOfferMessage = acceptedItemOfferMessage;
         this.refuseItemDemandMessage = refuseItemDemandMessage;
+
+        this.initialMoneyOfferMessage = initialMoneyOfferMessage;
+        this.furtherMoneyOfferMessage = furtherMoneyOfferMessage;
+        this.acceptedMoneyOfferMessage = acceptedMoneyOfferMessage;
+        this.refuseMoneyDemandMessage = refuseMoneyDemandMessage;
+
         this.powerSuccessMessage = powerSuccessMessage;
         this.powerTrees = powerTrees;
     }
@@ -114,6 +129,74 @@ public class NegotiationScript
     public void setRefuseItemDemandMessage(PersonalityVariant<String> refuseItemDemandMessage)
     {
         this.refuseItemDemandMessage = refuseItemDemandMessage;
+    }
+
+    /**
+     * Gets initialMoneyOfferMessage
+     * @return initialMoneyOfferMessage
+     */
+    public PersonalityVariant<String> getInitialMoneyOfferMessage()
+    {
+        return initialMoneyOfferMessage;
+    }
+
+    /**
+     * Sets initialMoneyOfferMessage
+     */
+    public void setInitialMoneyOfferMessage(PersonalityVariant<String> initialMoneyOfferMessage)
+    {
+        this.initialMoneyOfferMessage = initialMoneyOfferMessage;
+    }
+
+    /**
+     * Gets furtherMoneyOfferMessage
+     * @return furtherMoneyOfferMessage
+     */
+    public PersonalityVariant<String> getFurtherMoneyOfferMessage()
+    {
+        return furtherMoneyOfferMessage;
+    }
+
+    /**
+     * Sets furtherMoneyOfferMessage
+     */
+    public void setFurtherMoneyOfferMessage(PersonalityVariant<String> furtherMoneyOfferMessage)
+    {
+        this.furtherMoneyOfferMessage = furtherMoneyOfferMessage;
+    }
+
+    /**
+     * Gets acceptedMoneyOfferMessage
+     * @return acceptedMoneyOfferMessage
+     */
+    public PersonalityVariant<String> getAcceptedMoneyOfferMessage()
+    {
+        return acceptedMoneyOfferMessage;
+    }
+
+    /**
+     * Sets acceptedMoneyOfferMessage
+     */
+    public void setAcceptedMoneyOfferMessage(PersonalityVariant<String> acceptedMoneyOfferMessage)
+    {
+        this.acceptedMoneyOfferMessage = acceptedMoneyOfferMessage;
+    }
+
+    /**
+     * Gets refuseMoneyDemandMessage
+     * @return refuseMoneyDemandMessage
+     */
+    public PersonalityVariant<String> getRefuseMoneyDemandMessage()
+    {
+        return refuseMoneyDemandMessage;
+    }
+
+    /**
+     * Sets refuseMoneyDemandMessage
+     */
+    public void setRefuseMoneyDemandMessage(PersonalityVariant<String> refuseMoneyDemandMessage)
+    {
+        this.refuseMoneyDemandMessage = refuseMoneyDemandMessage;
     }
 
     /**

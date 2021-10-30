@@ -528,7 +528,7 @@ public class Negotiation
                 offerState = state;
                 if (state == OfferState.PENDING)
                 {
-                    String mobMessage = (initialOfferMade) ? script.getFurtherItemOfferMessage().getVariant(mobPersonality) : script.getInitialItemOfferMessage().getVariant(mobPersonality);
+                    String mobMessage = (initialOfferMade) ? script.getFurtherMoneyOfferMessage().getVariant(mobPersonality) : script.getInitialMoneyOfferMessage().getVariant(mobPersonality);
                     initialOfferMade = true;
                     ArrayList<NegotiationResponse> responses = new ArrayList<>();
                     responses.add(new NegotiationResponse(ACCEPT_OFFER_TEXT, NegotiationResponseType.SPEECH));
@@ -545,14 +545,14 @@ public class Negotiation
                 action.removeListener(this);
                 if (offerState == OfferState.ACCEPTED)
                 {
-                    String mobMessage = script.getAcceptedItemOfferMessage().getVariant(mobPersonality);
+                    String mobMessage = script.getAcceptedMoneyOfferMessage().getVariant(mobPersonality);
                     prompt = new NegotiationPrompt(mobMessage, Mood.HAPPY, null);
                     updatePromptListeners(prompt);
                     executeMobExit();
                 }
                 else if (offerState == OfferState.DENIED)
                 {
-                    String mobMessage = script.getRefuseItemDemandMessage().getVariant(mobPersonality);
+                    String mobMessage = script.getRefuseMoneyDemandMessage().getVariant(mobPersonality);
                     prompt = new NegotiationPrompt(mobMessage, Mood.ANGRY, null);
                     updatePromptListeners(prompt);
                 }

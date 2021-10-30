@@ -4,6 +4,7 @@ import com.zazsona.mobnegotiation.MobNegotiationPlugin;
 import com.zazsona.mobnegotiation.model.*;
 import com.zazsona.mobnegotiation.model.action.IAction;
 import com.zazsona.mobnegotiation.model.action.ItemNegotiationAction;
+import com.zazsona.mobnegotiation.model.action.MoneyNegotiationAction;
 import com.zazsona.mobnegotiation.model.action.PowerNegotiationAction;
 import com.zazsona.mobnegotiation.repository.ICooldownRespository;
 import com.zazsona.mobnegotiation.repository.INegotiationRepository;
@@ -17,6 +18,7 @@ import com.zazsona.mobnegotiation.view.interfaces.IViewInteractionExecutor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.hover.content.Text;
+import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Mob;
@@ -39,6 +41,7 @@ public class NegotiationController implements Listener
     private static final String NAME_PLACEHOLDER_TEXT = "%NAME%";
     private static final String POWER_PLACEHOLDER_TEXT = "%POWER%";
     private static final String ITEM_PLACEHOLDER_TEXT = "%ITEM%";
+    private static final String MONEY_PLACEHOLDER_TEXT = "%MONEY%";
 
     private INegotiationRepository negotiationRepo;
     private ICooldownRespository cooldownRepo;
@@ -191,6 +194,7 @@ public class NegotiationController implements Listener
             String moodFormatting = (i == lines.length - 1) ? getMoodFormatting(prompt.getMobMood()) : getMoodFormatting(Mood.NEUTRAL); // Only format last line
             line = line.replace(POWER_PLACEHOLDER_TEXT, ChatColor.GOLD + POWER_PLACEHOLDER_TEXT + moodFormatting);
             line = line.replace(ITEM_PLACEHOLDER_TEXT, ChatColor.GOLD + ITEM_PLACEHOLDER_TEXT + moodFormatting);
+            line = line.replace(MONEY_PLACEHOLDER_TEXT, ChatColor.GOLD + MONEY_PLACEHOLDER_TEXT + moodFormatting);
             line = fillPlaceholderValues(line, negotiation);
             stringBuilder.append(mobChatTag).append(moodFormatting).append(line).append("\n");
         }
@@ -248,6 +252,18 @@ public class NegotiationController implements Listener
                 String formattedItemQuantity = String.format("x%s", inAction.getCurrentOfferQuantity());
                 String formattedText = formattedItemQuantity + " " + formattedItemName;
                 line = line.replace(ITEM_PLACEHOLDER_TEXT, formattedText);
+            }
+        }
+        if (line.contains(MONEY_PLACEHOLDER_TEXT))
+        {
+            IAction action = negotiation.getAction();
+            if (action instanceof MoneyNegotiationAction)
+            {
+                MoneyNegotiationAction mnAction = (MoneyNegotiationAction) action;
+                double money = mnAction.getCurrentOfferAmount();
+                String currencyName = mnAction.getCurrencyName();
+                String formattedText = String.format("%s%s", currencyName, money);
+                line = line.replace(MONEY_PLACEHOLDER_TEXT, formattedText);
             }
         }
         return line;

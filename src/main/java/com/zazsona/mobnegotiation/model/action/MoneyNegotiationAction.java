@@ -101,6 +101,15 @@ public class MoneyNegotiationAction extends Action
     }
 
     /**
+     * Gets the currency name correct for the current amount (singular, plural, etc.)
+     * @return the currency name
+     */
+    public String getCurrencyName()
+    {
+        return (currentAmount == 1) ? economy.currencyNameSingular() : economy.currencyNamePlural();
+    }
+
+    /**
      * Runs all listeners for alerting when a new offer is made.
      */
     protected void runOfferUpdatedListeners(OfferState offerState, double amount)

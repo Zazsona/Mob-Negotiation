@@ -29,6 +29,30 @@
     "irritable": "Enough. Let'sss gamble life inssstead.",
     "gloomy": "My life'sss not worth any more. Take it inssstead."
   },
+  "initialMoneyOfferMessage": {
+    "upbeat": "Here'sss an explosssive offer for you then, how'sss %MONEY%?",
+    "timid": "Alright... Take thisss %MONEY%.",
+    "irritable": "I have to pay you to go away? Fine. Here'sss %MONEY%.",
+    "gloomy": "My life'sss only worth %MONEY%..."
+  },
+  "furtherMoneyOfferMessage": {
+    "upbeat": "Ssso I'm not going away that easy? Alright, here'sss %MONEY%.",
+    "timid": "You desssire more? Here's %MONEY%.",
+    "irritable": "...Oh? Isss that ssstill not enough? You're insufferable. Take thisss %MONEY%.",
+    "gloomy": "No richesss for Creepersss... Here'sss %MONEY%."
+  },
+  "acceptedMoneyOfferMessage": {
+    "upbeat": "That'sss sssorted then. Sssee you!",
+    "timid": "Sssoo here you go... Bye.",
+    "irritable": "That'sss cheap to get rid of you.",
+    "gloomy": "Back to sssquare one I go..."
+  },
+  "refuseMoneyDemandMessage": {
+    "upbeat": "Let'sss see how much your life isss worth.",
+    "timid": "Sssorry, I can't let you have any more.",
+    "irritable": "I tire of your greed. Let'sss finish this.",
+    "gloomy": "Thisss is all I've got in life. Maybe I'll sssell you."
+  },
   "powerSuccessMessage": {
     "upbeat": "I had fun. Here, enjoy thisss %POWER% power.",
     "timid": "Thanksss for the chat. Here, take thisss power of %POWER%.",
