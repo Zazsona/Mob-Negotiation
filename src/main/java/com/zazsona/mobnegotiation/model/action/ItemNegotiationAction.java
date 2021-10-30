@@ -67,7 +67,7 @@ public class ItemNegotiationAction extends Action
         boolean followUp = random.nextDouble() < followUpSuccessRate;
         if (followUp)
         {
-            this.currentQuantity += offer.getIncreaseStep();
+            this.currentQuantity += offer.getIncreaseAmount();
             runOfferUpdatedListeners(OfferState.PENDING, getOfferStack());
             return true;
         }

@@ -1,0 +1,12 @@
+#  =========================== Details ====================================
+#  The cash offered by various mob types.
+#  version : Plugin version. Don't edit this unless you want things to go higgledy-piggledy.
+#  [mob] : The mob that makes the contained offers
+#  [mob].initial-amount : The amount of the cash offered at first
+#  [mob].increase-amount : How much the offer is increased by when the player demands more
+#  ========================================================================
+
+version: 1.0.0
+creeper:
+    initial-amount: 20
+    increase-amount: 20

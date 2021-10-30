@@ -6,13 +6,13 @@ public class ItemOffer
 {
     private Material item;
     private int initialQuantity;
-    private int increaseStep;
+    private int increaseAmount;
 
-    public ItemOffer(Material item, int initialQuantity, int increaseStep)
+    public ItemOffer(Material item, int initialQuantity, int increaseAmount)
     {
         this.item = item;
         this.initialQuantity = initialQuantity;
-        this.increaseStep = increaseStep;
+        this.increaseAmount = increaseAmount;
     }
 
     /**
@@ -47,15 +47,15 @@ public class ItemOffer
 
     /**
      * Gets the amount to increase the quantity by every time a subsequent offer is made.
-     * @return increaseStep
+     * @return the quantity to increase initial quantity by.
      */
-    public int getIncreaseStep()
+    public int getIncreaseAmount()
     {
-        return increaseStep;
+        return increaseAmount;
     }
 
-    public void setIncreaseStep(int increaseStep)
+    public void setIncreaseAmount(int increaseAmount)
     {
-        this.increaseStep = increaseStep;
+        this.increaseAmount = increaseAmount;
     }
 }

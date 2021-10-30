@@ -40,7 +40,12 @@ public class PluginConfig
     public static final String ITEM_VERSION_KEY = "version";
     public static final String ITEM_ITEM_KEY = "item";
     public static final String ITEM_INITIAL_QUANTITY_KEY = "initial-quantity";
-    public static final String ITEM_INCREASE_RATE_KEY = "increase-rate";
+    public static final String ITEM_INCREASE_AMOUNT_KEY = "increase-amount";
+
+    public static final String ECON_FILE = "economy.yml";
+    public static final String ECON_VERSION_KEY = "version";
+    public static final String ECON_INITIAL_AMOUNT_KEY = "initial-amount";
+    public static final String ECON_INCREASE_AMOUNT_KEY = "increase-amount";
 
     private static Logger logger;
     private static String dataFolderDir;
@@ -63,6 +68,9 @@ public class PluginConfig
 
         File itemFileDir = new File(dataFolderDir+"/"+ITEM_FILE);
         updateConfigFile(ITEM_FILE, ITEM_VERSION_KEY, itemFileDir, ITEM_VERSION_KEY);
+
+        File economyFileDir = new File(dataFolderDir+"/"+ECON_FILE);
+        updateConfigFile(ECON_FILE, ECON_VERSION_KEY, economyFileDir, ECON_VERSION_KEY);
     }
 
     /**
@@ -443,7 +451,7 @@ public class PluginConfig
     }
 
     /**
-     * Gets the item offers for by this entity
+     * Gets the item offers for this entity
      * @param entity the entity to get the paired offers for
      * @return the offers available in an unmodifiable list, may be empty
      */
@@ -452,21 +460,45 @@ public class PluginConfig
         File itemFileDir = new File(dataFolderDir+"/"+ITEM_FILE);
         YamlConfiguration itemsConfig = YamlConfiguration.loadConfiguration(itemFileDir);
         String entityKey = entity.toString().toLowerCase();
-        ConfigurationSection offersConfiguration = itemsConfig.getConfigurationSection(entityKey);
-        ArrayList<ItemOffer> offers = new ArrayList<>();
-        for (String key : offersConfiguration.getKeys(false))
+        if (itemsConfig.contains(entityKey))
         {
-            ConfigurationSection offerConfiguration = offersConfiguration.getConfigurationSection(key);
-            String itemName = offerConfiguration.getString(ITEM_ITEM_KEY);
-            Material item = Material.matchMaterial(itemName);
-            int initialQuantity = offerConfiguration.getInt(ITEM_INITIAL_QUANTITY_KEY);
-            int increaseRate = offerConfiguration.getInt(ITEM_INCREASE_RATE_KEY);
-            if (item != null && initialQuantity > 0)
-                offers.add(new ItemOffer(item, initialQuantity, increaseRate));
-            else
-                logger.warning(String.format("Invalid offer configuration for %s, ignoring...", entity));
+            ConfigurationSection offersConfiguration = itemsConfig.getConfigurationSection(entityKey);
+            ArrayList<ItemOffer> offers = new ArrayList<>();
+            for (String key : offersConfiguration.getKeys(false))
+            {
+                ConfigurationSection offerConfiguration = offersConfiguration.getConfigurationSection(key);
+                String itemName = offerConfiguration.getString(ITEM_ITEM_KEY);
+                Material item = Material.matchMaterial(itemName);
+                int initialQuantity = offerConfiguration.getInt(ITEM_INITIAL_QUANTITY_KEY);
+                int increaseAmount = offerConfiguration.getInt(ITEM_INCREASE_AMOUNT_KEY);
+                if (item != null && initialQuantity > 0)
+                    offers.add(new ItemOffer(item, initialQuantity, increaseAmount));
+                else
+                    logger.warning(String.format("Invalid offer configuration for %s, ignoring...", entity));
+            }
+            return Collections.unmodifiableList(offers);
         }
-        return Collections.unmodifiableList(offers);
+        return Collections.unmodifiableList(new ArrayList<>());
+    }
+
+    /**
+     * Gets the money offer for this entity
+     * @param entity the entity to get the paired offer for
+     * @return the offer, or null if none is assigned
+     */
+    public static MoneyOffer getMoneyOffer(EntityType entity)
+    {
+        File econFileDir = new File(dataFolderDir+"/"+ECON_FILE);
+        YamlConfiguration econConfig = YamlConfiguration.loadConfiguration(econFileDir);
+        String entityKey = entity.toString().toLowerCase();
+        if (econConfig.contains(entityKey))
+        {
+            ConfigurationSection offerConfiguration = econConfig.getConfigurationSection(entityKey);
+            double initialAmount = offerConfiguration.getDouble(ECON_INITIAL_AMOUNT_KEY);
+            double increaseAmount = offerConfiguration.getDouble(ECON_INCREASE_AMOUNT_KEY);
+            return new MoneyOffer(initialAmount, increaseAmount);
+        }
+        return null;
     }
 
     /**

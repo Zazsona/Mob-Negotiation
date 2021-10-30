@@ -85,9 +85,6 @@ public class NegotiationController implements Listener
                 double roll = (random.nextDouble() * 100);
                 if (roll < PluginConfig.getNegotiationRate() && !cooldownRepo.isPlayerInCooldown(player) && eligibilityChecker.canEntitiesNegotiate(player, mob))
                 {
-                    MobNegotiationPlugin.getInstance().getLogger().info("HP: "+mob.getHealth());
-                    MobNegotiationPlugin.getInstance().getLogger().info("DMG: "+e.getFinalDamage());
-                    MobNegotiationPlugin.getInstance().getLogger().info("-----");
                     if (mobRemainingHealth <= 0.0f)
                     {
                         e.setDamage(0.0f);
@@ -100,11 +97,8 @@ public class NegotiationController implements Listener
                     boolean successfulStart = negotiation.start();
                     if (!successfulStart)
                     {
-                        MobNegotiationPlugin.getInstance().getLogger().info("DOING UNSUCCESSFUL HP");
                         mob.setHealth(preHitMobHealth);
                         e.setDamage(rawDamage);
-                        MobNegotiationPlugin.getInstance().getLogger().info(""+mob.getHealth());
-                        MobNegotiationPlugin.getInstance().getLogger().info("-----");
                     }
                 }
             }
