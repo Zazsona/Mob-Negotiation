@@ -63,8 +63,10 @@ public class PowerNegotiationAction extends Action
         if (selectedResponse == null)
             throw new IllegalArgumentException(String.format("Unrecognised response: %s", responseText));
 
-        float roll = rand.nextFloat() * 100;
-        if (roll < selectedResponse.getSuccessRates().getVariant(mobPersonality))
+        double successRateModifier = PluginConfig.getNegotiationPowerSuccessRate() / 100.0f;
+        double successRate = selectedResponse.getSuccessRates().getVariant(mobPersonality) * successRateModifier;
+        double roll = rand.nextDouble() * 100;
+        if (roll < successRate)
         {
             List<NegotiationScriptNode> children = this.scriptNode.getChildren();
             if (children.size() > 0) // Negotiation On-going

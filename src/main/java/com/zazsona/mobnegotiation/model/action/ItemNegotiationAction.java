@@ -63,7 +63,7 @@ public class ItemNegotiationAction extends Action
     public boolean denyOffer()
     {
         runOfferUpdatedListeners(OfferState.DENIED, getOfferStack());
-        double followUpSuccessRate = 0.3f;
+        double followUpSuccessRate = PluginConfig.getItemDemandSuccessRate() / 100.0f;
         boolean followUp = random.nextDouble() < followUpSuccessRate;
         if (followUp)
         {

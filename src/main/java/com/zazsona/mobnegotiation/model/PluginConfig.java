@@ -17,6 +17,9 @@ public class PluginConfig
     public static final String CFG_VERSION_KEY = "version";
     public static final String CFG_PLUGIN_ENABLED_KEY = "plugin-enabled";
     public static final String CFG_NEGOTIATION_RATE_KEY = "negotiation-rate";
+    public static final String CFG_NEGOTIATION_POWER_SUCCESS_RATE_KEY = "negotiation-power-success-rate";
+    public static final String CFG_NEGOTIATION_ITEM_SUCCESS_RATE_KEY = "negotiation-item-success-rate";
+    public static final String CFG_NEGOTIATION_MONEY_SUCCESS_RATE_KEY = "negotiation-money-success-rate";
     public static final String CFG_NEGOTIATION_HP_THRESHOLD_KEY = "negotiation-hp-threshold";
     public static final String CFG_POWER_DURATION_KEY = "power-effect-duration-ticks";
     public static final String CFG_NEGOTIATION_IDLE_TIMEOUT_KEY = "negotiation-idle-timeout-ticks";
@@ -127,6 +130,69 @@ public class PluginConfig
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
         return plugin.getConfig().getDouble(CFG_NEGOTIATION_RATE_KEY);
+    }
+
+    /**
+     * Sets the rate modifier, as a percentage, that power negotiations succeed, where 100% is base rates.
+     * @param percentage the modifier for power negotiations successes as a percentage, where 100 is base rates.
+     */
+    public static void setNegotiationPowerSuccessRate(double percentage)
+    {
+        Plugin plugin = MobNegotiationPlugin.getInstance();
+        plugin.getConfig().set(CFG_NEGOTIATION_POWER_SUCCESS_RATE_KEY, percentage);
+        save();
+    }
+
+    /**
+     * Gets the rate modifier, as a percentage, that power negotiations succeed, where 100% is base rates.
+     * @return the modifier for power negotiations successes as a percentage, where 100 is base rates.
+     */
+    public static double getNegotiationPowerSuccessRate()
+    {
+        Plugin plugin = MobNegotiationPlugin.getInstance();
+        return plugin.getConfig().getDouble(CFG_NEGOTIATION_POWER_SUCCESS_RATE_KEY);
+    }
+
+    /**
+     * Sets the rate, as a percentage, that item demands succeed
+     * @param percentage the chance of a demand for more items succeeding
+     */
+    public static void setItemDemandSuccessRate(double percentage)
+    {
+        Plugin plugin = MobNegotiationPlugin.getInstance();
+        plugin.getConfig().set(CFG_NEGOTIATION_ITEM_SUCCESS_RATE_KEY, percentage);
+        save();
+    }
+
+    /**
+     * Gets the rate, as a percentage, that item demands succeed
+     * @return the chance of a demand for more items succeeding
+     */
+    public static double getItemDemandSuccessRate()
+    {
+        Plugin plugin = MobNegotiationPlugin.getInstance();
+        return plugin.getConfig().getDouble(CFG_NEGOTIATION_ITEM_SUCCESS_RATE_KEY);
+    }
+
+    /**
+     * Sets the rate, as a percentage, that money demands succeed
+     * @param percentage the chance of a demand for more money succeeding
+     */
+    public static void setMoneyDemandSuccessRate(double percentage)
+    {
+        Plugin plugin = MobNegotiationPlugin.getInstance();
+        plugin.getConfig().set(CFG_NEGOTIATION_MONEY_SUCCESS_RATE_KEY, percentage);
+        save();
+    }
+
+    /**
+     * Gets the rate, as a percentage, that money demands succeed
+     * @return the chance of a demand for more money succeeding
+     */
+    public static double getMoneyDemandSuccessRate()
+    {
+        Plugin plugin = MobNegotiationPlugin.getInstance();
+        return plugin.getConfig().getDouble(CFG_NEGOTIATION_MONEY_SUCCESS_RATE_KEY);
     }
 
     /**
