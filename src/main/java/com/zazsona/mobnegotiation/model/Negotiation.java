@@ -12,12 +12,15 @@ import com.zazsona.mobnegotiation.model.script.NegotiationScriptLoader;
 import com.zazsona.mobnegotiation.model.script.NegotiationScriptNode;
 import com.zazsona.mobnegotiation.model.script.NegotiationScriptResponseNode;
 import com.zazsona.mobnegotiation.repository.ICooldownRespository;
+import net.milkbowl.vault.economy.Economy;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.util.Vector;
 
 import javax.naming.ConfigurationException;
@@ -29,6 +32,7 @@ public class Negotiation
 {
     protected final String POWER_TEXT = "Lend me your power.";
     protected final String ITEM_TEXT = "I want items.";
+    protected final String MONEY_TEXT = "Give me some money.";
     protected final String ATTACK_TEXT = "All Out Attack";
     protected final String CANCEL_TEXT = "Return to Battle";
 
@@ -296,6 +300,8 @@ public class Negotiation
             responses.add(new NegotiationResponse(POWER_TEXT, NegotiationResponseType.SPEECH));
         if (PluginConfig.isItemNegotiationEnabled())
             responses.add(new NegotiationResponse(ITEM_TEXT, NegotiationResponseType.SPEECH));
+        if (PluginConfig.isMoneyNegotiationEnabled() && getEconomy() != null)
+            responses.add(new NegotiationResponse(MONEY_TEXT, NegotiationResponseType.SPEECH));
         if (PluginConfig.isAllOutAttackEnabled())
             responses.add(new NegotiationResponse(ATTACK_TEXT, NegotiationResponseType.ATTACK));
         if (responses.size() > 0)
@@ -331,6 +337,11 @@ public class Negotiation
                 this.action = createItemNegotiationAction();
                 this.action.execute();
             }
+            else if (responseText.equals(MONEY_TEXT) && PluginConfig.isMoneyNegotiationEnabled() && getEconomy() != null)
+            {
+                this.action = createMoneyNegotiationAction();
+                this.action.execute();
+            }
             else if (responseText.equals(ATTACK_TEXT) && PluginConfig.isAllOutAttackEnabled())
             {
                 this.action = createAttackAction();
@@ -349,6 +360,14 @@ public class Negotiation
                 itemNegotiationAction.acceptOffer();
             else if (responseText.equals(DENY_OFFER_TEXT))
                 itemNegotiationAction.denyOffer();
+        }
+        else if (state == NegotiationState.ACTIVE_MONEY && action instanceof MoneyNegotiationAction)
+        {
+            MoneyNegotiationAction moneyNegotiationAction = (MoneyNegotiationAction) action;
+            if (responseText.equals(ACCEPT_OFFER_TEXT))
+                moneyNegotiationAction.acceptOffer();
+            else if (responseText.equals(DENY_OFFER_TEXT))
+                moneyNegotiationAction.denyOffer();
         }
         else if (this.prompt != null)
         {
@@ -481,6 +500,86 @@ public class Negotiation
             }
         });
         return itemNegotiationAction;
+    }
+
+    /**
+     * Creates a new {@link MoneyNegotiationAction} with relevant listeners for updating negotiation state.
+     * @return the action
+     */
+    private MoneyNegotiationAction createMoneyNegotiationAction()
+    {
+        MoneyNegotiationAction moneyNegotiationAction = new MoneyNegotiationAction(player, mob, getEconomy());
+        moneyNegotiationAction.addListener(new IMoneyNegotiationActionListener()
+        {
+            private boolean initialOfferMade = true;
+            private OfferState offerState;
+
+            @Override
+            public void onActionStart(IAction action)
+            {
+                state = NegotiationState.ACTIVE_MONEY;
+                initialOfferMade = false;
+                updateStateListeners();
+            }
+
+            @Override
+            public void onOfferUpdated(MoneyNegotiationAction action, OfferState state, double amount)
+            {
+                offerState = state;
+                if (state == OfferState.PENDING)
+                {
+                    String mobMessage = (initialOfferMade) ? script.getFurtherItemOfferMessage().getVariant(mobPersonality) : script.getInitialItemOfferMessage().getVariant(mobPersonality);
+                    initialOfferMade = true;
+                    ArrayList<NegotiationResponse> responses = new ArrayList<>();
+                    responses.add(new NegotiationResponse(ACCEPT_OFFER_TEXT, NegotiationResponseType.SPEECH));
+                    responses.add(new NegotiationResponse(DENY_OFFER_TEXT, NegotiationResponseType.SPEECH));
+                    responses.add(new NegotiationResponse(CANCEL_TEXT, NegotiationResponseType.CANCEL));
+                    prompt = new NegotiationPrompt(mobMessage, Mood.NEUTRAL, responses);
+                    updatePromptListeners(prompt);
+                }
+            }
+
+            @Override
+            public void onActionComplete(IAction action)
+            {
+                action.removeListener(this);
+                if (offerState == OfferState.ACCEPTED)
+                {
+                    String mobMessage = script.getAcceptedItemOfferMessage().getVariant(mobPersonality);
+                    prompt = new NegotiationPrompt(mobMessage, Mood.HAPPY, null);
+                    updatePromptListeners(prompt);
+                    executeMobExit();
+                }
+                else if (offerState == OfferState.DENIED)
+                {
+                    String mobMessage = script.getRefuseItemDemandMessage().getVariant(mobPersonality);
+                    prompt = new NegotiationPrompt(mobMessage, Mood.ANGRY, null);
+                    updatePromptListeners(prompt);
+                }
+                stop(NegotiationState.FINISHED_MONEY);
+            }
+        });
+        return moneyNegotiationAction;
+    }
+
+    /**
+     * Gets the current Vault-supporting economy on this server.
+     * @return the economy, or null if none is available.
+     */
+    protected Economy getEconomy()
+    {
+        Plugin plugin = MobNegotiationPlugin.getInstance();
+        Server server = plugin.getServer();
+        if (server.getPluginManager().getPlugin("Vault") == null)
+            return null;
+
+        RegisteredServiceProvider<Economy> economyServiceProvider = server.getServicesManager().getRegistration(Economy.class);
+        if (economyServiceProvider != null)
+        {
+            Economy economy = economyServiceProvider.getProvider();
+            return economy;
+        }
+        return null;
     }
 
     /**
