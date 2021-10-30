@@ -7,6 +7,8 @@ import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitTask;
 
+import javax.naming.ConfigurationException;
+
 public class TimedNegotiation extends Negotiation
 {
     protected BukkitTask idleTimer;
@@ -19,7 +21,7 @@ public class TimedNegotiation extends Negotiation
     }
 
     @Override
-    protected void beginNegotiation()
+    protected void beginNegotiation() throws ConfigurationException
     {
         stopIdleTimer();
         super.beginNegotiation();

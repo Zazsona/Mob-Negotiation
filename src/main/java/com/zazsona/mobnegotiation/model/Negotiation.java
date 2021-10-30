@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
+import javax.naming.ConfigurationException;
 import java.security.InvalidParameterException;
 import java.util.*;
 import java.util.logging.Level;
@@ -185,9 +186,9 @@ public class Negotiation
 
     /**
      * Initialises the negotiation process and, if successful, presents the UI to the player.
-     * @throws InvalidParameterException Negotiating entity is unable to negotiate
+     * @return true on successful initialisation
      */
-    public void start()
+    public boolean start()
     {
         try
         {
@@ -196,26 +197,25 @@ public class Negotiation
 
             this.script = NegotiationScriptLoader.loadScript(mob.getType());
             initialiseEntities();
+            beginNegotiation();
+            return true;
         }
         catch (InvalidParticipantsException e)
         {
             // This is an error we can handle without disturbing administrative users
+            if (mob != null && mob.isValid())
+                mob.setTarget(player);
             stop(NegotiationState.FINISHED_ERROR_INITIALISATION_FAILURE);
+            return false;
         }
         catch (Exception e)
         {
+            if (mob != null && mob.isValid())
+                mob.setTarget(player);
             MobNegotiationPlugin.getInstance().getLogger().log(Level.SEVERE, "Error while initialising negotiation:", e);
+            player.sendMessage(ChatColor.RED+"Unable to start mob negotiation. Please contact a server administrator to check the logs.");
             stop(NegotiationState.FINISHED_ERROR_INITIALISATION_FAILURE);
-        }
-
-        try
-        {
-            beginNegotiation();
-        }
-        catch (Exception e)
-        {
-            MobNegotiationPlugin.getInstance().getLogger().log(Level.SEVERE, "Error during negotiation:", e);
-            stop(NegotiationState.FINISHED_ERROR_UNKNOWN);
+            return false;
         }
     }
 
@@ -282,8 +282,9 @@ public class Negotiation
 
     /**
      * Presents the negotiation UI to the user and marks the negotiation state as "STARTED"
+     * @throws ConfigurationException all options are disabled
      */
-    protected void beginNegotiation()
+    protected void beginNegotiation() throws ConfigurationException
     {
         MobNegotiationPlugin.getInstance().getLogger().info(String.format("%s started negotiation with %s.", player.getName(), mob.getName()));
         this.state = NegotiationState.STARTED;
@@ -291,12 +292,22 @@ public class Negotiation
 
         String mobMessage = script.getGreetingMessage().getVariant(mobPersonality);
         ArrayList<NegotiationResponse> responses = new ArrayList<>();
-        responses.add(new NegotiationResponse(POWER_TEXT, NegotiationResponseType.SPEECH));
-        responses.add(new NegotiationResponse(ITEM_TEXT, NegotiationResponseType.SPEECH));
-        responses.add(new NegotiationResponse(ATTACK_TEXT, NegotiationResponseType.ATTACK));
-        responses.add(new NegotiationResponse(CANCEL_TEXT, NegotiationResponseType.CANCEL));
-        this.prompt = new NegotiationPrompt(mobMessage, Mood.NEUTRAL, responses);
-        updatePromptListeners(this.prompt);
+        if (PluginConfig.isPowerNegotiationEnabled())
+            responses.add(new NegotiationResponse(POWER_TEXT, NegotiationResponseType.SPEECH));
+        if (PluginConfig.isItemNegotiationEnabled())
+            responses.add(new NegotiationResponse(ITEM_TEXT, NegotiationResponseType.SPEECH));
+        if (PluginConfig.isAllOutAttackEnabled())
+            responses.add(new NegotiationResponse(ATTACK_TEXT, NegotiationResponseType.ATTACK));
+        if (responses.size() > 0)
+            responses.add(new NegotiationResponse(CANCEL_TEXT, NegotiationResponseType.CANCEL));
+
+        if (responses.size() > 0)
+        {
+            this.prompt = new NegotiationPrompt(mobMessage, Mood.NEUTRAL, responses);
+            updatePromptListeners(this.prompt);
+        }
+        else
+            throw new ConfigurationException("All negotiation options are disabled.");
     }
 
     public void nextPrompt(NegotiationResponse response)
@@ -308,19 +319,19 @@ public class Negotiation
         }
         else if (state == NegotiationState.STARTED)
         {
-            if (responseText.equals(POWER_TEXT))
+            if (responseText.equals(POWER_TEXT) && PluginConfig.isPowerNegotiationEnabled())
             {
                 this.action = createPowerNegotiationAction();
                 this.action.execute();
                 this.prompt = convertScriptNodeToPrompt(((PowerNegotiationAction) this.action).getCurrentNode());
                 updatePromptListeners(this.prompt);
             }
-            else if (responseText.equals(ITEM_TEXT))
+            else if (responseText.equals(ITEM_TEXT) && PluginConfig.isItemNegotiationEnabled())
             {
                 this.action = createItemNegotiationAction();
                 this.action.execute();
             }
-            else if (responseText.equals(ATTACK_TEXT))
+            else if (responseText.equals(ATTACK_TEXT) && PluginConfig.isAllOutAttackEnabled())
             {
                 this.action = createAttackAction();
                 this.action.execute();

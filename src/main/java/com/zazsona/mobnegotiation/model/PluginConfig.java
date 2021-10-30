@@ -16,6 +16,10 @@ public class PluginConfig
 {
     public static final String CFG_VERSION_KEY = "version";
     public static final String CFG_PLUGIN_ENABLED_KEY = "plugin-enabled";
+    public static final String CFG_POWER_NEGOTIATION_ENABLED_KEY = "power-negotiation-enabled";
+    public static final String CFG_ITEM_NEGOTIATION_ENABLED_KEY = "item-negotiation-enabled";
+    public static final String CFG_MONEY_NEGOTIATION_ENABLED_KEY = "money-negotiation-enabled";
+    public static final String CFG_ALL_OUT_ATTACK_ENABLED_KEY = "all-out-attack-enabled";
     public static final String CFG_NEGOTIATION_RATE_KEY = "negotiation-rate";
     public static final String CFG_NEGOTIATION_POWER_SUCCESS_RATE_KEY = "negotiation-power-success-rate";
     public static final String CFG_NEGOTIATION_ITEM_SUCCESS_RATE_KEY = "negotiation-item-success-rate";
@@ -109,6 +113,90 @@ public class PluginConfig
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
         return plugin.getConfig().getBoolean(CFG_PLUGIN_ENABLED_KEY);
+    }
+
+    /**
+     * Sets if power negotiations should be possible
+     * @param newEnabled enabled state to set
+     */
+    public static void setPowerNegotiationEnabled(boolean newEnabled)
+    {
+        Plugin plugin = MobNegotiationPlugin.getInstance();
+        plugin.getConfig().set(CFG_POWER_NEGOTIATION_ENABLED_KEY, newEnabled);
+        save();
+    }
+
+    /**
+     * Gets if power negotiations are enabled
+     * @return boolean on enabled
+     */
+    public static boolean isPowerNegotiationEnabled()
+    {
+        Plugin plugin = MobNegotiationPlugin.getInstance();
+        return plugin.getConfig().getBoolean(CFG_POWER_NEGOTIATION_ENABLED_KEY);
+    }
+
+    /**
+     * Sets if item negotiations should be possible
+     * @param newEnabled enabled state to set
+     */
+    public static void setItemNegotiationEnabled(boolean newEnabled)
+    {
+        Plugin plugin = MobNegotiationPlugin.getInstance();
+        plugin.getConfig().set(CFG_ITEM_NEGOTIATION_ENABLED_KEY, newEnabled);
+        save();
+    }
+
+    /**
+     * Gets if item negotiations are enabled
+     * @return boolean on enabled
+     */
+    public static boolean isItemNegotiationEnabled()
+    {
+        Plugin plugin = MobNegotiationPlugin.getInstance();
+        return plugin.getConfig().getBoolean(CFG_ITEM_NEGOTIATION_ENABLED_KEY);
+    }
+
+    /**
+     * Sets if money negotiations should be possible
+     * @param newEnabled enabled state to set
+     */
+    public static void setMoneyNegotiationEnabled(boolean newEnabled)
+    {
+        Plugin plugin = MobNegotiationPlugin.getInstance();
+        plugin.getConfig().set(CFG_MONEY_NEGOTIATION_ENABLED_KEY, newEnabled);
+        save();
+    }
+
+    /**
+     * Gets if money negotiations are enabled
+     * @return boolean on enabled
+     */
+    public static boolean isMoneyNegotiationEnabled()
+    {
+        Plugin plugin = MobNegotiationPlugin.getInstance();
+        return plugin.getConfig().getBoolean(CFG_MONEY_NEGOTIATION_ENABLED_KEY);
+    }
+
+    /**
+     * Sets if All out Attacks should be possible
+     * @param newEnabled enabled state to set
+     */
+    public static void setAllOutAttackEnabled(boolean newEnabled)
+    {
+        Plugin plugin = MobNegotiationPlugin.getInstance();
+        plugin.getConfig().set(CFG_ALL_OUT_ATTACK_ENABLED_KEY, newEnabled);
+        save();
+    }
+
+    /**
+     * Gets if All out Attacks are enabled
+     * @return boolean on enabled
+     */
+    public static boolean isAllOutAttackEnabled()
+    {
+        Plugin plugin = MobNegotiationPlugin.getInstance();
+        return plugin.getConfig().getBoolean(CFG_ALL_OUT_ATTACK_ENABLED_KEY);
     }
 
     /**

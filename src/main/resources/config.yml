@@ -16,6 +16,10 @@
 
 version: 1.0
 plugin-enabled: true
+power-negotiation-enabled: true
+item-negotiation-enabled: true
+money-negotiation-enabled: true
+all-out-attack-enabled: true
 negotiation-rate: 100.0
 negotiation-power-success-rate: 100.0
 negotiation-item-success-rate: 33.0
