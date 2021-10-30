@@ -1,0 +1,52 @@
+#  =========================== Details ====================================
+#  The items offered by various mob types.
+#
+#  version : Plugin version. Don't edit this unless you want things to go higgledy-piggledy.
+#  [mob] : The mob that makes the contained offers
+#  [mob].offerX : An offer
+#  [mob].offerX.item : The item being given
+#  [mob].offerX.initial-quantity : The amount of the item offered at first
+#  [mob].offerX.increase-rate : How many more are offered each time the player demands more
+#
+#  Offers are mapped by item name, then quantity. E.g: "DIRT: 5" is an offer for 5 dirt.
+#
+#  ========================================================================
+
+version: 1.0.0
+creeper:
+  offer1:
+    item: GUNPOWDER
+    initial-quantity: 2
+    increase-rate: 1
+  offer2:
+    item: GUNPOWDER
+    initial-quantity: 2
+    increase-rate: 2
+  offer3:
+    item: DIRT
+    initial-quantity: 20
+    increase-rate: 10
+  offer4:
+    item: COBBLESTONE
+    initial-quantity: 20
+    increase-rate: 10
+  offer5:
+    item: SAND
+    initial-quantity: 20
+    increase-rate: 10
+  offer6:
+    item: GRAVEL
+    initial-quantity: 10
+    increase-rate: 5
+  offer7:
+    item: OAK_PLANKS
+    initial-quantity: 10
+    increase-rate: 15
+  offer8:
+    item: BIRCH_PLANKS
+    initial-quantity: 10
+    increase-rate: 15
+  offer9:
+    item: SPRUCE_PLANKS
+    initial-quantity: 10
+    increase-rate: 15

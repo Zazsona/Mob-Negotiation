@@ -1,14 +1,15 @@
 package com.zazsona.mobnegotiation.model;
 
 import com.zazsona.mobnegotiation.MobNegotiationPlugin;
+import org.bukkit.Material;
+import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.potion.PotionEffectType;
 
 import java.io.*;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class PluginConfig
@@ -24,9 +25,18 @@ public class PluginConfig
     public static final String CFG_MOB_CHAT_TAG_KEY = "mob-chat-tag";
     public static final String CFG_ALERT_MSGS_KEY = "alert-messages";
 
-    private static final String PWR_FILE = "powers.yml";
+    public static final String PWR_FILE = "powers.yml";
     public static final String PWR_VERSION_KEY = "version";
     private static final HashMap<EntityType, PotionEffectType> entityPowersMap = new HashMap<>();
+
+    public static final String ITEM_FILE = "items.yml";
+    public static final String ITEM_VERSION_KEY = "version";
+    public static final String ITEM_ITEM_KEY = "item";
+    public static final String ITEM_INITIAL_QUANTITY_KEY = "initial-quantity";
+    public static final String ITEM_INCREASE_RATE_KEY = "increase-rate";
+
+    private static Logger logger;
+    private static String dataFolderDir;
 
     /**
      * Crates and loads configs as required.
@@ -34,13 +44,18 @@ public class PluginConfig
      */
     public static void initialiseConfigs(Plugin plugin) throws IOException
     {
+        logger = plugin.getLogger();
+        dataFolderDir = plugin.getDataFolder().getAbsolutePath();
         plugin.getConfig().options().copyDefaults(true);
         plugin.getConfig().options().copyHeader(true);
         plugin.saveConfig();
 
-        File powerFileDir = new File(plugin.getDataFolder().getAbsolutePath()+"/"+PWR_FILE);
+        File powerFileDir = new File(dataFolderDir+"/"+PWR_FILE);
         updateConfigFile(PWR_FILE, PWR_VERSION_KEY, powerFileDir, PWR_VERSION_KEY);
         loadEntityPowers(plugin.getLogger(), powerFileDir, PWR_VERSION_KEY);
+
+        File itemFileDir = new File(dataFolderDir+"/"+ITEM_FILE);
+        updateConfigFile(ITEM_FILE, ITEM_VERSION_KEY, itemFileDir, ITEM_VERSION_KEY);
     }
 
     /**
@@ -271,6 +286,33 @@ public class PluginConfig
     public static PotionEffectType getOfferedPower(EntityType entity)
     {
         return entityPowersMap.getOrDefault(entity, null);
+    }
+
+    /**
+     * Gets the item offers for by this entity
+     * @param entity the entity to get the paired offers for
+     * @return the offers available in an unmodifiable list, may be empty
+     */
+    public static List<ItemOffer> getItemOffers(EntityType entity)
+    {
+        File itemFileDir = new File(dataFolderDir+"/"+ITEM_FILE);
+        YamlConfiguration itemsConfig = YamlConfiguration.loadConfiguration(itemFileDir);
+        String entityKey = entity.toString().toLowerCase();
+        ConfigurationSection offersConfiguration = itemsConfig.getConfigurationSection(entityKey);
+        ArrayList<ItemOffer> offers = new ArrayList<>();
+        for (String key : offersConfiguration.getKeys(false))
+        {
+            ConfigurationSection offerConfiguration = offersConfiguration.getConfigurationSection(key);
+            String itemName = offerConfiguration.getString(ITEM_ITEM_KEY);
+            Material item = Material.matchMaterial(itemName);
+            int initialQuantity = offerConfiguration.getInt(ITEM_INITIAL_QUANTITY_KEY);
+            int increaseRate = offerConfiguration.getInt(ITEM_INCREASE_RATE_KEY);
+            if (item != null && initialQuantity > 0)
+                offers.add(new ItemOffer(item, initialQuantity, increaseRate));
+            else
+                logger.warning(String.format("Invalid offer configuration for %s, ignoring...", entity));
+        }
+        return Collections.unmodifiableList(offers);
     }
 
     /**
