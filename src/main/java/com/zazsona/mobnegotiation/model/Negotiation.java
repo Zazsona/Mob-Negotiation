@@ -17,6 +17,7 @@ import org.bukkit.block.Block;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.Vector;
 
 import java.security.InvalidParameterException;
@@ -29,6 +30,9 @@ public class Negotiation
     protected final String ITEM_TEXT = "I want items.";
     protected final String ATTACK_TEXT = "All Out Attack";
     protected final String CANCEL_TEXT = "Return to Battle";
+
+    protected final String ACCEPT_OFFER_TEXT = "I'll take it.";
+    protected final String DENY_OFFER_TEXT = "You can do better than that.";
 
     protected String negotiationId;
     protected Player player;
@@ -313,7 +317,8 @@ public class Negotiation
             }
             else if (responseText.equals(ITEM_TEXT))
             {
-                stop(NegotiationState.FINISHED_ITEM);
+                this.action = createItemNegotiationAction();
+                this.action.execute();
             }
             else if (responseText.equals(ATTACK_TEXT))
             {
@@ -325,6 +330,14 @@ public class Negotiation
         {
             PowerNegotiationAction powerNegotiationAction = (PowerNegotiationAction) action;
             powerNegotiationAction.nextNode(responseText);
+        }
+        else if (state == NegotiationState.ACTIVE_ITEM && action instanceof ItemNegotiationAction)
+        {
+            ItemNegotiationAction itemNegotiationAction = (ItemNegotiationAction) action;
+            if (responseText.equals(ACCEPT_OFFER_TEXT))
+                itemNegotiationAction.acceptOffer();
+            else if (responseText.equals(DENY_OFFER_TEXT))
+                itemNegotiationAction.denyOffer();
         }
         else if (this.prompt != null)
         {
@@ -390,13 +403,73 @@ public class Negotiation
             {
                 PowerNegotiationAction pnAction = (PowerNegotiationAction) action;
                 pnAction.removeListener(this);
-                NegotiationState endState = (pnAction.getGivenPowers().size() > 0) ? NegotiationState.FINISHED_POWER_GIVEN : NegotiationState.FINISHED_POWER_REJECTED;
-                if (endState == NegotiationState.FINISHED_POWER_GIVEN)
+                boolean powerGiven = pnAction.getGivenPowers().size() > 0;
+                if (powerGiven)
                     executeMobExit();
-                stop(endState);
+                stop(NegotiationState.FINISHED_POWER);
             }
         });
         return powerNegotiationAction;
+    }
+
+    /**
+     * Creates a new {@link ItemNegotiationAction} with relevant listeners for updating negotiation state.
+     * @return the action
+     */
+    private ItemNegotiationAction createItemNegotiationAction()
+    {
+        ItemNegotiationAction itemNegotiationAction = new ItemNegotiationAction(player, mob);
+        itemNegotiationAction.addListener(new IItemNegotiationActionListener()
+        {
+            private boolean initialOfferMade = true;
+            private OfferState offerState;
+
+            @Override
+            public void onActionStart(IAction action)
+            {
+                state = NegotiationState.ACTIVE_ITEM;
+                initialOfferMade = false;
+                updateStateListeners();
+            }
+
+            @Override
+            public void onOfferUpdated(ItemNegotiationAction action, OfferState state, ItemStack offeredStack)
+            {
+                offerState = state;
+                if (state == OfferState.PENDING)
+                {
+                    String mobMessage = (initialOfferMade) ? script.getFurtherItemOfferMessage().getVariant(mobPersonality) : script.getInitialItemOfferMessage().getVariant(mobPersonality);
+                    initialOfferMade = true;
+                    ArrayList<NegotiationResponse> responses = new ArrayList<>();
+                    responses.add(new NegotiationResponse(ACCEPT_OFFER_TEXT, NegotiationResponseType.SPEECH));
+                    responses.add(new NegotiationResponse(DENY_OFFER_TEXT, NegotiationResponseType.SPEECH));
+                    responses.add(new NegotiationResponse(CANCEL_TEXT, NegotiationResponseType.CANCEL));
+                    prompt = new NegotiationPrompt(mobMessage, Mood.NEUTRAL, responses);
+                    updatePromptListeners(prompt);
+                }
+            }
+
+            @Override
+            public void onActionComplete(IAction action)
+            {
+                action.removeListener(this);
+                if (offerState == OfferState.ACCEPTED)
+                {
+                    String mobMessage = script.getAcceptedItemOfferMessage().getVariant(mobPersonality);
+                    prompt = new NegotiationPrompt(mobMessage, Mood.HAPPY, null);
+                    updatePromptListeners(prompt);
+                    executeMobExit();
+                }
+                else if (offerState == OfferState.DENIED)
+                {
+                    String mobMessage = script.getRefuseItemDemandMessage().getVariant(mobPersonality);
+                    prompt = new NegotiationPrompt(mobMessage, Mood.ANGRY, null);
+                    updatePromptListeners(prompt);
+                }
+                stop(NegotiationState.FINISHED_ITEM);
+            }
+        });
+        return itemNegotiationAction;
     }
 
     /**

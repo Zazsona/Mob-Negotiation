@@ -2,6 +2,7 @@ package com.zazsona.mobnegotiation.controller;
 
 import com.zazsona.mobnegotiation.model.*;
 import com.zazsona.mobnegotiation.model.action.IAction;
+import com.zazsona.mobnegotiation.model.action.ItemNegotiationAction;
 import com.zazsona.mobnegotiation.model.action.PowerNegotiationAction;
 import com.zazsona.mobnegotiation.repository.ICooldownRespository;
 import com.zazsona.mobnegotiation.repository.INegotiationRepository;
@@ -21,6 +22,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
+import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -99,13 +101,16 @@ public class NegotiationController implements Listener
         negotiationMenu.setHeaderText(headerText);
 
         ArrayList<NegotiationResponse> responses = prompt.getResponses();
-        for (NegotiationResponse response : responses)
+        if (responses != null)
         {
-            String icon = getResponseTypeIcon(response.getType());
-            ChatColor colour = getResponseTypeColour(response.getType());
-            NegotiationButton button = new NegotiationButton(response.getText(), icon, colour, negotiationMenu);
-            button.addListener((clickedButton -> handleButtonClick(negotiationMenu, negotiation, response)));
-            negotiationMenu.addChild(button);
+            for (NegotiationResponse response : responses)
+            {
+                String icon = getResponseTypeIcon(response.getType());
+                ChatColor colour = getResponseTypeColour(response.getType());
+                NegotiationButton button = new NegotiationButton(response.getText(), icon, colour, negotiationMenu);
+                button.addListener((clickedButton -> handleButtonClick(negotiationMenu, negotiation, response)));
+                negotiationMenu.addChild(button);
+            }
         }
         menuMap.put(negotiation, negotiationMenu);
         Mob mob = negotiation.getMob();
@@ -214,6 +219,19 @@ public class NegotiationController implements Listener
                     String formattedPowerName = WordUtils.capitalizeFully(powerName.replace("_", " "));
                     line = line.replace(POWER_PLACEHOLDER_TEXT, formattedPowerName);
                 }
+            }
+        }
+        if (line.contains(ITEM_PLACEHOLDER_TEXT))
+        {
+            IAction action = negotiation.getAction();
+            if (action instanceof ItemNegotiationAction)
+            {
+                ItemNegotiationAction inAction = (ItemNegotiationAction) action;
+                ItemStack stack = inAction.getOfferStack();
+                String formattedItemName = WordUtils.capitalizeFully(stack.getType().toString().replace("_", " "));
+                String formattedItemQuantity = String.format("x%s", inAction.getCurrentOfferQuantity());
+                String formattedText = formattedItemQuantity + " " + formattedItemName;
+                line = line.replace(ITEM_PLACEHOLDER_TEXT, formattedText);
             }
         }
         return line;
