@@ -14,6 +14,8 @@ import com.zazsona.mobnegotiation.view.interfaces.IClickableNegotiationView;
 import com.zazsona.mobnegotiation.view.interfaces.INegotiationView;
 import com.zazsona.mobnegotiation.view.interfaces.IViewInteractionExecutor;
 import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.hover.content.Text;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Mob;
@@ -31,6 +33,7 @@ import java.util.Random;
 
 public class NegotiationController implements Listener
 {
+    private static final String HOVER_HINT_TEXT = "Click to Select";
     private static final String PERSONALITY_PLACEHOLDER_TEXT = "%PERSONALITY%";
     private static final String NAME_PLACEHOLDER_TEXT = "%NAME%";
     private static final String POWER_PLACEHOLDER_TEXT = "%POWER%";
@@ -107,7 +110,8 @@ public class NegotiationController implements Listener
             {
                 String icon = getResponseTypeIcon(response.getType());
                 ChatColor colour = getResponseTypeColour(response.getType());
-                NegotiationButton button = new NegotiationButton(response.getText(), icon, colour, negotiationMenu);
+                HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(HOVER_HINT_TEXT));
+                NegotiationButton button = new NegotiationButton(response.getText(), icon, colour, negotiationMenu, hoverEvent);
                 button.addListener((clickedButton -> handleButtonClick(negotiationMenu, negotiation, response)));
                 negotiationMenu.addChild(button);
             }
