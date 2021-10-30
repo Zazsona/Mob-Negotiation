@@ -17,6 +17,12 @@
     "irritable": "Don't be ssso cocky. Take this %ITEM%.",
     "gloomy": "Oh... what about this %ITEM%?"
   },
+  "acceptedItemOfferMessage": {
+    "upbeat": "Sssweet. Have fun with it!",
+    "timid": "Here it isss...",
+    "irritable": "Expensssive tastes... Fine.",
+    "gloomy": "Enjoy. It'sss worth more than me anyway..."
+  },
   "refuseItemDemandMessage": {
     "upbeat": "Inssstead, let'sss party.",
     "timid": "Sssorry, I can't offer any more.",

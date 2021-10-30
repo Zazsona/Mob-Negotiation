@@ -10,6 +10,7 @@ public class NegotiationScript
     private PersonalityVariant<String> greetingMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
     private PersonalityVariant<String> initialItemOfferMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
     private PersonalityVariant<String> furtherItemOfferMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
+    private PersonalityVariant<String> acceptedItemOfferMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
     private PersonalityVariant<String> refuseItemDemandMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
     private PersonalityVariant<String> powerSuccessMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
     private List<NegotiationScriptNode> powerTrees = new ArrayList<>();
@@ -19,11 +20,12 @@ public class NegotiationScript
 
     }
 
-    public NegotiationScript(PersonalityVariant<String> greetingMessage, PersonalityVariant<String> initialItemOfferMessage, PersonalityVariant<String> furtherItemOfferMessage, PersonalityVariant<String> refuseItemDemandMessage, PersonalityVariant<String> powerSuccessMessage, List<NegotiationScriptNode> powerTrees)
+    public NegotiationScript(PersonalityVariant<String> greetingMessage, PersonalityVariant<String> initialItemOfferMessage, PersonalityVariant<String> furtherItemOfferMessage, PersonalityVariant<String> acceptedItemOfferMessage, PersonalityVariant<String> refuseItemDemandMessage, PersonalityVariant<String> powerSuccessMessage, List<NegotiationScriptNode> powerTrees)
     {
         this.greetingMessage = greetingMessage;
         this.initialItemOfferMessage = initialItemOfferMessage;
         this.furtherItemOfferMessage = furtherItemOfferMessage;
+        this.acceptedItemOfferMessage = acceptedItemOfferMessage;
         this.refuseItemDemandMessage = refuseItemDemandMessage;
         this.powerSuccessMessage = powerSuccessMessage;
         this.powerTrees = powerTrees;
@@ -78,6 +80,23 @@ public class NegotiationScript
     public void setFurtherItemOfferMessage(PersonalityVariant<String> furtherItemOfferMessage)
     {
         this.furtherItemOfferMessage = furtherItemOfferMessage;
+    }
+
+    /**
+     * Gets acceptedItemOfferMessage
+     * @return acceptedItemOfferMessage
+     */
+    public PersonalityVariant<String> getAcceptedItemOfferMessage()
+    {
+        return acceptedItemOfferMessage;
+    }
+
+    /**
+     * Sets acceptedItemOfferMessage
+     */
+    public void setAcceptedItemOfferMessage(PersonalityVariant<String> acceptedItemOfferMessage)
+    {
+        this.acceptedItemOfferMessage = acceptedItemOfferMessage;
     }
 
     /**
