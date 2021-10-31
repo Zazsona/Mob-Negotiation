@@ -97,6 +97,7 @@ public class NegotiationController implements Listener
                     negotiation.addListener(promptListener);
                     negotiation.addListener(stateListener);
                     negotiationRepo.addNegotiation(negotiation);
+                    MetricsManager.getInstance().trackNegotiation(negotiation);
                     boolean successfulStart = negotiation.start();
                     if (!successfulStart)
                     {
