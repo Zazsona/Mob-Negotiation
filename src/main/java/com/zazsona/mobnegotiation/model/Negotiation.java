@@ -452,6 +452,7 @@ public class Negotiation
         itemNegotiationAction.addListener(new IItemNegotiationActionListener()
         {
             private boolean initialOfferMade = true;
+            private boolean useVariantFurtherOfferText = false;
             private OfferState offerState;
 
             @Override
@@ -468,7 +469,12 @@ public class Negotiation
                 offerState = state;
                 if (state == OfferState.PENDING)
                 {
-                    String mobMessage = (initialOfferMade) ? script.getFurtherItemOfferMessage().getVariant(mobPersonality) : script.getInitialItemOfferMessage().getVariant(mobPersonality);
+                    String mobMessage = script.getInitialItemOfferMessage().getVariant(mobPersonality);
+                    if (initialOfferMade)
+                    {
+                        mobMessage = (useVariantFurtherOfferText) ? script.getFurtherItemOfferMessageVariant().getVariant(mobPersonality) : script.getFurtherItemOfferMessage().getVariant(mobPersonality);
+                        useVariantFurtherOfferText = !useVariantFurtherOfferText;
+                    }
                     initialOfferMade = true;
                     ArrayList<NegotiationResponse> responses = new ArrayList<>();
                     responses.add(new NegotiationResponse(ACCEPT_OFFER_TEXT, NegotiationResponseType.SPEECH));
@@ -512,6 +518,7 @@ public class Negotiation
         moneyNegotiationAction.addListener(new IMoneyNegotiationActionListener()
         {
             private boolean initialOfferMade = true;
+            private boolean useVariantFurtherOfferText = false;
             private OfferState offerState;
 
             @Override
@@ -528,7 +535,12 @@ public class Negotiation
                 offerState = state;
                 if (state == OfferState.PENDING)
                 {
-                    String mobMessage = (initialOfferMade) ? script.getFurtherMoneyOfferMessage().getVariant(mobPersonality) : script.getInitialMoneyOfferMessage().getVariant(mobPersonality);
+                    String mobMessage = script.getInitialMoneyOfferMessage().getVariant(mobPersonality);
+                    if (initialOfferMade)
+                    {
+                        mobMessage = (useVariantFurtherOfferText) ? script.getFurtherMoneyOfferMessageVariant().getVariant(mobPersonality) : script.getFurtherMoneyOfferMessage().getVariant(mobPersonality);
+                        useVariantFurtherOfferText = !useVariantFurtherOfferText;
+                    }
                     initialOfferMade = true;
                     ArrayList<NegotiationResponse> responses = new ArrayList<>();
                     responses.add(new NegotiationResponse(ACCEPT_OFFER_TEXT, NegotiationResponseType.SPEECH));

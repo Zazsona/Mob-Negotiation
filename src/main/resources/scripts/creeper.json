@@ -12,10 +12,16 @@
     "gloomy": "Thisss %ITEM% is probably the best thing I have..."
   },
   "furtherItemOfferMessage": {
-    "upbeat": "Alright, let'sss upgrade that to this %ITEM%.",
+    "upbeat": "Alright, let'sss upgrade that to thisss %ITEM%.",
     "timid": "What!? How about thisss %ITEM%?",
     "irritable": "Don't be ssso cocky. Take this %ITEM%.",
     "gloomy": "Oh... what about this %ITEM%?"
+  },
+  "furtherItemOfferMessageVariant": {
+    "upbeat": "More? Here'sss a ssspecial just for you then, thisss %ITEM%.",
+    "timid": "I'm not sssure how much more I have, isss this %ITEM% enough?",
+    "irritable": "Persssissstent, aren't we? %ITEM%?",
+    "gloomy": "Sssucks to be me... isss this %ITEM% enough?"
   },
   "acceptedItemOfferMessage": {
     "upbeat": "Sssweet. Have fun with it!",
@@ -40,6 +46,12 @@
     "timid": "You desssire more? Here's %MONEY%.",
     "irritable": "...Oh? Isss that ssstill not enough? You're insufferable. Take thisss %MONEY%.",
     "gloomy": "No richesss for Creepersss... Here'sss %MONEY%."
+  },
+  "furtherMoneyOfferMessageVariant": {
+    "upbeat": "Alright, friendsss and family ssspecial: %MONEY%.",
+    "timid": "I'll be in sssoo much trouble giving you %MONEY%...",
+    "irritable": "%MONEY%. Sssilence now.",
+    "gloomy": "More casssh down the drain... Take %MONEY%."
   },
   "acceptedMoneyOfferMessage": {
     "upbeat": "That'sss sssorted then. Sssee you!",

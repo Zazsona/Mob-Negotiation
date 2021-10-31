@@ -3,6 +3,7 @@ version: 1.0
 author: Zazsona
 main: com.zazsona.mobnegotiation.MobNegotiationPlugin
 api-version: 1.17
+depend: [Vault]
 commands:
   __negotiation_response__:
     description: Used for internal logic.
