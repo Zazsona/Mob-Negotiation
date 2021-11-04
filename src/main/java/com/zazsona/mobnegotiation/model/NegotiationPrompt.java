@@ -1,18 +1,14 @@
 package com.zazsona.mobnegotiation.model;
 
-import java.util.ArrayList;
-
 public class NegotiationPrompt
 {
     private String mobMessage;
     private Mood mobMood;
-    private ArrayList<NegotiationResponse> responses;
 
-    public NegotiationPrompt(String mobMessage, Mood mood, ArrayList<NegotiationResponse> responses)
+    public NegotiationPrompt(String mobMessage, Mood mood)
     {
         this.mobMessage = mobMessage;
         this.mobMood = mood;
-        this.responses = responses;
     }
 
     /**
@@ -31,14 +27,5 @@ public class NegotiationPrompt
     public Mood getMobMood()
     {
         return mobMood;
-    }
-
-    /**
-     * Gets responses
-     * @return responses
-     */
-    public ArrayList<NegotiationResponse> getResponses()
-    {
-        return responses;
     }
 }
