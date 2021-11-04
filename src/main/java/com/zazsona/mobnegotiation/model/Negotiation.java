@@ -309,8 +309,8 @@ public class Negotiation
 
         if (responses.size() > 0)
         {
-            this.prompt = new NegotiationPrompt(mobMessage, Mood.NEUTRAL, responses);
-            updatePromptListeners(this.prompt);
+            this.prompt = new RespondableNegotiationPrompt(mobMessage, Mood.NEUTRAL, responses);
+            updatePromptListeners(this.prompt, false);
         }
         else
             throw new ConfigurationException("All negotiation options are disabled.");
@@ -330,7 +330,7 @@ public class Negotiation
                 this.action = createPowerNegotiationAction();
                 this.action.execute();
                 this.prompt = convertScriptNodeToPrompt(((PowerNegotiationAction) this.action).getCurrentNode());
-                updatePromptListeners(this.prompt);
+                updatePromptListeners(this.prompt, false);
             }
             else if (responseText.equals(ITEM_TEXT) && PluginConfig.isItemNegotiationEnabled())
             {
@@ -372,7 +372,7 @@ public class Negotiation
         else if (this.prompt != null)
         {
             this.prompt = null;
-            updatePromptListeners(null);
+            updatePromptListeners(null, false);
         }
     }
 
@@ -424,7 +424,7 @@ public class Negotiation
                 if (node != null)
                 {
                     prompt = convertScriptNodeToPrompt(node);
-                    updatePromptListeners(prompt);
+                    updatePromptListeners(prompt, false);
                 }
             }
 
@@ -480,8 +480,8 @@ public class Negotiation
                     responses.add(new NegotiationResponse(ACCEPT_OFFER_TEXT, NegotiationResponseType.SPEECH));
                     responses.add(new NegotiationResponse(DENY_OFFER_TEXT, NegotiationResponseType.SPEECH));
                     responses.add(new NegotiationResponse(CANCEL_TEXT, NegotiationResponseType.CANCEL));
-                    prompt = new NegotiationPrompt(mobMessage, Mood.NEUTRAL, responses);
-                    updatePromptListeners(prompt);
+                    prompt = new RespondableNegotiationPrompt(mobMessage, Mood.NEUTRAL, responses);
+                    updatePromptListeners(prompt, false);
                 }
             }
 
@@ -492,15 +492,15 @@ public class Negotiation
                 if (offerState == OfferState.ACCEPTED)
                 {
                     String mobMessage = script.getAcceptedItemOfferMessage().getVariant(mobPersonality);
-                    prompt = new NegotiationPrompt(mobMessage, Mood.HAPPY, null);
-                    updatePromptListeners(prompt);
+                    prompt = new NegotiationPrompt(mobMessage, Mood.HAPPY);
+                    updatePromptListeners(prompt, false);
                     executeMobExit();
                 }
                 else if (offerState == OfferState.DENIED)
                 {
                     String mobMessage = script.getRefuseItemDemandMessage().getVariant(mobPersonality);
-                    prompt = new NegotiationPrompt(mobMessage, Mood.ANGRY, null);
-                    updatePromptListeners(prompt);
+                    prompt = new NegotiationPrompt(mobMessage, Mood.ANGRY);
+                    updatePromptListeners(prompt, false);
                 }
                 stop(NegotiationState.FINISHED_ITEM);
             }
@@ -546,8 +546,8 @@ public class Negotiation
                     responses.add(new NegotiationResponse(ACCEPT_OFFER_TEXT, NegotiationResponseType.SPEECH));
                     responses.add(new NegotiationResponse(DENY_OFFER_TEXT, NegotiationResponseType.SPEECH));
                     responses.add(new NegotiationResponse(CANCEL_TEXT, NegotiationResponseType.CANCEL));
-                    prompt = new NegotiationPrompt(mobMessage, Mood.NEUTRAL, responses);
-                    updatePromptListeners(prompt);
+                    prompt = new RespondableNegotiationPrompt(mobMessage, Mood.NEUTRAL, responses);
+                    updatePromptListeners(prompt, false);
                 }
             }
 
@@ -558,15 +558,15 @@ public class Negotiation
                 if (offerState == OfferState.ACCEPTED)
                 {
                     String mobMessage = script.getAcceptedMoneyOfferMessage().getVariant(mobPersonality);
-                    prompt = new NegotiationPrompt(mobMessage, Mood.HAPPY, null);
-                    updatePromptListeners(prompt);
+                    prompt = new NegotiationPrompt(mobMessage, Mood.HAPPY);
+                    updatePromptListeners(prompt, false);
                     executeMobExit();
                 }
                 else if (offerState == OfferState.DENIED)
                 {
                     String mobMessage = script.getRefuseMoneyDemandMessage().getVariant(mobPersonality);
-                    prompt = new NegotiationPrompt(mobMessage, Mood.ANGRY, null);
-                    updatePromptListeners(prompt);
+                    prompt = new NegotiationPrompt(mobMessage, Mood.ANGRY);
+                    updatePromptListeners(prompt, false);
                 }
                 stop(NegotiationState.FINISHED_MONEY);
             }
@@ -616,7 +616,7 @@ public class Negotiation
                 responses.add(new NegotiationResponse(responseNode.getText(), NegotiationResponseType.SPEECH));
             responses.add(new NegotiationResponse(CANCEL_TEXT, NegotiationResponseType.CANCEL));
         }
-        return new NegotiationPrompt(scriptNode.getText(), scriptNode.getMood(), responses);
+        return new RespondableNegotiationPrompt(scriptNode.getText(), scriptNode.getMood(), responses);
     }
 
     /**
@@ -662,7 +662,7 @@ public class Negotiation
     /**
      * Notifies all subscribed listeners of a state update
      */
-    private void updateStateListeners()
+    protected void updateStateListeners()
     {
         for (int i = stateListeners.size() - 1; i >= 0; i--)
         {
@@ -680,13 +680,13 @@ public class Negotiation
     /**
      * Notifies all subscribed listeners of a prompt update
      */
-    private void updatePromptListeners(NegotiationPrompt prompt)
+    protected void updatePromptListeners(NegotiationPrompt prompt, boolean passive)
     {
         for (int i = promptUpdateListeners.size() - 1; i >= 0; i--)
         {
             try
             {
-                promptUpdateListeners.get(i).onNegotiationPromptChanged(this, prompt);
+                promptUpdateListeners.get(i).onNegotiationPromptChanged(this, prompt, passive);
             }
             catch (Exception e)
             {

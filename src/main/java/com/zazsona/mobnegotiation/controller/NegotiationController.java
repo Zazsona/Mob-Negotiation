@@ -109,30 +109,35 @@ public class NegotiationController implements Listener
         }
     }
 
-    private void displayPrompt(Negotiation negotiation, NegotiationPrompt prompt)
+    private void displayPrompt(Negotiation negotiation, NegotiationPrompt prompt, boolean passive)
     {
         if (prompt == null)
             return;
-        if (negotiation.getState() == NegotiationState.STARTED)
-            displayAlertTitle(negotiation.getPlayer());
         NegotiationMenu negotiationMenu = new NegotiationMenu(interactionExecutor);
         String headerText = (prompt.getMobMessage() != null) ? createHeaderText(negotiation, prompt) : null;
         negotiationMenu.setHeaderText(headerText);
 
-        ArrayList<NegotiationResponse> responses = prompt.getResponses();
-        if (responses != null)
+        if (!passive)
         {
-            for (NegotiationResponse response : responses)
+            if (negotiation.getState() == NegotiationState.STARTED)
+                displayAlertTitle(negotiation.getPlayer());
+
+            if (prompt instanceof RespondableNegotiationPrompt)
             {
-                String icon = getResponseTypeIcon(response.getType());
-                ChatColor colour = getResponseTypeColour(response.getType());
-                HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(HOVER_HINT_TEXT));
-                NegotiationButton button = new NegotiationButton(response.getText(), icon, colour, negotiationMenu, hoverEvent);
-                button.addListener((clickedButton -> handleButtonClick(negotiationMenu, negotiation, response)));
-                negotiationMenu.addChild(button);
+                RespondableNegotiationPrompt respondablePrompt = (RespondableNegotiationPrompt) prompt;
+                ArrayList<NegotiationResponse> responses = respondablePrompt.getResponses();
+                for (NegotiationResponse response : responses)
+                {
+                    String icon = getResponseTypeIcon(response.getType());
+                    ChatColor colour = getResponseTypeColour(response.getType());
+                    HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(HOVER_HINT_TEXT));
+                    NegotiationButton button = new NegotiationButton(response.getText(), icon, colour, negotiationMenu, hoverEvent);
+                    button.addListener((clickedButton -> handleButtonClick(negotiationMenu, negotiation, response)));
+                    negotiationMenu.addChild(button);
+                }
             }
+            menuMap.put(negotiation, negotiationMenu);
         }
-        menuMap.put(negotiation, negotiationMenu);
         Mob mob = negotiation.getMob();
         Player player = negotiation.getPlayer();
         player.playSound(mob.getLocation(), taskSoundsRepo.getSound(mob.getType()), 1.0f, 1.0f);
