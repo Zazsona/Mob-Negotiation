@@ -13,6 +13,7 @@ public class TimedNegotiation extends Negotiation
 {
     protected BukkitTask idleTimer;
     protected int idleTimerTicks;
+    protected BukkitTask idleReminderTimer;
 
     public TimedNegotiation(Player player, Mob mob, INegotiationEntityEligibilityChecker eligibilityChecker, ICooldownRespository cooldownRespository, int idleTimerTicks)
     {
@@ -25,7 +26,7 @@ public class TimedNegotiation extends Negotiation
     {
         stopIdleTimer();
         super.beginNegotiation();
-        if (state.isTerminating() && prompt.getResponses().size() > 0)
+        if (!state.isTerminating() && prompt instanceof RespondableNegotiationPrompt && ((RespondableNegotiationPrompt) prompt).getResponses().size() > 0)
             startIdleTimer();
     }
 
@@ -34,7 +35,7 @@ public class TimedNegotiation extends Negotiation
     {
         stopIdleTimer();
         super.nextPrompt(response);
-        if (!state.isTerminating() && prompt.getResponses().size() > 0)
+        if (!state.isTerminating() && prompt instanceof RespondableNegotiationPrompt && ((RespondableNegotiationPrompt) prompt).getResponses().size() > 0)
             startIdleTimer();
     }
 
@@ -52,10 +53,18 @@ public class TimedNegotiation extends Negotiation
     {
         stopIdleTimer();
         MobNegotiationPlugin plugin = MobNegotiationPlugin.getInstance();
+        idleReminderTimer = Bukkit.getScheduler().runTaskLater(plugin, () ->
+                                                               {
+                                                                   NegotiationPrompt prompt = new NegotiationPrompt(script.getIdleWarningMessage().getVariant(mobPersonality), Mood.NEUTRAL);
+                                                                   updatePromptListeners(prompt, true);
+                                                               }, Math.round(idleTimerTicks / 2.0f));
+
         idleTimer = Bukkit.getScheduler().runTaskLater(plugin, () ->
-        {
-            stop(NegotiationState.FINISHED_TIMEOUT);
-        }, idleTimerTicks);
+                                                       {
+                                                           this.prompt = new NegotiationPrompt(script.getIdleTimeoutMessage().getVariant(mobPersonality), Mood.ANGRY);
+                                                           updatePromptListeners(this.prompt, false);
+                                                           stop(NegotiationState.FINISHED_TIMEOUT);
+                                                       }, idleTimerTicks);
     }
 
     /**
@@ -65,5 +74,7 @@ public class TimedNegotiation extends Negotiation
     {
         if (idleTimer != null && !idleTimer.isCancelled())
             idleTimer.cancel();
+        if (idleReminderTimer != null && !idleReminderTimer.isCancelled())
+            idleReminderTimer.cancel();
     }
 }
