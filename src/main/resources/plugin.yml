@@ -7,3 +7,24 @@ softdepend: [Vault]
 commands:
   __negotiation_response__:
     description: Used for internal logic.
+permissions:
+  holdup.negotiation.*:
+    description: Allow all enabled negotiation actions
+    default: true
+    children:
+      holdup.negotiation.power: true
+      holdup.negotiation.money: true
+      holdup.negotiation.items: true
+      holdup.negotiation.attack: true
+  holdup.negotiation.power:
+    description: Allow the player to negotiate powers
+    default: true
+  holdup.negotiation.money:
+    description: Allow the player to negotiate for money
+    default: true
+  holdup.negotiation.items:
+    description: Allow the player to negotiate for items
+    default: true
+  holdup.negotiation.attack:
+    description: Allow the player to use ALl out Attack
+    default: true

@@ -1,6 +1,7 @@
 package com.zazsona.mobnegotiation.controller;
 
 import com.zazsona.mobnegotiation.MobNegotiationPlugin;
+import com.zazsona.mobnegotiation.Permissions;
 import com.zazsona.mobnegotiation.model.*;
 import com.zazsona.mobnegotiation.model.action.IAction;
 import com.zazsona.mobnegotiation.model.action.ItemNegotiationAction;
@@ -86,7 +87,7 @@ public class NegotiationController implements Listener
             if (mobRemainingHealth <= PluginConfig.getNegotiationHealthThreshold())
             {
                 double roll = (random.nextDouble() * 100);
-                if (roll < PluginConfig.getNegotiationRate() && !cooldownRepo.isPlayerInCooldown(player) && eligibilityChecker.canEntitiesNegotiate(player, mob))
+                if (roll < PluginConfig.getNegotiationRate() && Permissions.hasNegotiationPermission(player) && !cooldownRepo.isPlayerInCooldown(player) && eligibilityChecker.canEntitiesNegotiate(player, mob))
                 {
                     if (mobRemainingHealth <= 0.0f)
                     {

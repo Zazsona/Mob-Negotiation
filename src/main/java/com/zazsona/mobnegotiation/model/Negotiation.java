@@ -1,6 +1,7 @@
 package com.zazsona.mobnegotiation.model;
 
 import com.zazsona.mobnegotiation.MobNegotiationPlugin;
+import com.zazsona.mobnegotiation.Permissions;
 import com.zazsona.mobnegotiation.model.action.*;
 import com.zazsona.mobnegotiation.model.entitystate.EntityActionLockListener;
 import com.zazsona.mobnegotiation.model.entitystate.EntityInvalidatedEventListener;
@@ -204,7 +205,7 @@ public class Negotiation
             beginNegotiation();
             return true;
         }
-        catch (InvalidParticipantsException e)
+        catch (InvalidParticipantsException | ConfigurationException e)
         {
             // This is an error we can handle without disturbing administrative users
             if (mob != null && mob.isValid())
@@ -296,17 +297,16 @@ public class Negotiation
 
         String mobMessage = script.getGreetingMessage().getVariant(mobPersonality);
         ArrayList<NegotiationResponse> responses = new ArrayList<>();
-        if (PluginConfig.isPowerNegotiationEnabled())
+        if (PluginConfig.isPowerNegotiationEnabled() && player.hasPermission(Permissions.NEGOTIATION_POWER))
             responses.add(new NegotiationResponse(POWER_TEXT, NegotiationResponseType.SPEECH));
-        if (PluginConfig.isItemNegotiationEnabled())
+        if (PluginConfig.isItemNegotiationEnabled() && player.hasPermission(Permissions.NEGOTIATION_ITEMS))
             responses.add(new NegotiationResponse(ITEM_TEXT, NegotiationResponseType.SPEECH));
-        if (PluginConfig.isMoneyNegotiationEnabled() && getEconomy() != null)
+        if (PluginConfig.isMoneyNegotiationEnabled() && player.hasPermission(Permissions.NEGOTIATION_MONEY) && getEconomy() != null)
             responses.add(new NegotiationResponse(MONEY_TEXT, NegotiationResponseType.SPEECH));
-        if (PluginConfig.isAllOutAttackEnabled())
+        if (PluginConfig.isAllOutAttackEnabled() && player.hasPermission(Permissions.NEGOTIATION_ATTACK))
             responses.add(new NegotiationResponse(ATTACK_TEXT, NegotiationResponseType.ATTACK));
         if (responses.size() > 0)
             responses.add(new NegotiationResponse(CANCEL_TEXT, NegotiationResponseType.CANCEL));
-
         if (responses.size() > 0)
         {
             this.prompt = new RespondableNegotiationPrompt(mobMessage, Mood.NEUTRAL, responses);
@@ -325,24 +325,24 @@ public class Negotiation
         }
         else if (state == NegotiationState.STARTED)
         {
-            if (responseText.equals(POWER_TEXT) && PluginConfig.isPowerNegotiationEnabled())
+            if (responseText.equals(POWER_TEXT))
             {
                 this.action = createPowerNegotiationAction();
                 this.action.execute();
                 this.prompt = convertScriptNodeToPrompt(((PowerNegotiationAction) this.action).getCurrentNode());
                 updatePromptListeners(this.prompt, false);
             }
-            else if (responseText.equals(ITEM_TEXT) && PluginConfig.isItemNegotiationEnabled())
+            else if (responseText.equals(ITEM_TEXT))
             {
                 this.action = createItemNegotiationAction();
                 this.action.execute();
             }
-            else if (responseText.equals(MONEY_TEXT) && PluginConfig.isMoneyNegotiationEnabled() && getEconomy() != null)
+            else if (responseText.equals(MONEY_TEXT) && getEconomy() != null)
             {
                 this.action = createMoneyNegotiationAction();
                 this.action.execute();
             }
-            else if (responseText.equals(ATTACK_TEXT) && PluginConfig.isAllOutAttackEnabled())
+            else if (responseText.equals(ATTACK_TEXT))
             {
                 this.action = createAttackAction();
                 this.action.execute();
