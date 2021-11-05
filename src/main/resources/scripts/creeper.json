@@ -5,6 +5,18 @@
     "irritable": "Ssstop! Ssstop already! What will make you go away?",
     "gloomy": "Look, jussst... End me."
   },
+  "idleWarningMessage": {
+    "upbeat": "Anybody home? Sssay sssomethingg!",
+    "timid": "Sssuch sssilence...",
+    "irritable": "Ssspeak up already.",
+    "gloomy": "Sssolemn silence..."
+  },
+  "idleTimeoutMessage": {
+    "upbeat": "Too ssscared to talk? Let'sss have sssome fun.",
+    "timid": "I can't take thisss...",
+    "irritable": "My patience hasss worn out.",
+    "gloomy": "Ssso you won't even talk to me anymore, very well."
+  },
   "initialItemOfferMessage": {
     "upbeat": "I just ssso happen to have thisss %ITEM% ssspare.",
     "timid": "Isss thisss %ITEM% enough?",

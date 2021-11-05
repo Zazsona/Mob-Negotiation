@@ -8,6 +8,8 @@ public class NegotiationScript
     private static final String UNDEFINED_MSG = "No text.";
 
     private PersonalityVariant<String> greetingMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
+    private PersonalityVariant<String> idleWarningMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
+    private PersonalityVariant<String> idleTimeoutMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
     private PersonalityVariant<String> initialItemOfferMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
     private PersonalityVariant<String> furtherItemOfferMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
     private PersonalityVariant<String> furtherItemOfferMessageVariant = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
@@ -28,12 +30,14 @@ public class NegotiationScript
 
     }
 
-    public NegotiationScript(PersonalityVariant<String> greetingMessage,
+    public NegotiationScript(PersonalityVariant<String> greetingMessage, PersonalityVariant<String> idleWarningMessage, PersonalityVariant<String> idleTimeoutMessage,
                              PersonalityVariant<String> initialItemOfferMessage, PersonalityVariant<String> furtherItemOfferMessage, PersonalityVariant<String> furtherItemOfferMessageVariant, PersonalityVariant<String> acceptedItemOfferMessage, PersonalityVariant<String> refuseItemDemandMessage,
                              PersonalityVariant<String> initialMoneyOfferMessage, PersonalityVariant<String> furtherMoneyOfferMessage, PersonalityVariant<String> furtherMoneyOfferMessageVariant, PersonalityVariant<String> acceptedMoneyOfferMessage, PersonalityVariant<String> refuseMoneyDemandMessage,
                              PersonalityVariant<String> powerSuccessMessage, List<NegotiationScriptNode> powerTrees)
     {
         this.greetingMessage = greetingMessage;
+        this.idleWarningMessage = idleWarningMessage;
+        this.idleTimeoutMessage = idleTimeoutMessage;
         this.initialItemOfferMessage = initialItemOfferMessage;
         this.furtherItemOfferMessage = furtherItemOfferMessage;
         this.furtherItemOfferMessageVariant = furtherItemOfferMessageVariant;
@@ -65,6 +69,40 @@ public class NegotiationScript
     public void setGreetingMessage(PersonalityVariant<String> greetingMessage)
     {
         this.greetingMessage = greetingMessage;
+    }
+
+    /**
+     * Gets idleWarningMessage
+     * @return idleWarningMessage
+     */
+    public PersonalityVariant<String> getIdleWarningMessage()
+    {
+        return idleWarningMessage;
+    }
+
+    /**
+     * Sets idleWarningMessage
+     */
+    public void setIdleWarningMessage(PersonalityVariant<String> idleWarningMessage)
+    {
+        this.idleWarningMessage = idleWarningMessage;
+    }
+
+    /**
+     * Gets idleTimeoutMessage
+     * @return idleTimeoutMessage
+     */
+    public PersonalityVariant<String> getIdleTimeoutMessage()
+    {
+        return idleTimeoutMessage;
+    }
+
+    /**
+     * Sets idleTimeoutMessage
+     */
+    public void setIdleTimeoutMessage(PersonalityVariant<String> idleTimeoutMessage)
+    {
+        this.idleTimeoutMessage = idleTimeoutMessage;
     }
 
     /**
