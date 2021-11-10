@@ -154,7 +154,7 @@
       ],
       "children": [
         {
-          "text": "Ssso, have you ever heard of... A Creeper that buildsss?",
+          "text": "Ssso, conversssely, have you ever heard of a Creeper that buildsss?",
           "mood": "NEUTRAL",
           "responses": [
             {
@@ -223,7 +223,7 @@
           ]
         },
         {
-          "text": "At any rate, it seemsss your sssearch for power comesss from flawsss of the human?",
+          "text": "At any rate, you ssseek my power due to your human weaknessss?",
           "mood": "NEUTRAL",
           "responses": [
             {
@@ -248,7 +248,7 @@
               }
             },
             {
-              "text": "Humans are still less flawed than Creepers!",
+              "text": "Humans are still stronger than Creepers!",
               "successRates": {
                 "upbeat": 85.0,
                 "timid": 20.0,
@@ -287,6 +287,428 @@
                 "timid": "Then you'll have to excussse mine. I can't take speechesss.",
                 "irritable": "And I jussst found a reassson to blow you up.",
                 "gloomy": "And you don't trussst me to keep them sssecret? Very well."
+              }
+            }
+          ]
+        }
+      ]
+    },
+
+
+    {
+      "text": "My power? Why? You've already hit me hard...",
+      "mood": "NEUTRAL",
+      "responses": [
+        {
+          "text": "Sorry...",
+          "successRates": {
+            "upbeat": 15.0,
+            "timid": 85.0,
+            "irritable": 5.0,
+            "gloomy": 5.0
+          },
+          "successResponses": {
+            "upbeat": "Heh, don't worry about it.",
+            "timid": "No worriesss...",
+            "irritable": "Finally, sssome mannersss.",
+            "gloomy": "You don't need to feel sssorry for me."
+          },
+          "failureResponses": {
+            "upbeat": "I'll make you sssorry.",
+            "timid": "I'm sssorry for thisss...",
+            "irritable": "Apology denied.",
+            "gloomy": "Don't wassste your sssympathy on me."
+          }
+        },
+        {
+          "text": "It sounded like you enjoyed it.",
+          "successRates": {
+            "upbeat": 85.0,
+            "timid": 10.0,
+            "irritable": 5.0,
+            "gloomy": 5.0
+          },
+          "successResponses": {
+            "upbeat": "Maybe I did.",
+            "timid": "I have my interestsss...",
+            "irritable": "Yesss.",
+            "gloomy": "The pain remindsss me I'm alive."
+          },
+          "failureResponses": {
+            "upbeat": "I'll ssshow you sssomething I enjoy.",
+            "timid": "Not ssso much...",
+            "irritable": "No.",
+            "gloomy": "I have no joysss."
+          }
+        },
+        {
+          "text": "It's my only use for you.",
+          "successRates": {
+            "upbeat": 5.0,
+            "timid": 10.0,
+            "irritable": 85.0,
+            "gloomy": 5.0
+          },
+          "successResponses": {
+            "upbeat": "At leassst I have a ussse.",
+            "timid": "Very well...",
+            "irritable": "Fair enough.",
+            "gloomy": "Yeah..."
+          },
+          "failureResponses": {
+            "upbeat": "And I have none for you.",
+            "timid": "I don't think ssso...",
+            "irritable": "I have one for you.",
+            "gloomy": "I have no ussse."
+          }
+        }
+      ],
+      "children": [
+        {
+          "text": "Ssstill, it hurts...",
+          "mood": "NEUTRAL",
+          "responses": [
+            {
+              "text": "I really am sorry...",
+              "successRates": {
+                "upbeat": 15.0,
+                "timid": 85.0,
+                "irritable": 5.0,
+                "gloomy": 5.0
+              },
+              "successResponses": {
+                "upbeat": "Yeah, I get it.",
+                "timid": "Thanksss. That makesss it a little better.",
+                "irritable": "Underssstood.",
+                "gloomy": "You sssound sssincere..."
+              },
+              "failureResponses": {
+                "upbeat": "Let me cheer you up.",
+                "timid": "That'sss not enough...",
+                "irritable": "Let me bandage up with your sssorrys.",
+                "gloomy": "I have a sssorry life..."
+              }
+            },
+            {
+              "text": "Toughen up.",
+              "successRates": {
+                "upbeat": 5.0,
+                "timid": 10.0,
+                "irritable": 90.0,
+                "gloomy": 15.0
+              },
+              "successResponses": {
+                "upbeat": "Sssame to you.",
+                "timid": "I ssshould...",
+                "irritable": "Point taken.",
+                "gloomy": "Hmm..."
+              },
+              "failureResponses": {
+                "upbeat": "My ssspirit's tough. I'll ssshow you.",
+                "timid": "That'sss not me.",
+                "irritable": "Why don't you?",
+                "gloomy": "I'm not interesssted."
+              }
+            },
+            {
+              "text": "I'll kiss it better.",
+              "successRates": {
+                "upbeat": 85.0,
+                "timid": 20.0,
+                "irritable": 2.5,
+                "gloomy": 7.5
+              },
+              "successResponses": {
+                "upbeat": "Come, lean in then.",
+                "timid": "You think that'll work?",
+                "irritable": "You mussst have a magic touch.",
+                "gloomy": "I'll try anything..."
+              },
+              "failureResponses": {
+                "upbeat": "Come here. I'll kissss you.",
+                "timid": "Don't patronisssse me.",
+                "irritable": "Don't even try.",
+                "gloomy": "Isss that sssupposed to be a joke?"
+              }
+            }
+          ]
+        },
+        {
+          "text": "Talking it out, I'm ssstarting to feel better.",
+          "mood": "NEUTRAL",
+          "responses": [
+            {
+              "text": "Good to hear.",
+              "successRates": {
+                "upbeat": 15.0,
+                "timid": 85.0,
+                "irritable": 5.0,
+                "gloomy": 5.0
+              },
+              "successResponses": {
+                "upbeat": "Yeah, it isss.",
+                "timid": "Thanksss for ssstaying with me.",
+                "irritable": "It isss..",
+                "gloomy": "I think ssso..."
+              },
+              "failureResponses": {
+                "upbeat": "It isss. Now I can beat you.",
+                "timid": "Thanksss... but I need to protect myssself.",
+                "irritable": "Don't lie.",
+                "gloomy": "Isss that truly have you feel?"
+              }
+            },
+            {
+              "text": "We can't be having that.",
+              "successRates": {
+                "upbeat": 95.0,
+                "timid": 2.5,
+                "irritable": 2.5,
+                "gloomy": 15.0
+              },
+              "successResponses": {
+                "upbeat": "Then let'sss wrap thisss up.",
+                "timid": "Hold on...",
+                "irritable": "Yesss, we can.",
+                "gloomy": "C'mon, give me thisss."
+              },
+              "failureResponses": {
+                "upbeat": "I think we can.",
+                "timid": "We... can't?",
+                "irritable": "I dissssagree.",
+                "gloomy": "Maybe not... Let'sss battle it to the death."
+              }
+            },
+            {
+              "text": "That's my 'power'.",
+              "successRates": {
+                "upbeat": 5.0,
+                "timid": 20.0,
+                "irritable": 30.0,
+                "gloomy": 85.5
+              },
+              "successResponses": {
+                "upbeat": "I sssee why you need mine inssstead.",
+                "timid": "I like it.",
+                "irritable": "That mussst come in helpful.",
+                "gloomy": "I wisssh I had that power..."
+              },
+              "failureResponses": {
+                "upbeat": "What a ssstupid power. Here'sss mine!",
+                "timid": "I... need it.",
+                "irritable": "Don't lie to me.",
+                "gloomy": "Don't bother wasssting it on me."
+              }
+            }
+          ]
+        }
+      ]
+    },
+
+
+    {
+      "text": "More humansss after my power? Ugh, why do I always find myssself in thisss sssorry ssstate?",
+      "mood": "NEUTRAL",
+      "responses": [
+        {
+          "text": "Because you're special.",
+          "successRates": {
+            "upbeat": 15.0,
+            "timid": 85.0,
+            "irritable": 5.0,
+            "gloomy": 10.0
+          },
+          "successResponses": {
+            "upbeat": "Don't I know it?",
+            "timid": "You think ssso?",
+            "irritable": "Thanksss, but I don't think ssso.",
+            "gloomy": "Heh... Maybe..."
+          },
+          "failureResponses": {
+            "upbeat": "That'sss just not me.",
+            "timid": "I'm just an ordinary Creeper. I have nothing to offer you.",
+            "irritable": "None of usss are ssspecial.",
+            "gloomy": "No, I don't think ssso..."
+          }
+        },
+        {
+          "text": "Because you're weak.",
+          "successRates": {
+            "upbeat": 5.0,
+            "timid": 2.0,
+            "irritable": 95.0,
+            "gloomy": 5.0
+          },
+          "successResponses": {
+            "upbeat": "Maybe I am, never could find a good bassse to blow up.",
+            "timid": "Yeah...",
+            "irritable": "Heh, you sssay it how it isss.",
+            "gloomy": "I know, I know."
+          },
+          "failureResponses": {
+            "upbeat": "That'sss not very nice. I'll have to blow you up twice!",
+            "timid": "I can't take any more of this...",
+            "irritable": "You have no right to sssay that.",
+            "gloomy": "I didn't need to hear that from you."
+          }
+        },
+        {
+          "text": "Because it's fate.",
+          "successRates": {
+            "upbeat": 10.0,
+            "timid": 10.0,
+            "irritable": 5.0,
+            "gloomy": 90.0
+          },
+          "successResponses": {
+            "upbeat": "Heh, if you believe in all that I'll play along.",
+            "timid": "I've never consssidered I have a fate.",
+            "irritable": "Never cared much for fate, but it'sss certainly not my fault.",
+            "gloomy": "Hey, maybe you're right..."
+          },
+          "failureResponses": {
+            "upbeat": "You sssound ridiculousss.",
+            "timid": "I don't have one.",
+            "irritable": "Abssssolute nonsenssse.",
+            "gloomy": "Fate isss for foolsss."
+          }
+        }
+      ],
+      "children": [
+        {
+          "text": "I wonder, if I were human, would thingsss be different?",
+          "mood": "NEUTRAL",
+          "responses": [
+            {
+              "text": "Who knows?",
+              "successRates": {
+                "upbeat": 10.0,
+                "timid": 5.0,
+                "irritable": 5.0,
+                "gloomy": 95.0
+              },
+              "successResponses": {
+                "upbeat": "I think I have a clue.",
+                "timid": "Sssomebody sssmarter than me, maybe.",
+                "irritable": "I do.",
+                "gloomy": "Maybe we'll never know."
+              },
+              "failureResponses": {
+                "upbeat": "It'sss anyone'sss guess.",
+                "timid": "Guesss I'll never know...",
+                "irritable": "Sssounds like you don't care.",
+                "gloomy": "I'll never find out..."
+              }
+            },
+            {
+              "text": "That's impossible.",
+              "successRates": {
+                "upbeat": 10.0,
+                "timid": 5.0,
+                "irritable": 90.0,
+                "gloomy": 5.0
+              },
+              "successResponses": {
+                "upbeat": "I can alwaysss dream.",
+                "timid": "I sssuppose being a Creeper isssn't ssso bad, really.",
+                "irritable": "That'sss true. No point dwelling on it.",
+                "gloomy": "Grim timesss, hey?"
+              },
+              "failureResponses": {
+                "upbeat": "They sssaid the sssame thing about a creature that EXPLODESSS!",
+                "timid": "I guesss so...",
+                "irritable": "Obviousssly.",
+                "gloomy": "Ssso much for my dreamsss."
+              }
+            },
+            {
+              "text": "You'd blow up less.",
+              "successRates": {
+                "upbeat": 95.0,
+                "timid": 15.0,
+                "irritable": 10.0,
+                "gloomy": 2.0
+              },
+              "successResponses": {
+                "upbeat": "I've ssseen you humansss play with TNT, you know?",
+                "timid": "I'd like that.",
+                "irritable": "Sssounds like an excellent perk.",
+                "gloomy": "That sssounds nice for you."
+              },
+              "failureResponses": {
+                "upbeat": "That'sss not the life for me.",
+                "timid": "That'sss too different for me.",
+                "irritable": "Real jokessster you are.",
+                "gloomy": "I prefer the easssy out."
+              }
+            }
+          ]
+        },
+        {
+          "text": "Tell me, do you ever find yourself in the sssame sssituation?",
+          "mood": "NEUTRAL",
+          "responses": [
+            {
+              "text": "That's a secret.",
+              "successRates": {
+                "upbeat": 10.0,
+                "timid": 5.0,
+                "irritable": 2.0,
+                "gloomy": 90.0
+              },
+              "successResponses": {
+                "upbeat": "C'mon, you can tell me.",
+                "timid": "I ssseee.",
+                "irritable": "We all have our sssecrets.",
+                "gloomy": "I get that. Yoursss isss probably better than mine. Thanksss for not bragging."
+              },
+              "failureResponses": {
+                "upbeat": "Don't you trussst me?.",
+                "timid": "Do you not like me enough to ssshare?",
+                "irritable": "It wasss a sssimple quessstion.",
+                "gloomy": "Eh, doesssn't matter anyway..."
+              }
+            },
+            {
+              "text": "I'm too cool to get caught.",
+              "successRates": {
+                "upbeat": 90.0,
+                "timid": 5.0,
+                "irritable": 2.0,
+                "gloomy": 8.0
+              },
+              "successResponses": {
+                "upbeat": "Ssssure you are.",
+                "timid": "I wisssh I could be that cool...",
+                "irritable": "Careful with that confidenccce.",
+                "gloomy": "I usssed to think the sssame..."
+              },
+              "failureResponses": {
+                "upbeat": "But not asss cool asss me.",
+                "timid": "You ssshouldn't talk to me, then...",
+                "irritable": "Arroganccce will get you nowhere.",
+                "gloomy": "I can't ssstand your attitude."
+              }
+            },
+            {
+              "text": "All the time.",
+              "successRates": {
+                "upbeat": 5.0,
+                "timid": 95.0,
+                "irritable": 25.0,
+                "gloomy": 5.0
+              },
+              "successResponses": {
+                "upbeat": "Honesssty is the bessst policy!",
+                "timid": "We have that in common.",
+                "irritable": "It'sss irritating, right?",
+                "gloomy": "That mussst sssuck. Trussst me, I'd know."
+              },
+              "failureResponses": {
+                "upbeat": "Sssucks to be you.",
+                "timid": "You sssound like you can take it, though...",
+                "irritable": "Don't lie.",
+                "gloomy": "You're worssse than me."
               }
             }
           ]
