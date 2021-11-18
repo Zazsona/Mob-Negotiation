@@ -1,3 +1,4 @@
 # The effect powers offered by various mob types.
 version: 1.0.0
-creeper: SPEED
+creeper: FAST_DIGGING
+zombie: INCREASE_DAMAGE
