@@ -47,3 +47,116 @@ creeper:
     item: SPRUCE_PLANKS
     initial-quantity: 10
     increase-amount: 15
+zombie:
+  offer1:
+    item: ROTTEN_FLESH
+    initial-quantity: 2
+    increase-amount: 2
+  offer2:
+    item: ROTTEN_FLESH
+    initial-quantity: 5
+    increase-amount: 2
+  offer3:
+    item: IRON_INGOT
+    initial-quantity: 1
+    increase-amount: 2
+  offer4:
+    item: IRON_INGOT
+    initial-quantity: 2
+    increase-amount: 2
+  offer5:
+    item: IRON_INGOT
+    initial-quantity: 3
+    increase-amount: 2
+  offer6:
+    item: IRON_NUGGET
+    initial-quantity: 13
+    increase-amount: 13
+  offer7:
+    item: IRON_NUGGET
+    initial-quantity: 22
+    increase-amount: 22
+  offer8:
+    item: GOLD_INGOT
+    initial-quantity: 1
+    increase-amount: 1
+  offer9:
+    item: GOLD_INGOT
+    initial-quantity: 1
+    increase-amount: 2
+  offer10:
+    item: GOLD_NUGGET
+    initial-quantity: 13
+    increase-amount: 13
+  offer11:
+    item: POTATO
+    initial-quantity: 2
+    increase-amount: 3
+  offer12:
+    item: POTATO
+    initial-quantity: 3
+    increase-amount: 4
+  offer13:
+    item: LEATHER
+    initial-quantity: 2
+    increase-amount: 2
+  offer14:
+    item: LEATHER
+    initial-quantity: 2
+    increase-amount: 3
+  offer15:
+    item: CARROT
+    initial-quantity: 2
+    increase-amount: 3
+  offer16:
+    item: CARROT
+    initial-quantity: 3
+    increase-amount: 4
+  offer17:
+    item: LEATHER_HELMET
+    initial-quantity: 1
+    increase-amount: 1
+  offer18:
+    item: LEATHER_CHESTPLATE
+    initial-quantity: 1
+    increase-amount: 1
+  offer19:
+    item: LEATHER_LEGGINGS
+    initial-quantity: 1
+    increase-amount: 1
+  offer20:
+    item: LEATHER_BOOTS
+    initial-quantity: 1
+    increase-amount: 1
+  offer21:
+    item: GOLDEN_HELMET
+    initial-quantity: 1
+    increase-amount: 1
+  offer22:
+    item: GOLDEN_BOOTS
+    initial-quantity: 1
+    increase-amount: 1
+  offer23:
+    item: CHAINMAIL_HELMET
+    initial-quantity: 1
+    increase-amount: 1
+  offer24:
+    item: CHAINMAIL_BOOTS
+    initial-quantity: 1
+    increase-amount: 1
+  offer25:
+    item: IRON_BOOTS
+    initial-quantity: 1
+    increase-amount: 1
+  offer26:
+    item: IRON_SWORD
+    initial-quantity: 1
+    increase-amount: 1
+  offer27:
+    item: IRON_SHOVEL
+    initial-quantity: 1
+    increase-amount: 1
+  offer28:
+    item: BUCKET
+    initial-quantity: 1
+    increase-amount: 1

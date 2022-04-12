@@ -10,3 +10,6 @@ version: 1.0.0
 creeper:
     initial-amount: 20
     increase-amount: 20
+zombie:
+    initial-amount: 18
+    increase-amount: 18

@@ -448,7 +448,7 @@
               "successResponses": {
                 "upbeat": "Yeah, it isss.",
                 "timid": "Thanksss for ssstaying with me.",
-                "irritable": "It isss..",
+                "irritable": "It isss...",
                 "gloomy": "I think ssso..."
               },
               "failureResponses": {
@@ -663,7 +663,7 @@
                 "gloomy": "I get that. Yoursss isss probably better than mine. Thanksss for not bragging."
               },
               "failureResponses": {
-                "upbeat": "Don't you trussst me?.",
+                "upbeat": "Don't you trussst me?",
                 "timid": "Do you not like me enough to ssshare?",
                 "irritable": "It wasss a sssimple quessstion.",
                 "gloomy": "Eh, doesssn't matter anyway..."

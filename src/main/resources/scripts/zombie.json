@@ -1,0 +1,719 @@
+{
+  "greetingMessage": {
+    "upbeat": "Buuhhh... Want speak?",
+    "timid": "... Spare life?",
+    "irritable": "Guuuh... Why stop?",
+    "gloomy": "Buhhh..."
+  },
+  "idleWarningMessage": {
+    "upbeat": "Guh... Talk...",
+    "timid": "Buh... ... Think still?",
+    "irritable": "Ugh... Bore...dom...",
+    "gloomy": "Sleep... Guuuh..."
+  },
+  "idleTimeoutMessage": {
+    "upbeat": "Too slow... Grr... fun over.",
+    "timid": "No talk... anymore?",
+    "irritable": "...Gruh Go now.",
+    "gloomy": "Afterlife... too short... to wait."
+  },
+  "initialItemOfferMessage": {
+    "upbeat": "Hrgh... Funny... Have spare %ITEM%.",
+    "timid": "Grah... Take %ITEM%... please.",
+    "irritable": "Burrr... Take %ITEM%... leave.",
+    "gloomy": "%ITEM% more... than me."
+  },
+  "furtherItemOfferMessage": {
+    "upbeat": "Grah... Can... give %ITEM%.",
+    "timid": "What about... %ITEM%? Hrgh...",
+    "irritable": "Gruuuh... %ITEM%.",
+    "gloomy": "Hrrr... %ITEM%... is all."
+  },
+  "furtherItemOfferMessageVariant": {
+    "upbeat": "Might have... Urgh... %ITEM%.",
+    "timid": "%ITEM%... maybe? Guh...",
+    "irritable": "%ITEM%... Burgh... Take.",
+    "gloomy": "Buuuh... %ITEM%."
+  },
+  "acceptedItemOfferMessage": {
+    "upbeat": "Enjoy like... Brr... me.",
+    "timid": "Please... have.",
+    "irritable": "Go... go-urgh... now.",
+    "gloomy": "Uuuggghhh..."
+  },
+  "refuseItemDemandMessage": {
+    "upbeat": "Burgh! Fight... instead.",
+    "timid": "Gargh! No have.",
+    "irritable": "...Give me. Bargh!",
+    "gloomy": "No... more. Grrruh!"
+  },
+  "initialMoneyOfferMessage": {
+    "upbeat": "Hargh... Pocket... have lint... and %MONEY%.",
+    "timid": "Only... Grr... %MONEY%.",
+    "irritable": "%MONEY%... Take.",
+    "gloomy": "%MONEY%... and kill... please."
+  },
+  "furtherMoneyOfferMessage": {
+    "upbeat": "More... deeper pocket... %MONEY%.",
+    "timid": "Savings... Urgh... have %MONEY%.",
+    "irritable": "Murgh... More... %MONEY%. Go.",
+    "gloomy": "%MONEY%. Take... Urg... all."
+  },
+  "furtherMoneyOfferMessageVariant": {
+    "upbeat": "%MONEY%. Other... Gu... Pocket...",
+    "timid": "Bur... %MONEY%... is more...",
+    "irritable": "%MONEY%... Rurgh... Really take.",
+    "gloomy": "Rurgh... Running... out... Have %MONEY%."
+  },
+  "acceptedMoneyOfferMessage": {
+    "upbeat": "Harr... Don't spend... all at once.",
+    "timid": "Thank... for spare... life... Gurhbye.",
+    "irritable": "Hope... happy.",
+    "gloomy": "Buuu... Now have... nothing..."
+  },
+  "refuseMoneyDemandMessage": {
+    "upbeat": "Hargh! Sorry... mine.",
+    "timid": "Gurgh! Can't... give.",
+    "irritable": " Grah! S...top.",
+    "gloomy": "Buh... Not... worth."
+  },
+  "powerSuccessMessage": {
+    "upbeat": "Understand... you. Have %POWER% power.",
+    "timid": "We same... You take %POWER% power now.",
+    "irritable": "Enjoy... life... with %POWER% power.",
+    "gloomy": "%POWER% power... yours."
+  },
+  "powerTrees": [
+    {
+      "text": "Power? Buh... You... still alive. What you... want do with life?",
+      "mood": "NEUTRAL",
+      "responses": [
+        {
+          "text": "Achieve my dreams.",
+          "successRates": {
+            "upbeat": 5.0,
+            "timid": 15.0,
+            "irritable": 5.0,
+            "gloomy": 85.0
+          },
+          "successResponses": {
+            "upbeat": "I try... Not succeed. Harr!",
+            "timid": "Wish... you luck.",
+            "irritable": "Gurgh... Good luck... You need it.",
+            "gloomy": "Bugh... I... once... had dreams."
+          },
+          "failureResponses": {
+            "upbeat": "Hargh! You... make me laugh...",
+            "timid": "Guhhh... Why... have? Never succeed..",
+            "irritable": "Grah! You... waste time.",
+            "gloomy": "No one... Buh... have dreams."
+          }
+        },
+        {
+          "text": "Help everyone I meet.",
+          "successRates": {
+            "upbeat": 5.0,
+            "timid": 95.0,
+            "irritable": 20.0,
+            "gloomy": 5.0
+          },
+          "successResponses": {
+            "upbeat": "Help...? Hargh! You hit me... Funny.",
+            "timid": "You... Ugh... nicer than me.",
+            "irritable": "Brr... You... spend life... well.",
+            "gloomy": "Gurgh... Good... for living..."
+          },
+          "failureResponses": {
+            "upbeat": "Hruh. What... waste. Let have... fun.",
+            "timid": "Me... not compare. Hurgh...",
+            "irritable": "Lie.",
+            "gloomy": "Why... bother? Guh..."
+          }
+        },
+        {
+          "text": "Die.",
+          "successRates": {
+            "upbeat": 2.0,
+            "timid": 2.0,
+            "irritable": 95.0,
+            "gloomy": 5.0
+          },
+          "successResponses": {
+            "upbeat": "Hrah! Join... me. Much fun.",
+            "timid": "Like... Gu... me.",
+            "irritable": "Hmuh... I... see.",
+            "gloomy": "I... same desire."
+          },
+          "failureResponses": {
+            "upbeat": "Let... me help. Hraugh!",
+            "timid": "Guh... That's... sad. Life good.",
+            "irritable": "That... waste. Kruh...",
+            "gloomy": "Guh... Afterlife... bad. Me show you."
+          }
+        }
+      ],
+      "children": [
+        {
+          "text": "Surgh... So... what like... to still have freedom... to choose?",
+          "mood": "NEUTRAL",
+          "responses": [
+            {
+              "text": "I cherish it.",
+              "successRates": {
+                "upbeat": 5.0,
+                "timid": 95.0,
+                "irritable": 35.0,
+                "gloomy": 5.0
+              },
+              "successResponses": {
+                "upbeat": "Hurh... Afterlife... less difficult.",
+                "timid": "Ourgh... Once did... too.",
+                "irritable": "Guh... Good.",
+                "gloomy": "Gruh... Better... times."
+              },
+              "failureResponses": {
+                "upbeat": "Hargh... Afterlife... easier... You see... Now.",
+                "timid": "Guh... No... brag.",
+                "irritable": "... Why?.",
+                "gloomy": "Burgh... Forget... cherish."
+              }
+            },
+            {
+              "text": "It defines me.",
+              "successRates": {
+                "upbeat": 5.0,
+                "timid": 5.0,
+                "irritable": 95.0,
+                "gloomy": 20.0
+              },
+              "successResponses": {
+                "upbeat": "You... like dictionary.",
+                "timid": "Defines... huurrr...",
+                "irritable": "Buh... You... straightforward. Like me.",
+                "gloomy": "Wish... have... Guh..."
+              },
+              "failureResponses": {
+                "upbeat": "Death... define you. Hargh!",
+                "timid": "Have no... definition... I take yours.",
+                "irritable": "Bad... answer. Gurgh!",
+                "gloomy": "Burgh... So simple... not define life."
+              }
+            },
+            {
+              "text": "It's everything.",
+              "successRates": {
+                "upbeat": 5.0,
+                "timid": 5.0,
+                "irritable": 5.0,
+                "gloomy": 95.0
+              },
+              "successResponses": {
+                "upbeat": "Hurgh... If... say so.",
+                "timid": "Hmm...",
+                "irritable": "Guh... Maybe.",
+                "gloomy": "Buh... You... understand... life."
+              },
+              "failureResponses": {
+                "upbeat": "Guh... Lighten up.",
+                "timid": "Buh... I... have nothing... then.",
+                "irritable": "Argh... Want answer... not lyrics.",
+                "gloomy": "Guh... Me... nothing."
+              }
+            }
+          ]
+        },
+        {
+          "text": "Buh... So... what... I do with... afterlife?",
+          "mood": "NEUTRAL",
+          "responses": [
+            {
+              "text": "Join me.",
+              "successRates": {
+                "upbeat": 15.0,
+                "timid": 90.0,
+                "irritable": 5.0,
+                "gloomy": 7.5
+              },
+              "successResponses": {
+                "upbeat": "Hurgh? Thanks... But... you... smell funny.",
+                "timid": "Burgh? Want... me? Can't accept... but thanks.",
+                "irritable": "Not for me... Ugh... but thanks.",
+                "gloomy": "Gurr... Thanks... but I slow you down..."
+              },
+              "failureResponses": {
+                "upbeat": "Hurgh. You... ruin my... street cred.",
+                "timid": "Me... too slow.",
+                "irritable": "Burgh... No time... for you.",
+                "gloomy": "Urgh... Too much... effort."
+              }
+            },
+            {
+              "text": "PARTAAAAY!",
+              "successRates": {
+                "upbeat": 90.0,
+                "timid": 20.0,
+                "irritable": 2.5,
+                "gloomy": 2.5
+              },
+              "successResponses": {
+                "upbeat": "I... can... gruh... GROOVE!",
+                "timid": "Sound... fun... Thanks.",
+                "irritable": "Guh... Time... to... lighten up.",
+                "gloomy": "Buh... I... just watch."
+              },
+              "failureResponses": {
+                "upbeat": "Hargh... Not... with you.",
+                "timid": "Not... for me.",
+                "irritable": "Buh... You... irritating.",
+                "gloomy": "Gruh... Joy... Sickening."
+              }
+            },
+            {
+              "text": "Follow your fate.",
+              "successRates": {
+                "upbeat": 5.0,
+                "timid": 15.0,
+                "irritable": 5.0,
+                "gloomy": 85.0
+              },
+              "successResponses": {
+                "upbeat": "A fate... for fun. Burguhuh.",
+                "timid": "Will... do.",
+                "irritable": "... Not easy...",
+                "gloomy": "Gruh... Easy... for some."
+              },
+              "failureResponses": {
+                "upbeat": "Nurgh... Not... my style.",
+                "timid": "Ugghhh... Fate... is lost.",
+                "irritable": "Burghhh... No... such thing.",
+                "gloomy": "My fate... is to hate..."
+              }
+            }
+          ]
+        }
+      ]
+    },
+
+
+    {
+      "text": "Purgh... Power? How about... propose marriage... first?",
+      "mood": "NEUTRAL",
+      "responses": [
+        {
+          "text": "Eww, no.",
+          "successRates": {
+            "upbeat": 85.0,
+            "timid": 1.0,
+            "irritable": 15.0,
+            "gloomy": 5.0
+          },
+          "successResponses": {
+            "upbeat": "Pargh. I see... I out of... your league.",
+            "timid": "Guh... I... wouldn't either.",
+            "irritable": "Hargh. Saves... divorce papers.",
+            "gloomy": "Gruh... Good... choice."
+          },
+          "failureResponses": {
+            "upbeat": "Till... death... do us part. Hragh!",
+            "timid": "Graugh... You... awful.",
+            "irritable": "We... no business... then.",
+            "gloomy": "Urgh... You kick... while I down."
+          }
+        },
+        {
+          "text": "You read my mind.",
+          "successRates": {
+            "upbeat": 20.0,
+            "timid": 90.0,
+            "irritable": 5.0,
+            "gloomy": 5.0
+          },
+          "successResponses": {
+            "upbeat": "Harr... I'll... set a date.",
+            "timid": "I know... juhhh... joke... But thanks.",
+            "irritable": "Burr... It... only fair.",
+            "gloomy": "Buh... No... mind read..."
+          },
+          "failureResponses": {
+            "upbeat": "Well... hurgh... I... refuse..",
+            "timid": "Not... true proposal.",
+            "irritable": "You... immature.",
+            "gloomy": "I... not ready... yet."
+          }
+        },
+        {
+          "text": "I don't believe in marriage.",
+          "successRates": {
+            "upbeat": 5.0,
+            "timid": 10.0,
+            "irritable": 85.0,
+            "gloomy": 30.0
+          },
+          "successResponses": {
+            "upbeat": "You just believe... Santa Claus?",
+            "timid": "Buh... Me... neither.",
+            "irritable": "Hurgh... Good.",
+            "gloomy": "Hurh... Neither... I."
+          },
+          "failureResponses": {
+            "upbeat": "... Shame. We... funny children.",
+            "timid": "Oh...",
+            "irritable": "Furgh... Fool.",
+            "gloomy": "Ugh... It... only... wish."
+          }
+        }
+      ],
+      "children": [
+        {
+          "text": "Either... way. Should confess... sins... now.",
+          "mood": "NEUTRAL",
+          "responses": [
+            {
+              "text": "No chance.",
+              "successRates": {
+                "upbeat": 15.0,
+                "timid": 5.0,
+                "irritable": 85.0,
+                "gloomy": 10.0
+              },
+              "successResponses": {
+                "upbeat": "Huhhh... Yeah... same..",
+                "timid": "Bugh... Keep... to grave. Smart.",
+                "irritable": "Your... truth...",
+                "gloomy": "I... guh... have secrets... to."
+              },
+              "failureResponses": {
+                "upbeat": "No... fun.",
+                "timid": "You... bad... person?",
+                "irritable": "No... trust you.",
+                "gloomy": "You... never find... happiness."
+              }
+            },
+            {
+              "text": "I've been a good little human.",
+              "successRates": {
+                "upbeat": 90.0,
+                "timid": 15.0,
+                "irritable": 5.0,
+                "gloomy": 10.0
+              },
+              "successResponses": {
+                "upbeat": "I... see you... with pig.",
+                "timid": "Guhhh... R-really?",
+                "irritable": "Understood...",
+                "gloomy": "Buh... World... better place... if true."
+              },
+              "failureResponses": {
+                "upbeat": "I... not so sure.",
+                "timid": "Not... true. I... see.",
+                "irritable": "You... lie.",
+                "gloomy": "I... not... so good."
+              }
+            },
+            {
+              "text": "I have a dark past.",
+              "successRates": {
+                "upbeat": 2.0,
+                "timid": 2.0,
+                "irritable": 30.0,
+                "gloomy": 90.0
+              },
+              "successResponses": {
+                "upbeat": "Bugh! What... worst you do? Forget... say please?",
+                "timid": "Buh... We all... have history.",
+                "irritable": "I... understand.",
+                "gloomy": "I... same."
+              },
+              "failureResponses": {
+                "upbeat": "Ow... the edge.",
+                "timid": "You... bad. Gargh!",
+                "irritable": "Guhhhh... Yeah... right.",
+                "gloomy": "Mine... darker."
+              }
+            }
+          ]
+        },
+        {
+          "text": "Come on... what vows... you make?",
+          "mood": "NEUTRAL",
+          "responses": [
+            {
+              "text": "Vows lead to disappointment.",
+              "successRates": {
+                "upbeat": 5.0,
+                "timid": 5.0,
+                "irritable": 85.0,
+                "gloomy": 35.0
+              },
+              "successResponses": {
+                "upbeat": "Gurhhhh... I... take that... as vow.",
+                "timid": "Thanks... for spare me... sadness.",
+                "irritable": "You... right.",
+                "gloomy": "Always... I... hurt before."
+              },
+              "failureResponses": {
+                "upbeat": "Buh... Like... that... answer.",
+                "timid": "You... lack... heart.",
+                "irritable": "You... hopeless... disappointment.",
+                "gloomy": "Buh... You... not care."
+              }
+            },
+            {
+              "text": "I'll cherish you forever.",
+              "successRates": {
+                "upbeat": 20.0,
+                "timid": 90.0,
+                "irritable": 10.0,
+                "gloomy": 2.5
+              },
+              "successResponses": {
+                "upbeat": "You... make me... blush.",
+                "timid": "Fuhhh.... Thanks.",
+                "irritable": "Not... quite feel same... But okay.",
+                "gloomy": "Appreciate... the idea. I... not lovable."
+              },
+              "failureResponses": {
+                "upbeat": "I... cherish killing you.",
+                "timid": "... Guh. Don't... lie.",
+                "irritable": "That... impossible... Fool.",
+                "gloomy": "I... incapable... of love."
+              }
+            },
+            {
+              "text": "I vow to kill you.",
+              "successRates": {
+                "upbeat": 80.0,
+                "timid": 1.0,
+                "irritable": 50.0,
+                "gloomy": 5.0
+              },
+              "successResponses": {
+                "upbeat": "Hargh! You... too weak... Good... joke.",
+                "timid": "I... appreciate... death... later.",
+                "irritable": "You... actually commit.",
+                "gloomy": "End... my suffering... I... remember this."
+              },
+              "failureResponses": {
+                "upbeat": "I... kill you... FIRST!",
+                "timid": "Guh... So... be it.",
+                "irritable": "... Fool.",
+                "gloomy": "Guh... Go ahead..."
+              }
+            }
+          ]
+        }
+      ]
+    },
+
+
+    {
+      "text": "Power...? Do... I see... hand shaking? You... okay?",
+      "mood": "NEUTRAL",
+      "responses": [
+        {
+          "text": "It's a bit chilly...",
+          "successRates": {
+            "upbeat": 15.0,
+            "timid": 10.0,
+            "irritable": 80.0,
+            "gloomy": 5.0
+          },
+          "successResponses": {
+            "upbeat": "That just... because I cool.",
+            "timid": "Brrr... I... cold too.",
+            "irritable": "Brrr... Should... layer up.",
+            "gloomy": "Death... guh... is always... cold."
+          },
+          "failureResponses": {
+            "upbeat": "You... wimp.",
+            "timid": "Buh... You just... want leave.",
+            "irritable": "No... it not.",
+            "gloomy": "You... don't know... cold."
+          }
+        },
+        {
+          "text": "I'm just excited to talk!",
+          "successRates": {
+            "upbeat": 15.0,
+            "timid": 90.0,
+            "irritable": 5.0,
+            "gloomy": 5.0
+          },
+          "successResponses": {
+            "upbeat": "I... am... pretty charismatic.",
+            "timid": "To... Talk... to me?",
+            "irritable": "Buh... You... calm down... then.",
+            "gloomy": "Buh... Don't... be."
+          },
+          "failureResponses": {
+            "upbeat": "I... NOT!",
+            "timid": "I... not worth... excitement.",
+            "irritable": "Hurgh... You... childish.",
+            "gloomy": "I... not mood."
+          }
+        },
+        {
+          "text": "Jazz hands!",
+          "successRates": {
+            "upbeat": 95.0,
+            "timid": 15.0,
+            "irritable": 2.0,
+            "gloomy": 2.0
+          },
+          "successResponses": {
+            "upbeat": "Grrrroovy!",
+            "timid": "You... want dance?",
+            "irritable": "Guuhhh... Not... my style... but... must... admit... you good.",
+            "gloomy": "Nice... save."
+          },
+          "failureResponses": {
+            "upbeat": "You... dare challenge... jazz hand master?",
+            "timid": "Buh... I... just wanted... to know... if you... okay.",
+            "irritable": "HRUAGH!",
+            "gloomy": "Graugh... Go... away."
+          }
+        }
+      ],
+      "children": [
+        {
+          "text": "You... ever... get shaky... when kid too?",
+          "mood": "NEUTRAL",
+          "responses": [
+            {
+              "text": "When I was scared...",
+              "successRates": {
+                "upbeat": 5.0,
+                "timid": 30.0,
+                "irritable": 95.0,
+                "gloomy": 15.0
+              },
+              "successResponses": {
+                "upbeat": "Hurh... You... still... scared now!",
+                "timid": "Me... too.",
+                "irritable": "You... look scared... now. No try... hide it.",
+                "gloomy": "Buh... I... scared... lots."
+              },
+              "failureResponses": {
+                "upbeat": "Ha-hargh! You... wimp.",
+                "timid": "Buh... You... look scared... of me... now.",
+                "irritable": "Gurgh. I... no time... for weak wimp.",
+                "gloomy": "Wish... scared. I... no feeling."
+              }
+            },
+            {
+              "text": "Only after coffee.",
+              "successRates": {
+                "upbeat": 95.0,
+                "timid": 5.0,
+                "irritable": 15.0,
+                "gloomy": 5.0
+              },
+              "successResponses": {
+                "upbeat": "Ha-hurgh... Bet... you shake... on toilet too.",
+                "timid": "Ourgh... Always... make me... shake.",
+                "irritable": "Bugh... I... also... coffee addict. That why... not rest... after death.",
+                "gloomy": "Ugh... Even child... need coffee... for busy life..."
+              },
+              "failureResponses": {
+                "upbeat": "Boring... child... have coffee.",
+                "timid": "Baugh! Why... you... have coffee... as kid?",
+                "irritable": "Graugh... Child... coffee... bad.",
+                "gloomy": "Not... joke question."
+              }
+            },
+            {
+              "text": "Once...",
+              "successRates": {
+                "upbeat": 2.0,
+                "timid": 10.0,
+                "irritable": 10.0,
+                "gloomy": 90.0
+              },
+              "successResponses": {
+                "upbeat": "Huhhh... You... shake... trying to waft fart?",
+                "timid": "I... no pry.",
+                "irritable": "Buh... Prepare you... Harder time... come yet.",
+                "gloomy": "Guh... We both... have suffered."
+              },
+              "failureResponses": {
+                "upbeat": "I... make that twice... Now.",
+                "timid": "I... don't... Ugh... believe.",
+                "irritable": "Ugh... Weak...",
+                "gloomy": "You... not suffered enough... like me."
+              }
+            }
+          ]
+        },
+        {
+          "text": "Speaking of... shaky... hands....\nYou... any good... at sewing? I... need clothes...fixing.",
+          "mood": "NEUTRAL",
+          "responses": [
+            {
+              "text": "They're not too bad.",
+              "successRates": {
+                "upbeat": 10.0,
+                "timid": 90.0,
+                "irritable": 10.0,
+                "gloomy": 10.0
+              },
+              "successResponses": {
+                "upbeat": "Hagh! They... certainly... more style... than yours.",
+                "timid": "Thanks... I... feel better.",
+                "irritable": "Hoogh... You... should try... wearing them.",
+                "gloomy": "Maybe... compared to... goorgh... rest of life."
+              },
+              "failureResponses": {
+                "upbeat": "You... try on... then!",
+                "timid": "Uhn... You just... think you better... than me.",
+                "irritable": "Ugh... You just... too lazy.",
+                "gloomy": "No... they're... bad.... like me..."
+              }
+            },
+            {
+              "text": "My hands are literal blocks.",
+              "successRates": {
+                "upbeat": 90.0,
+                "timid": 5.0,
+                "irritable": 15.0,
+                "gloomy": 5.0
+              },
+              "successResponses": {
+                "upbeat": "...Wow. Mine... too. Suh... Strange... isn't it?",
+                "timid": "We... not so... different.",
+                "irritable": "... No kidding. Mine... too.",
+                "gloomy": "Gruh... At least... you can put down."
+              },
+              "failureResponses": {
+                "upbeat": "Well... done... Sherlock Bones...",
+                "timid": "...You think... I stupid?",
+                "irritable": "Argh... I... know. Don't... care...",
+                "gloomy": "Murgh... Don't... toy... with me."
+              }
+            },
+            {
+              "text": "I'm good when I'm paid.",
+              "successRates": {
+                "upbeat": 5.0,
+                "timid": 5.0,
+                "irritable": 95.0,
+                "gloomy": 5.0
+              },
+              "successResponses": {
+                "upbeat": "Guess... you no take... rotten flesh?",
+                "timid": "I... gruh... think about it...",
+                "irritable": "Harh... You... better be.",
+                "gloomy": "Hurh... Fair's... fair."
+              },
+              "failureResponses": {
+                "upbeat": "With... that shirt? I... see... stitch up.",
+                "timid": "Hooh... Was hoping... kind.",
+                "irritable": "I... not fall... for con.",
+                "gloomy": "You... greedy. That... lead you... to darkness... and demise."
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
