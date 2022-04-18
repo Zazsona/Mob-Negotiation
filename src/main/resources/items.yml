@@ -160,3 +160,108 @@ zombie:
     item: BUCKET
     initial-quantity: 1
     increase-amount: 1
+skeleton:
+  offer1:
+    item: BONE
+    initial-quantity: 1
+    increase-amount: 1
+  offer2:
+    item: BONE
+    initial-quantity: 2
+    increase-amount: 1
+  offer3:
+    item: ARROW
+    initial-quantity: 1
+    increase-amount: 2
+  offer4:
+    item: ARROW
+    initial-quantity: 2
+    increase-amount: 2
+  offer5:
+    item: BONE_MEAL
+    initial-quantity: 3
+    increase-amount: 4
+  offer6:
+    item: BONE_MEAL
+    initial-quantity: 6
+    increase-amount: 3
+  offer7:
+    item: BOW
+    initial-quantity: 1
+    increase-amount: 1
+  offer8:
+    item: FLINT
+    initial-quantity: 2
+    increase-amount: 2
+  offer9:
+    item: FLINT
+    initial-quantity: 1
+    increase-amount: 2
+  offer10:
+    item: FLINT
+    initial-quantity: 3
+    increase-amount: 2
+  offer11:
+    item: FEATHER
+    initial-quantity: 2
+    increase-amount: 3
+  offer12:
+    item: FEATHER
+    initial-quantity: 3
+    increase-amount: 4
+  offer13:
+    item: FEATHER
+    initial-quantity: 2
+    increase-amount: 2
+  offer14:
+    item: STICK
+    initial-quantity: 4
+    increase-amount: 6
+  offer15:
+    item: STICK
+    initial-quantity: 6
+    increase-amount: 8
+  offer16:
+    item: STICK
+    initial-quantity: 8
+    increase-amount: 12
+  offer17:
+    item: LEATHER_HELMET
+    initial-quantity: 1
+    increase-amount: 1
+  offer18:
+    item: LEATHER_CHESTPLATE
+    initial-quantity: 1
+    increase-amount: 1
+  offer19:
+    item: LEATHER_LEGGINGS
+    initial-quantity: 1
+    increase-amount: 1
+  offer20:
+    item: LEATHER_BOOTS
+    initial-quantity: 1
+    increase-amount: 1
+  offer21:
+    item: GOLDEN_HELMET
+    initial-quantity: 1
+    increase-amount: 1
+  offer22:
+    item: GOLDEN_BOOTS
+    initial-quantity: 1
+    increase-amount: 1
+  offer23:
+    item: CHAINMAIL_HELMET
+    initial-quantity: 1
+    increase-amount: 1
+  offer24:
+    item: CHAINMAIL_BOOTS
+    initial-quantity: 1
+    increase-amount: 1
+  offer25:
+    item: IRON_BOOTS
+    initial-quantity: 1
+    increase-amount: 1
+  offer26:
+    item: IRON_SWORD
+    initial-quantity: 1
+    increase-amount: 1

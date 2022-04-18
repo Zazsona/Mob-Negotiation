@@ -13,3 +13,6 @@ creeper:
 zombie:
     initial-amount: 18
     increase-amount: 18
+skeleton:
+    initial-amount: 19
+    increase-amount: 19

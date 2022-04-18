@@ -74,7 +74,7 @@
   "refuseMoneyDemandMessage": {
     "upbeat": "Hargh! Sorry... mine.",
     "timid": "Gurgh! Can't... give.",
-    "irritable": " Grah! S...top.",
+    "irritable": "Grah! S...top.",
     "gloomy": "Buh... Not... worth."
   },
   "powerSuccessMessage": {
@@ -174,7 +174,7 @@
               "failureResponses": {
                 "upbeat": "Hargh... Afterlife... easier... You see... Now.",
                 "timid": "Guh... No... brag.",
-                "irritable": "... Why?.",
+                "irritable": "... Why?",
                 "gloomy": "Burgh... Forget... cherish."
               }
             },
