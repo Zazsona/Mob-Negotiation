@@ -16,3 +16,6 @@ zombie:
 skeleton:
     initial-amount: 19
     increase-amount: 19
+spider:
+    initial-amount: 15
+    increase-amount: 15

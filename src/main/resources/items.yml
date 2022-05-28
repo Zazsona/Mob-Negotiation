@@ -265,3 +265,56 @@ skeleton:
     item: IRON_SWORD
     initial-quantity: 1
     increase-amount: 1
+spider:
+  offer1:
+    item: STRING
+    initial-quantity: 2
+    increase-amount: 2
+  offer2:
+    item: STRING
+    initial-quantity: 3
+    increase-amount: 3
+  offer3:
+    item: STRING
+    initial-quantity: 2
+    increase-amount: 4
+  offer4:
+    item: SPIDER_EYE
+    initial-quantity: 1
+    increase-amount: 2
+  offer5:
+    item: SPIDER_EYE
+    initial-quantity: 2
+    increase-amount: 2
+  offer6:
+    item: SPIDER_EYE
+    initial-quantity: 1
+    increase-amount: 3
+  offer7:
+    item: WHITE_WOOL
+    initial-quantity: 3
+    increase-amount: 3
+  offer8:
+    item: WHITE_WOOL
+    initial-quantity: 3
+    increase-amount: 5
+  offer9:
+    item: FERMENTED_SPIDER_EYE
+    initial-quantity: 1
+    increase-amount: 1
+  offer10:
+    item: FERMENTED_SPIDER_EYE
+    initial-quantity: 2
+    increase-amount: 1
+  offer11:
+    item: COBWEB
+    initial-quantity: 1
+    increase-amount: 1
+  offer12:
+    item: COBWEB
+    initial-quantity: 2
+    increase-amount: 1
+  offer13:
+    item: LEAD
+    initial-quantity: 1
+    increase-amount: 1

@@ -15,6 +15,7 @@ public class TalkSoundsRepository implements ITalkSoundsRepository
         setSound(EntityType.CREEPER, Sound.ENTITY_CREEPER_HURT);
         setSound(EntityType.SKELETON, Sound.ENTITY_SKELETON_AMBIENT);
         setSound(EntityType.ZOMBIE, Sound.ENTITY_ZOMBIE_AMBIENT);
+        setSound(EntityType.SPIDER, Sound.ENTITY_SPIDER_AMBIENT);
     }
 
     /**
