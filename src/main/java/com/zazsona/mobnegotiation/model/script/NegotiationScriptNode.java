@@ -1,6 +1,7 @@
 package com.zazsona.mobnegotiation.model.script;
 
 import com.zazsona.mobnegotiation.model.Mood;
+import com.zazsona.mobnegotiation.model.TextType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +12,7 @@ public class NegotiationScriptNode
 
     private String text = UNDEFINED_MSG;
     private Mood mood = Mood.NEUTRAL;
+    private TextType textType = TextType.SPEECH;
     private List<NegotiationScriptResponseNode> responses = new ArrayList<>();
     private List<NegotiationScriptNode> children = new ArrayList<>();
 
@@ -26,10 +28,14 @@ public class NegotiationScriptNode
     /**
      * Creates a new object with the provided text and no children or responses
      * @param text the text for the mob to say
+     * @param mood the mood of the text
+     * @param textType the format of the text
      */
-    public NegotiationScriptNode(String text)
+    public NegotiationScriptNode(String text, Mood mood, TextType textType)
     {
         this.text = text;
+        this.mood = mood;
+        this.textType = textType;
     }
 
     /**
@@ -46,10 +52,11 @@ public class NegotiationScriptNode
     /**
      * Creates a new object with the provided text and responses and no children
      * @param text the text for the mob to say
-     * @param responses the responses for the player
      * @param mood the mood of the text
+     * @param textType the format of the text
+     * @param responses the responses for the player
      */
-    public NegotiationScriptNode(String text, List<NegotiationScriptResponseNode> responses, Mood mood)
+    public NegotiationScriptNode(String text, Mood mood, TextType textType, List<NegotiationScriptResponseNode> responses)
     {
         this.text = text;
         this.responses = responses;
@@ -59,14 +66,17 @@ public class NegotiationScriptNode
     /**
      * Creates a new object with the provided text, responses, and children
      * @param text the text for the mob to say
+     * @param mood the mood of the text
+     * @param textType the format of the text
      * @param responses the responses for the player
      * @param children the child nodes
      */
-    public NegotiationScriptNode(String text, List<NegotiationScriptResponseNode> responses, Mood mood, List<NegotiationScriptNode> children)
+    public NegotiationScriptNode(String text, Mood mood, TextType textType, List<NegotiationScriptResponseNode> responses, List<NegotiationScriptNode> children)
     {
         this.text = text;
         this.responses = responses;
         this.mood = mood;
+        this.textType = textType;
         this.children = children;
     }
 
@@ -86,6 +96,15 @@ public class NegotiationScriptNode
     public Mood getMood()
     {
         return mood;
+    }
+
+    /**
+     * Gets textType
+     * @return textType
+     */
+    public TextType getTextType()
+    {
+        return textType;
     }
 
     /**

@@ -244,12 +244,14 @@ public class NegotiationButton implements IClickableNegotiationView
         ComponentBuilder componentBuilder = new ComponentBuilder()
                 .reset()
                 .color(getColour())
-                .append(String.format("%s ", getIcon()))
-                .append(String.format("[%s]", getText()))
+                .append(getIcon())
+                .append(" ")
+                .append("[")
                 .italic(italic)
                 .bold(bold)
                 .strikethrough(strikethrough)
-                .underlined(underline);
+                .underlined(underline)
+                .append(getText() + ChatColor.RESET + getColour() + "]", ComponentBuilder.FormatRetention.FORMATTING);
 
         if (getHoverEvent() != null)
             componentBuilder.event(getHoverEvent());

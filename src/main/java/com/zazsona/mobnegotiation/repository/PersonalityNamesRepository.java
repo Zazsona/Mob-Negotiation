@@ -32,7 +32,7 @@ public class PersonalityNamesRepository implements IPersonalityNamesRepository
         irritableNames.add("Grouchy");
         irritableNames.add("Moody");
         irritableNames.add("Fractious");
-        irritableNames.add("Irked ");
+        irritableNames.add("Irked");
         ArrayList<String> gloomyNames = new ArrayList<>();
         gloomyNames.add("Gloomy");
         gloomyNames.add("Downcast");

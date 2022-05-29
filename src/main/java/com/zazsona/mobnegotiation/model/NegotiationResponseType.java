@@ -5,7 +5,7 @@ package com.zazsona.mobnegotiation.model;
  */
 public enum NegotiationResponseType
 {
-    SPEECH,
+    PARLEY,
     ATTACK,
     CANCEL
 }

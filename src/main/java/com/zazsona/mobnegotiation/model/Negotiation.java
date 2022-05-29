@@ -295,21 +295,22 @@ public class Negotiation
         this.state = NegotiationState.STARTED;
         this.updateStateListeners();
 
-        String mobMessage = script.getGreetingMessage().getVariant(mobPersonality);
+        String greetingMessage = script.getGreetingMessage().getVariant(mobPersonality);
+        TextType greetingTextType = script.getGreetingMessage().getVariantType(mobPersonality);
         ArrayList<NegotiationResponse> responses = new ArrayList<>();
         if (PluginConfig.isPowerNegotiationEnabled() && player.hasPermission(Permissions.NEGOTIATION_POWER))
-            responses.add(new NegotiationResponse(POWER_TEXT, NegotiationResponseType.SPEECH));
+            responses.add(new NegotiationResponse(POWER_TEXT, TextType.SPEECH, NegotiationResponseType.PARLEY));
         if (PluginConfig.isItemNegotiationEnabled() && player.hasPermission(Permissions.NEGOTIATION_ITEMS))
-            responses.add(new NegotiationResponse(ITEM_TEXT, NegotiationResponseType.SPEECH));
+            responses.add(new NegotiationResponse(ITEM_TEXT, TextType.SPEECH, NegotiationResponseType.PARLEY));
         if (PluginConfig.isMoneyNegotiationEnabled() && player.hasPermission(Permissions.NEGOTIATION_MONEY) && getEconomy() != null)
-            responses.add(new NegotiationResponse(MONEY_TEXT, NegotiationResponseType.SPEECH));
+            responses.add(new NegotiationResponse(MONEY_TEXT, TextType.SPEECH, NegotiationResponseType.PARLEY));
         if (PluginConfig.isAllOutAttackEnabled() && player.hasPermission(Permissions.NEGOTIATION_ATTACK))
-            responses.add(new NegotiationResponse(ATTACK_TEXT, NegotiationResponseType.ATTACK));
+            responses.add(new NegotiationResponse(ATTACK_TEXT, TextType.ACTION, NegotiationResponseType.ATTACK));
         if (responses.size() > 0)
-            responses.add(new NegotiationResponse(CANCEL_TEXT, NegotiationResponseType.CANCEL));
+            responses.add(new NegotiationResponse(CANCEL_TEXT, TextType.ACTION, NegotiationResponseType.CANCEL));
         if (responses.size() > 0)
         {
-            this.prompt = new RespondableNegotiationPrompt(mobMessage, Mood.NEUTRAL, responses);
+            this.prompt = new RespondableNegotiationPrompt(greetingMessage, Mood.NEUTRAL, greetingTextType, responses);
             updatePromptListeners(this.prompt, false);
         }
         else
@@ -470,6 +471,7 @@ public class Negotiation
                 if (state == OfferState.PENDING)
                 {
                     String mobMessage = script.getInitialItemOfferMessage().getVariant(mobPersonality);
+                    TextType mobMessageTextType = script.getInitialItemOfferMessage().getVariantType(mobPersonality);
                     if (initialOfferMade)
                     {
                         mobMessage = (useVariantFurtherOfferText) ? script.getFurtherItemOfferMessageVariant().getVariant(mobPersonality) : script.getFurtherItemOfferMessage().getVariant(mobPersonality);
@@ -477,10 +479,10 @@ public class Negotiation
                     }
                     initialOfferMade = true;
                     ArrayList<NegotiationResponse> responses = new ArrayList<>();
-                    responses.add(new NegotiationResponse(ACCEPT_OFFER_TEXT, NegotiationResponseType.SPEECH));
-                    responses.add(new NegotiationResponse(DENY_OFFER_TEXT, NegotiationResponseType.SPEECH));
-                    responses.add(new NegotiationResponse(CANCEL_TEXT, NegotiationResponseType.CANCEL));
-                    prompt = new RespondableNegotiationPrompt(mobMessage, Mood.NEUTRAL, responses);
+                    responses.add(new NegotiationResponse(ACCEPT_OFFER_TEXT, TextType.SPEECH, NegotiationResponseType.PARLEY));
+                    responses.add(new NegotiationResponse(DENY_OFFER_TEXT, TextType.SPEECH, NegotiationResponseType.PARLEY));
+                    responses.add(new NegotiationResponse(CANCEL_TEXT, TextType.ACTION, NegotiationResponseType.CANCEL));
+                    prompt = new RespondableNegotiationPrompt(mobMessage, Mood.NEUTRAL, mobMessageTextType, responses);
                     updatePromptListeners(prompt, false);
                 }
             }
@@ -492,14 +494,16 @@ public class Negotiation
                 if (offerState == OfferState.ACCEPTED)
                 {
                     String mobMessage = script.getAcceptedItemOfferMessage().getVariant(mobPersonality);
-                    prompt = new NegotiationPrompt(mobMessage, Mood.HAPPY);
+                    TextType mobMessageTextType = script.getAcceptedItemOfferMessage().getVariantType(mobPersonality);
+                    prompt = new NegotiationPrompt(mobMessage, Mood.HAPPY, mobMessageTextType);
                     updatePromptListeners(prompt, false);
                     executeMobExit();
                 }
                 else if (offerState == OfferState.DENIED)
                 {
                     String mobMessage = script.getRefuseItemDemandMessage().getVariant(mobPersonality);
-                    prompt = new NegotiationPrompt(mobMessage, Mood.ANGRY);
+                    TextType mobMessageTextType = script.getRefuseItemDemandMessage().getVariantType(mobPersonality);
+                    prompt = new NegotiationPrompt(mobMessage, Mood.ANGRY, mobMessageTextType);
                     updatePromptListeners(prompt, false);
                 }
                 stop(NegotiationState.FINISHED_ITEM);
@@ -536,6 +540,7 @@ public class Negotiation
                 if (state == OfferState.PENDING)
                 {
                     String mobMessage = script.getInitialMoneyOfferMessage().getVariant(mobPersonality);
+                    TextType mobMessageTextType = script.getInitialMoneyOfferMessage().getVariantType(mobPersonality);
                     if (initialOfferMade)
                     {
                         mobMessage = (useVariantFurtherOfferText) ? script.getFurtherMoneyOfferMessageVariant().getVariant(mobPersonality) : script.getFurtherMoneyOfferMessage().getVariant(mobPersonality);
@@ -543,10 +548,10 @@ public class Negotiation
                     }
                     initialOfferMade = true;
                     ArrayList<NegotiationResponse> responses = new ArrayList<>();
-                    responses.add(new NegotiationResponse(ACCEPT_OFFER_TEXT, NegotiationResponseType.SPEECH));
-                    responses.add(new NegotiationResponse(DENY_OFFER_TEXT, NegotiationResponseType.SPEECH));
-                    responses.add(new NegotiationResponse(CANCEL_TEXT, NegotiationResponseType.CANCEL));
-                    prompt = new RespondableNegotiationPrompt(mobMessage, Mood.NEUTRAL, responses);
+                    responses.add(new NegotiationResponse(ACCEPT_OFFER_TEXT, TextType.SPEECH, NegotiationResponseType.PARLEY));
+                    responses.add(new NegotiationResponse(DENY_OFFER_TEXT, TextType.SPEECH, NegotiationResponseType.PARLEY));
+                    responses.add(new NegotiationResponse(CANCEL_TEXT, TextType.ACTION, NegotiationResponseType.CANCEL));
+                    prompt = new RespondableNegotiationPrompt(mobMessage, Mood.NEUTRAL, mobMessageTextType, responses);
                     updatePromptListeners(prompt, false);
                 }
             }
@@ -558,14 +563,16 @@ public class Negotiation
                 if (offerState == OfferState.ACCEPTED)
                 {
                     String mobMessage = script.getAcceptedMoneyOfferMessage().getVariant(mobPersonality);
-                    prompt = new NegotiationPrompt(mobMessage, Mood.HAPPY);
+                    TextType mobMessageTextType = script.getAcceptedMoneyOfferMessage().getVariantType(mobPersonality);
+                    prompt = new NegotiationPrompt(mobMessage, Mood.HAPPY, mobMessageTextType);
                     updatePromptListeners(prompt, false);
                     executeMobExit();
                 }
                 else if (offerState == OfferState.DENIED)
                 {
                     String mobMessage = script.getRefuseMoneyDemandMessage().getVariant(mobPersonality);
-                    prompt = new NegotiationPrompt(mobMessage, Mood.ANGRY);
+                    TextType mobMessageTextType = script.getRefuseMoneyDemandMessage().getVariantType(mobPersonality);
+                    prompt = new NegotiationPrompt(mobMessage, Mood.ANGRY, mobMessageTextType);
                     updatePromptListeners(prompt, false);
                 }
                 stop(NegotiationState.FINISHED_MONEY);
@@ -613,10 +620,10 @@ public class Negotiation
         if (scriptNode.getResponses() != null)
         {
             for (NegotiationScriptResponseNode responseNode : scriptNode.getResponses())
-                responses.add(new NegotiationResponse(responseNode.getText(), NegotiationResponseType.SPEECH));
-            responses.add(new NegotiationResponse(CANCEL_TEXT, NegotiationResponseType.CANCEL));
+                responses.add(new NegotiationResponse(responseNode.getText(), responseNode.getTextType(), NegotiationResponseType.PARLEY));
+            responses.add(new NegotiationResponse(CANCEL_TEXT, TextType.ACTION, NegotiationResponseType.CANCEL));
         }
-        return new RespondableNegotiationPrompt(scriptNode.getText(), scriptNode.getMood(), responses);
+        return new RespondableNegotiationPrompt(scriptNode.getText(), scriptNode.getMood(), scriptNode.getTextType(), responses);
     }
 
     /**

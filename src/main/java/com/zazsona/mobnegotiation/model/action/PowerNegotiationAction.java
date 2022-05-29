@@ -3,6 +3,7 @@ package com.zazsona.mobnegotiation.model.action;
 import com.zazsona.mobnegotiation.model.Mood;
 import com.zazsona.mobnegotiation.model.PersonalityType;
 import com.zazsona.mobnegotiation.model.PluginConfig;
+import com.zazsona.mobnegotiation.model.TextType;
 import com.zazsona.mobnegotiation.model.script.NegotiationScript;
 import com.zazsona.mobnegotiation.model.script.NegotiationScriptNode;
 import com.zazsona.mobnegotiation.model.script.NegotiationScriptResponseNode;
@@ -74,16 +75,17 @@ public class PowerNegotiationAction extends Action
                 String responseSuccess = selectedResponse.getSuccessResponses().getVariant(mobPersonality);
                 NegotiationScriptNode childNode = children.get(rand.nextInt(children.size()));
                 String mobMessage = responseSuccess + "\n" + childNode.getText();
-                NegotiationScriptNode node = new NegotiationScriptNode(mobMessage, childNode.getResponses(), childNode.getMood(), childNode.getChildren());
+                NegotiationScriptNode node = new NegotiationScriptNode(mobMessage, childNode.getMood(), childNode.getTextType(), childNode.getResponses(), childNode.getChildren());
                 this.scriptNode = node;
                 runNodeLoadListeners(this.scriptNode);
             }
             else // Negotiation Successful
             {
                 String responseSuccess = selectedResponse.getSuccessResponses().getVariant(mobPersonality);
+                TextType responseSuccessTextType = selectedResponse.getSuccessResponses().getVariantType(mobPersonality);
                 String powerSuccess = this.script.getPowerSuccessMessage().getVariant(mobPersonality);
                 String mobMessage = responseSuccess + "\n" + powerSuccess;
-                NegotiationScriptNode node = new NegotiationScriptNode(mobMessage, null, Mood.HAPPY, null);
+                NegotiationScriptNode node = new NegotiationScriptNode(mobMessage,  Mood.HAPPY, responseSuccessTextType, null, null);
                 this.scriptNode = node;
                 givePower();
                 runNodeLoadListeners(this.scriptNode);
@@ -93,7 +95,8 @@ public class PowerNegotiationAction extends Action
         else // Negotiation Failed
         {
             String mobMessage = selectedResponse.getFailureResponses().getVariant(mobPersonality);
-            NegotiationScriptNode node = new NegotiationScriptNode(mobMessage, null, Mood.ANGRY, null);
+            TextType mobMessageTextType = selectedResponse.getFailureResponses().getVariantType(mobPersonality);
+            NegotiationScriptNode node = new NegotiationScriptNode(mobMessage, Mood.ANGRY, mobMessageTextType, null, null);
             this.scriptNode = node;
             runNodeLoadListeners(this.scriptNode);
             stop();

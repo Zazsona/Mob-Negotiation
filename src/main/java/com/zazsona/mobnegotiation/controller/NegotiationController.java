@@ -1,6 +1,5 @@
 package com.zazsona.mobnegotiation.controller;
 
-import com.zazsona.mobnegotiation.MobNegotiationPlugin;
 import com.zazsona.mobnegotiation.Permissions;
 import com.zazsona.mobnegotiation.model.*;
 import com.zazsona.mobnegotiation.model.action.IAction;
@@ -19,7 +18,6 @@ import com.zazsona.mobnegotiation.view.interfaces.IViewInteractionExecutor;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.hover.content.Text;
-import net.milkbowl.vault.economy.Economy;
 import org.apache.commons.lang.WordUtils;
 import org.bukkit.Sound;
 import org.bukkit.entity.Mob;
@@ -129,10 +127,14 @@ public class NegotiationController implements Listener
                 ArrayList<NegotiationResponse> responses = respondablePrompt.getResponses();
                 for (NegotiationResponse response : responses)
                 {
-                    String icon = getResponseTypeIcon(response.getType());
-                    ChatColor colour = getResponseTypeColour(response.getType());
+                    String icon = getResponseTypeIcon(response.getResponseType());
+                    ChatColor colour = getResponseTypeColour(response.getResponseType());
+                    String formattedText = response.getText();
+                    formattedText = fillPlaceholderValues(formattedText, negotiation);
+                    formattedText = applyMinecraftFormatting(formattedText);
+                    formattedText = getTextTypeFormatting(response.getTextType()) + formattedText;
                     HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(HOVER_HINT_TEXT));
-                    NegotiationButton button = new NegotiationButton(response.getText(), icon, colour, negotiationMenu, hoverEvent);
+                    NegotiationButton button = new NegotiationButton(formattedText, icon, colour, negotiationMenu, hoverEvent);
                     button.addListener((clickedButton -> handleButtonClick(negotiationMenu, negotiation, response)));
                     negotiationMenu.addChild(button);
                 }
@@ -190,20 +192,24 @@ public class NegotiationController implements Listener
 
     private String createHeaderText(Negotiation negotiation, NegotiationPrompt prompt)
     {
-        String mobChatTagTemplate = PluginConfig.getMobChatTag();
-        String mobChatTag = fillPlaceholderValues(mobChatTagTemplate, negotiation).trim() + " ";
         String mobMessage = prompt.getMobMessage();
+        String mobChatTagTemplate = PluginConfig.getMobChatTag();
+        String mobChatTag = mobChatTagTemplate.trim() + " ";
         String[] lines = mobMessage.split("\n");
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < lines.length; i++)
         {
             String line = lines[i];
+            String textTypeFormatting = getTextTypeFormatting(prompt.getMobMessageTextType());
+            if (prompt.getMobMessageTextType() == TextType.SPEECH)
+                stringBuilder.append(fillPlaceholderValues(mobChatTag, negotiation));
             String moodFormatting = (i == lines.length - 1) ? getMoodFormatting(prompt.getMobMood()) : getMoodFormatting(Mood.NEUTRAL); // Only format last line
             line = line.replace(POWER_PLACEHOLDER_TEXT, ChatColor.GOLD + POWER_PLACEHOLDER_TEXT + moodFormatting);
             line = line.replace(ITEM_PLACEHOLDER_TEXT, ChatColor.GOLD + ITEM_PLACEHOLDER_TEXT + moodFormatting);
             line = line.replace(MONEY_PLACEHOLDER_TEXT, ChatColor.GOLD + MONEY_PLACEHOLDER_TEXT + moodFormatting);
             line = fillPlaceholderValues(line, negotiation);
-            stringBuilder.append(mobChatTag).append(moodFormatting).append(line).append("\n");
+            line = applyMinecraftFormatting(line);
+            stringBuilder.append(moodFormatting).append(textTypeFormatting).append(line).append("\n");
         }
         return stringBuilder.toString().trim();
     }
@@ -216,6 +222,26 @@ public class NegotiationController implements Listener
                     case HAPPY -> ""+ChatColor.GREEN;
                     default -> ""+ChatColor.WHITE;
                 };
+    }
+
+    private String getTextTypeFormatting(TextType textType)
+    {
+        switch (textType)
+        {
+            case ACTION:
+                return "" + ChatColor.ITALIC;
+            default:
+                return "";
+        }
+    }
+
+    private String applyMinecraftFormatting(String line)
+    {
+        // Formatting codes are the same as Minecraft default.
+        // Lines should just use f& instead of the section sign to prevent formatting issues with certain save formats.
+        String formatChar = ""+ChatColor.COLOR_CHAR;
+        String formattedLine = line.replace("f&", formatChar);
+        return formattedLine;
     }
 
     private String fillPlaceholderValues(String line, Negotiation negotiation)
@@ -280,7 +306,7 @@ public class NegotiationController implements Listener
     {
         return switch (type)
         {
-            case SPEECH -> ChatColor.WHITE;
+            case PARLEY -> ChatColor.WHITE;
             case ATTACK -> ChatColor.RED;
             case CANCEL -> ChatColor.GRAY;
         };

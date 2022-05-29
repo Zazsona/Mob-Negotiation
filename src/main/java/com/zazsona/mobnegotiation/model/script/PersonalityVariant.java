@@ -12,6 +12,11 @@ public class PersonalityVariant<T>
     private T irritable;
     private T gloomy;
 
+    public PersonalityVariant()
+    {
+
+    }
+
     public PersonalityVariant(T upbeat, T timid, T irritable, T gloomy)
     {
         this.upbeat = upbeat;

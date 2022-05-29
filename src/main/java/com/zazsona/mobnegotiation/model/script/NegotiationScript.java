@@ -7,22 +7,22 @@ public class NegotiationScript
 {
     private static final String UNDEFINED_MSG = "No text.";
 
-    private PersonalityVariant<String> greetingMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
-    private PersonalityVariant<String> idleWarningMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
-    private PersonalityVariant<String> idleTimeoutMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
-    private PersonalityVariant<String> initialItemOfferMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
-    private PersonalityVariant<String> furtherItemOfferMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
-    private PersonalityVariant<String> furtherItemOfferMessageVariant = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
-    private PersonalityVariant<String> acceptedItemOfferMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
-    private PersonalityVariant<String> refuseItemDemandMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
+    private ScriptTextPersonalityVariant greetingMessage = new ScriptTextPersonalityVariant(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
+    private ScriptTextPersonalityVariant idleWarningMessage = new ScriptTextPersonalityVariant(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
+    private ScriptTextPersonalityVariant idleTimeoutMessage = new ScriptTextPersonalityVariant(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
+    private ScriptTextPersonalityVariant initialItemOfferMessage = new ScriptTextPersonalityVariant(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
+    private ScriptTextPersonalityVariant furtherItemOfferMessage = new ScriptTextPersonalityVariant(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
+    private ScriptTextPersonalityVariant furtherItemOfferMessageVariant = new ScriptTextPersonalityVariant(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
+    private ScriptTextPersonalityVariant acceptedItemOfferMessage = new ScriptTextPersonalityVariant(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
+    private ScriptTextPersonalityVariant refuseItemDemandMessage = new ScriptTextPersonalityVariant(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
 
-    private PersonalityVariant<String> initialMoneyOfferMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
-    private PersonalityVariant<String> furtherMoneyOfferMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
-    private PersonalityVariant<String> furtherMoneyOfferMessageVariant = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
-    private PersonalityVariant<String> acceptedMoneyOfferMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
-    private PersonalityVariant<String> refuseMoneyDemandMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
+    private ScriptTextPersonalityVariant initialMoneyOfferMessage = new ScriptTextPersonalityVariant(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
+    private ScriptTextPersonalityVariant furtherMoneyOfferMessage = new ScriptTextPersonalityVariant(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
+    private ScriptTextPersonalityVariant furtherMoneyOfferMessageVariant = new ScriptTextPersonalityVariant(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
+    private ScriptTextPersonalityVariant acceptedMoneyOfferMessage = new ScriptTextPersonalityVariant(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
+    private ScriptTextPersonalityVariant refuseMoneyDemandMessage = new ScriptTextPersonalityVariant(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
 
-    private PersonalityVariant<String> powerSuccessMessage = new PersonalityVariant<>(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
+    private ScriptTextPersonalityVariant powerSuccessMessage = new ScriptTextPersonalityVariant(UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG, UNDEFINED_MSG);
     private List<NegotiationScriptNode> powerTrees = new ArrayList<>();
 
     public NegotiationScript()
@@ -30,10 +30,10 @@ public class NegotiationScript
 
     }
 
-    public NegotiationScript(PersonalityVariant<String> greetingMessage, PersonalityVariant<String> idleWarningMessage, PersonalityVariant<String> idleTimeoutMessage,
-                             PersonalityVariant<String> initialItemOfferMessage, PersonalityVariant<String> furtherItemOfferMessage, PersonalityVariant<String> furtherItemOfferMessageVariant, PersonalityVariant<String> acceptedItemOfferMessage, PersonalityVariant<String> refuseItemDemandMessage,
-                             PersonalityVariant<String> initialMoneyOfferMessage, PersonalityVariant<String> furtherMoneyOfferMessage, PersonalityVariant<String> furtherMoneyOfferMessageVariant, PersonalityVariant<String> acceptedMoneyOfferMessage, PersonalityVariant<String> refuseMoneyDemandMessage,
-                             PersonalityVariant<String> powerSuccessMessage, List<NegotiationScriptNode> powerTrees)
+    public NegotiationScript(ScriptTextPersonalityVariant greetingMessage, ScriptTextPersonalityVariant idleWarningMessage, ScriptTextPersonalityVariant idleTimeoutMessage,
+                             ScriptTextPersonalityVariant initialItemOfferMessage, ScriptTextPersonalityVariant furtherItemOfferMessage, ScriptTextPersonalityVariant furtherItemOfferMessageVariant, ScriptTextPersonalityVariant acceptedItemOfferMessage, ScriptTextPersonalityVariant refuseItemDemandMessage,
+                             ScriptTextPersonalityVariant initialMoneyOfferMessage, ScriptTextPersonalityVariant furtherMoneyOfferMessage, ScriptTextPersonalityVariant furtherMoneyOfferMessageVariant, ScriptTextPersonalityVariant acceptedMoneyOfferMessage, ScriptTextPersonalityVariant refuseMoneyDemandMessage,
+                             ScriptTextPersonalityVariant powerSuccessMessage, List<NegotiationScriptNode> powerTrees)
     {
         this.greetingMessage = greetingMessage;
         this.idleWarningMessage = idleWarningMessage;
@@ -58,7 +58,7 @@ public class NegotiationScript
      * Gets greetingMessage
      * @return greetingMessage
      */
-    public PersonalityVariant<String> getGreetingMessage()
+    public ScriptTextPersonalityVariant getGreetingMessage()
     {
         return greetingMessage;
     }
@@ -66,7 +66,7 @@ public class NegotiationScript
     /**
      * Sets greetingMessage
      */
-    public void setGreetingMessage(PersonalityVariant<String> greetingMessage)
+    public void setGreetingMessage(ScriptTextPersonalityVariant greetingMessage)
     {
         this.greetingMessage = greetingMessage;
     }
@@ -75,7 +75,7 @@ public class NegotiationScript
      * Gets idleWarningMessage
      * @return idleWarningMessage
      */
-    public PersonalityVariant<String> getIdleWarningMessage()
+    public ScriptTextPersonalityVariant getIdleWarningMessage()
     {
         return idleWarningMessage;
     }
@@ -83,7 +83,7 @@ public class NegotiationScript
     /**
      * Sets idleWarningMessage
      */
-    public void setIdleWarningMessage(PersonalityVariant<String> idleWarningMessage)
+    public void setIdleWarningMessage(ScriptTextPersonalityVariant idleWarningMessage)
     {
         this.idleWarningMessage = idleWarningMessage;
     }
@@ -92,7 +92,7 @@ public class NegotiationScript
      * Gets idleTimeoutMessage
      * @return idleTimeoutMessage
      */
-    public PersonalityVariant<String> getIdleTimeoutMessage()
+    public ScriptTextPersonalityVariant getIdleTimeoutMessage()
     {
         return idleTimeoutMessage;
     }
@@ -100,7 +100,7 @@ public class NegotiationScript
     /**
      * Sets idleTimeoutMessage
      */
-    public void setIdleTimeoutMessage(PersonalityVariant<String> idleTimeoutMessage)
+    public void setIdleTimeoutMessage(ScriptTextPersonalityVariant idleTimeoutMessage)
     {
         this.idleTimeoutMessage = idleTimeoutMessage;
     }
@@ -109,7 +109,7 @@ public class NegotiationScript
      * Gets initialItemOfferMessage
      * @return initialItemOfferMessage
      */
-    public PersonalityVariant<String> getInitialItemOfferMessage()
+    public ScriptTextPersonalityVariant getInitialItemOfferMessage()
     {
         return initialItemOfferMessage;
     }
@@ -117,7 +117,7 @@ public class NegotiationScript
     /**
      * Sets initialItemOfferMessage
      */
-    public void setInitialItemOfferMessage(PersonalityVariant<String> initialItemOfferMessage)
+    public void setInitialItemOfferMessage(ScriptTextPersonalityVariant initialItemOfferMessage)
     {
         this.initialItemOfferMessage = initialItemOfferMessage;
     }
@@ -126,7 +126,7 @@ public class NegotiationScript
      * Gets furtherItemOfferMessage
      * @return furtherItemOfferMessage
      */
-    public PersonalityVariant<String> getFurtherItemOfferMessage()
+    public ScriptTextPersonalityVariant getFurtherItemOfferMessage()
     {
         return furtherItemOfferMessage;
     }
@@ -134,7 +134,7 @@ public class NegotiationScript
     /**
      * Sets furtherItemOfferMessage
      */
-    public void setFurtherItemOfferMessage(PersonalityVariant<String> furtherItemOfferMessage)
+    public void setFurtherItemOfferMessage(ScriptTextPersonalityVariant furtherItemOfferMessage)
     {
         this.furtherItemOfferMessage = furtherItemOfferMessage;
     }
@@ -143,7 +143,7 @@ public class NegotiationScript
      * Gets furtherItemOfferMessageVariant
      * @return furtherItemOfferMessageVariant
      */
-    public PersonalityVariant<String> getFurtherItemOfferMessageVariant()
+    public ScriptTextPersonalityVariant getFurtherItemOfferMessageVariant()
     {
         return furtherItemOfferMessageVariant;
     }
@@ -151,7 +151,7 @@ public class NegotiationScript
     /**
      * Sets furtherItemOfferMessageVariant
      */
-    public void setFurtherItemOfferMessageVariant(PersonalityVariant<String> furtherItemOfferMessageVariant)
+    public void setFurtherItemOfferMessageVariant(ScriptTextPersonalityVariant furtherItemOfferMessageVariant)
     {
         this.furtherItemOfferMessageVariant = furtherItemOfferMessageVariant;
     }
@@ -160,7 +160,7 @@ public class NegotiationScript
      * Gets acceptedItemOfferMessage
      * @return acceptedItemOfferMessage
      */
-    public PersonalityVariant<String> getAcceptedItemOfferMessage()
+    public ScriptTextPersonalityVariant getAcceptedItemOfferMessage()
     {
         return acceptedItemOfferMessage;
     }
@@ -168,7 +168,7 @@ public class NegotiationScript
     /**
      * Sets acceptedItemOfferMessage
      */
-    public void setAcceptedItemOfferMessage(PersonalityVariant<String> acceptedItemOfferMessage)
+    public void setAcceptedItemOfferMessage(ScriptTextPersonalityVariant acceptedItemOfferMessage)
     {
         this.acceptedItemOfferMessage = acceptedItemOfferMessage;
     }
@@ -177,7 +177,7 @@ public class NegotiationScript
      * Gets refuseItemDemandMessage
      * @return refuseItemDemandMessage
      */
-    public PersonalityVariant<String> getRefuseItemDemandMessage()
+    public ScriptTextPersonalityVariant getRefuseItemDemandMessage()
     {
         return refuseItemDemandMessage;
     }
@@ -185,7 +185,7 @@ public class NegotiationScript
     /**
      * Sets refuseItemDemandMessage
      */
-    public void setRefuseItemDemandMessage(PersonalityVariant<String> refuseItemDemandMessage)
+    public void setRefuseItemDemandMessage(ScriptTextPersonalityVariant refuseItemDemandMessage)
     {
         this.refuseItemDemandMessage = refuseItemDemandMessage;
     }
@@ -194,7 +194,7 @@ public class NegotiationScript
      * Gets initialMoneyOfferMessage
      * @return initialMoneyOfferMessage
      */
-    public PersonalityVariant<String> getInitialMoneyOfferMessage()
+    public ScriptTextPersonalityVariant getInitialMoneyOfferMessage()
     {
         return initialMoneyOfferMessage;
     }
@@ -202,7 +202,7 @@ public class NegotiationScript
     /**
      * Sets initialMoneyOfferMessage
      */
-    public void setInitialMoneyOfferMessage(PersonalityVariant<String> initialMoneyOfferMessage)
+    public void setInitialMoneyOfferMessage(ScriptTextPersonalityVariant initialMoneyOfferMessage)
     {
         this.initialMoneyOfferMessage = initialMoneyOfferMessage;
     }
@@ -211,7 +211,7 @@ public class NegotiationScript
      * Gets furtherMoneyOfferMessage
      * @return furtherMoneyOfferMessage
      */
-    public PersonalityVariant<String> getFurtherMoneyOfferMessage()
+    public ScriptTextPersonalityVariant getFurtherMoneyOfferMessage()
     {
         return furtherMoneyOfferMessage;
     }
@@ -219,7 +219,7 @@ public class NegotiationScript
     /**
      * Sets furtherMoneyOfferMessage
      */
-    public void setFurtherMoneyOfferMessage(PersonalityVariant<String> furtherMoneyOfferMessage)
+    public void setFurtherMoneyOfferMessage(ScriptTextPersonalityVariant furtherMoneyOfferMessage)
     {
         this.furtherMoneyOfferMessage = furtherMoneyOfferMessage;
     }
@@ -228,7 +228,7 @@ public class NegotiationScript
      * Gets furtherMoneyOfferMessageVariant
      * @return furtherMoneyOfferMessageVariant
      */
-    public PersonalityVariant<String> getFurtherMoneyOfferMessageVariant()
+    public ScriptTextPersonalityVariant getFurtherMoneyOfferMessageVariant()
     {
         return furtherMoneyOfferMessageVariant;
     }
@@ -236,7 +236,7 @@ public class NegotiationScript
     /**
      * Sets furtherMoneyOfferMessageVariant
      */
-    public void setFurtherMoneyOfferMessageVariant(PersonalityVariant<String> furtherMoneyOfferMessageVariant)
+    public void setFurtherMoneyOfferMessageVariant(ScriptTextPersonalityVariant furtherMoneyOfferMessageVariant)
     {
         this.furtherMoneyOfferMessageVariant = furtherMoneyOfferMessageVariant;
     }
@@ -245,7 +245,7 @@ public class NegotiationScript
      * Gets acceptedMoneyOfferMessage
      * @return acceptedMoneyOfferMessage
      */
-    public PersonalityVariant<String> getAcceptedMoneyOfferMessage()
+    public ScriptTextPersonalityVariant getAcceptedMoneyOfferMessage()
     {
         return acceptedMoneyOfferMessage;
     }
@@ -253,7 +253,7 @@ public class NegotiationScript
     /**
      * Sets acceptedMoneyOfferMessage
      */
-    public void setAcceptedMoneyOfferMessage(PersonalityVariant<String> acceptedMoneyOfferMessage)
+    public void setAcceptedMoneyOfferMessage(ScriptTextPersonalityVariant acceptedMoneyOfferMessage)
     {
         this.acceptedMoneyOfferMessage = acceptedMoneyOfferMessage;
     }
@@ -262,7 +262,7 @@ public class NegotiationScript
      * Gets refuseMoneyDemandMessage
      * @return refuseMoneyDemandMessage
      */
-    public PersonalityVariant<String> getRefuseMoneyDemandMessage()
+    public ScriptTextPersonalityVariant getRefuseMoneyDemandMessage()
     {
         return refuseMoneyDemandMessage;
     }
@@ -270,7 +270,7 @@ public class NegotiationScript
     /**
      * Sets refuseMoneyDemandMessage
      */
-    public void setRefuseMoneyDemandMessage(PersonalityVariant<String> refuseMoneyDemandMessage)
+    public void setRefuseMoneyDemandMessage(ScriptTextPersonalityVariant refuseMoneyDemandMessage)
     {
         this.refuseMoneyDemandMessage = refuseMoneyDemandMessage;
     }
@@ -279,7 +279,7 @@ public class NegotiationScript
      * Gets powerSuccessMessage
      * @return powerSuccessMessage
      */
-    public PersonalityVariant<String> getPowerSuccessMessage()
+    public ScriptTextPersonalityVariant getPowerSuccessMessage()
     {
         return powerSuccessMessage;
     }
@@ -287,7 +287,7 @@ public class NegotiationScript
     /**
      * Sets powerSuccessMessage
      */
-    public void setPowerSuccessMessage(PersonalityVariant<String> powerSuccessMessage)
+    public void setPowerSuccessMessage(ScriptTextPersonalityVariant powerSuccessMessage)
     {
         this.powerSuccessMessage = powerSuccessMessage;
     }

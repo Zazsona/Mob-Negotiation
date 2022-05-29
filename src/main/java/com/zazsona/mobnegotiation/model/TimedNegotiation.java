@@ -55,13 +55,17 @@ public class TimedNegotiation extends Negotiation
         MobNegotiationPlugin plugin = MobNegotiationPlugin.getInstance();
         idleReminderTimer = Bukkit.getScheduler().runTaskLater(plugin, () ->
                                                                {
-                                                                   NegotiationPrompt prompt = new NegotiationPrompt(script.getIdleWarningMessage().getVariant(mobPersonality), Mood.NEUTRAL);
+                                                                   String mobMessage = script.getIdleWarningMessage().getVariant(mobPersonality);
+                                                                   TextType mobMessageTextType = script.getIdleWarningMessage().getVariantType(mobPersonality);
+                                                                   NegotiationPrompt prompt = new NegotiationPrompt(mobMessage, Mood.NEUTRAL, mobMessageTextType);
                                                                    updatePromptListeners(prompt, true);
                                                                }, Math.round(idleTimerTicks / 2.0f));
 
         idleTimer = Bukkit.getScheduler().runTaskLater(plugin, () ->
                                                        {
-                                                           this.prompt = new NegotiationPrompt(script.getIdleTimeoutMessage().getVariant(mobPersonality), Mood.ANGRY);
+                                                           String mobMessage = script.getIdleTimeoutMessage().getVariant(mobPersonality);
+                                                           TextType mobMessageTextType = script.getIdleTimeoutMessage().getVariantType(mobPersonality);
+                                                           this.prompt = new NegotiationPrompt(mobMessage, Mood.ANGRY, mobMessageTextType);
                                                            updatePromptListeners(this.prompt, false);
                                                            stop(NegotiationState.FINISHED_TIMEOUT);
                                                        }, idleTimerTicks);
