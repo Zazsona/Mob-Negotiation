@@ -1,8 +1,8 @@
 {
   "greetingMessage": {
-    "upbeat": "Buuhhh... Want speak?",
+    "upbeat": "Buuhhh... Want... Chat instead?",
     "timid": "... Spare life?",
-    "irritable": "Guuuh... Why stop?",
+    "irritable": "Guuuh... Stop...",
     "gloomy": "Buhhh..."
   },
   "idleWarningMessage": {
@@ -21,13 +21,13 @@
     "upbeat": "Hrgh... Funny... Have spare %ITEM%.",
     "timid": "Grah... Take %ITEM%... please.",
     "irritable": "Burrr... Take %ITEM%... leave.",
-    "gloomy": "%ITEM% more... than me."
+    "gloomy": "%ITEM% worth more... than me."
   },
   "furtherItemOfferMessage": {
     "upbeat": "Grah... Can... give %ITEM%.",
     "timid": "What about... %ITEM%? Hrgh...",
-    "irritable": "Gruuuh... %ITEM%.",
-    "gloomy": "Hrrr... %ITEM%... is all."
+    "irritable": "Gruuuh... Take %ITEM%.",
+    "gloomy": "Hrrr... %ITEM%... is all I... can give."
   },
   "furtherItemOfferMessageVariant": {
     "upbeat": "Might have... Urgh... %ITEM%.",
@@ -36,9 +36,9 @@
     "gloomy": "Buuuh... %ITEM%."
   },
   "acceptedItemOfferMessage": {
-    "upbeat": "Enjoy like... Brr... me.",
+    "upbeat": "Enjoy like... I did.",
     "timid": "Please... have.",
-    "irritable": "Go... go-urgh... now.",
+    "irritable": "Go... now.",
     "gloomy": "Uuuggghhh..."
   },
   "refuseItemDemandMessage": {
@@ -48,21 +48,21 @@
     "gloomy": "No... more. Grrruh!"
   },
   "initialMoneyOfferMessage": {
-    "upbeat": "Hargh... Pocket... have lint... and %MONEY%.",
-    "timid": "Only... Grr... %MONEY%.",
+    "upbeat": "Hargh... Only have pocket lint... and %MONEY%.",
+    "timid": "Only... %MONEY%.",
     "irritable": "%MONEY%... Take.",
-    "gloomy": "%MONEY%... and kill... please."
+    "gloomy": "%MONEY%... and no kill... please."
   },
   "furtherMoneyOfferMessage": {
-    "upbeat": "More... deeper pocket... %MONEY%.",
+    "upbeat": "More... not much deeper pocket... have %MONEY%.",
     "timid": "Savings... Urgh... have %MONEY%.",
     "irritable": "Murgh... More... %MONEY%. Go.",
     "gloomy": "%MONEY%. Take... Urg... all."
   },
   "furtherMoneyOfferMessageVariant": {
-    "upbeat": "%MONEY%. Other... Gu... Pocket...",
+    "upbeat": "I check... Other... Pocket... Got %MONEY%.",
     "timid": "Bur... %MONEY%... is more...",
-    "irritable": "%MONEY%... Rurgh... Really take.",
+    "irritable": "%MONEY%... Rurgh... Really take and go... now.",
     "gloomy": "Rurgh... Running... out... Have %MONEY%."
   },
   "acceptedMoneyOfferMessage": {
@@ -85,7 +85,7 @@
   },
   "powerTrees": [
     {
-      "text": "Power? Buh... You... still alive. What you... want do with life?",
+      "text": "You want... Power? First tell me... what you want do... with life?",
       "mood": "NEUTRAL",
       "responses": [
         {
@@ -154,7 +154,7 @@
       ],
       "children": [
         {
-          "text": "Surgh... So... what like... to still have freedom... to choose?",
+          "text": "Surgh... So... what like... to still have freedom... to choose what do with life?",
           "mood": "NEUTRAL",
           "responses": [
             {
@@ -166,7 +166,7 @@
                 "gloomy": 5.0
               },
               "successResponses": {
-                "upbeat": "Hurh... Afterlife... less difficult.",
+                "upbeat": "Hurh... In afterlife... I don't have... to bother.",
                 "timid": "Ourgh... Once did... too.",
                 "irritable": "Guh... Good.",
                 "gloomy": "Gruh... Better... times."
@@ -190,7 +190,7 @@
                 "upbeat": "You... like dictionary.",
                 "timid": "Defines... huurrr...",
                 "irritable": "Buh... You... straightforward. Like me.",
-                "gloomy": "Wish... have... Guh..."
+                "gloomy": "Wish... have... choice again... Guh..."
               },
               "failureResponses": {
                 "upbeat": "Death... define you. Hargh!",
@@ -398,7 +398,7 @@
                 "gloomy": 10.0
               },
               "successResponses": {
-                "upbeat": "I... see you... with pig.",
+                "upbeat": "If... you say so...",
                 "timid": "Guhhh... R-really?",
                 "irritable": "Understood...",
                 "gloomy": "Buh... World... better place... if true."
@@ -419,7 +419,7 @@
                 "gloomy": 90.0
               },
               "successResponses": {
-                "upbeat": "Bugh! What... worst you do? Forget... say please?",
+                "upbeat": "Bugh! What... worst you do? Forget to... say please?",
                 "timid": "Buh... We all... have history.",
                 "irritable": "I... understand.",
                 "gloomy": "I... same."
@@ -645,7 +645,7 @@
           ]
         },
         {
-          "text": "Speaking of... shaky... hands....\nYou... any good... at sewing? I... need clothes...fixing.",
+          "text": "Speaking of... shaky... hands... You... any good... at sewing? I... need clothes... fixing.",
           "mood": "NEUTRAL",
           "responses": [
             {
