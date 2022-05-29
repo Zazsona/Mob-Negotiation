@@ -5,7 +5,7 @@
 #  negotiation-power-success-rate : % chance multiplier for a power negotiation response succeeding, multiplying base response success rates. Use 100% for default rates.
 #  negotiation-item-success-rate : % chance of a mob offering more items when demanding more
 #  negotiation-money-success-rate : % chance of a mob offering more money when demanding more
-#  negotiation-hp-threshold : Sets the remaining health of a mob, following an attack, required to be able to negotiate. Set to 0.0 to only negotiate on killing hits.
+#  negotiation-hp-threshold : Sets the remaining health of a mob, after an attack, required to be able to negotiate. Set to 0.0 to only negotiate on killing hits.
 #  power-effect-duration-ticks : The number of ticks a bestowed power lasts
 #  negotiation-idle-timeout-ticks : Ticks without a player response before negotiation ends
 #  negotiation-cooldown-ticks : Minimum ticks before a player can get another negotiation
@@ -20,16 +20,17 @@ power-negotiation-enabled: true
 item-negotiation-enabled: true
 money-negotiation-enabled: true
 all-out-attack-enabled: true
-negotiation-rate: 100.0
+negotiation-rate: 5.0
 negotiation-power-success-rate: 100.0
 negotiation-item-success-rate: 33.0
 negotiation-money-success-rate: 33.0
 negotiation-hp-threshold: 0.0
-power-effect-duration-ticks: 6000
-negotiation-idle-timeout-ticks: 600
+power-effect-duration-ticks: 9600
+negotiation-idle-timeout-ticks: 400
 negotiation-cooldown-ticks: 3600
-negotiation-damage-grace-ticks: 30
+negotiation-damage-grace-ticks: 10
 mob-chat-tag: "<%PERSONALITY% %NAME%>"
 alert-messages:
-  - "HOLD IT!"
-  - "HOLD UP!"
+  - "WAIT, WAIT!"
+  - "STOP!"
+  - "HANG ON!"
