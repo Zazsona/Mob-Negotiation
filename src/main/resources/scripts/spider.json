@@ -1,95 +1,153 @@
 {
   "greetingMessage": {
-    "upbeat": "The spider is staring at you, with a glint in its eye.",
-    "timid": "The spider is trembling...",
-    "irritable": "The spider appears antsy...",
-    "gloomy": "The spider seems unfocused..."
+    "upbeat": "The %PERSONALITY% %NAME% is staring at you, with a glint in its eye.",
+    "timid": "The %PERSONALITY% %NAME% is trembling...",
+    "irritable": "The %PERSONALITY% %NAME% appears antsy...",
+    "gloomy": "The %PERSONALITY% %NAME% seems unfocused...",
+    "upbeatTextType": "ACTION",
+    "timidTextType": "ACTION",
+    "irritableTextType": "ACTION",
+    "gloomyTextType": "ACTION"
   },
   "idleWarningMessage": {
     "upbeat": "The spider seems to be planning an escape.",
     "timid": "The spider seems to be planning an escape.",
     "irritable": "The spider seems to be planning an escape.",
-    "gloomy": "The spider seems to be planning an escape."
+    "gloomy": "The spider seems to be planning an escape.",
+    "upbeatTextType": "ACTION",
+    "timidTextType": "ACTION",
+    "irritableTextType": "ACTION",
+    "gloomyTextType": "ACTION"
   },
   "idleTimeoutMessage": {
     "upbeat": "The spider has become antagonistic!",
     "timid": "The spider has become antagonistic!",
     "irritable": "The spider has become antagonistic!",
-    "gloomy": "The spider has become antagonistic!"
+    "gloomy": "The spider has become antagonistic!",
+    "upbeatTextType": "ACTION",
+    "timidTextType": "ACTION",
+    "irritableTextType": "ACTION",
+    "gloomyTextType": "ACTION"
   },
   "initialItemOfferMessage": {
     "upbeat": "The spider dangles %ITEM% at you.",
     "timid": "The spider cautiously nudges %ITEM% towards you.",
     "irritable": "The spider throws out %ITEM%.",
-    "gloomy": "The spider drops %ITEM% in front of you."
+    "gloomy": "The spider drops %ITEM% in front of you.",
+    "upbeatTextType": "ACTION",
+    "timidTextType": "ACTION",
+    "irritableTextType": "ACTION",
+    "gloomyTextType": "ACTION"
   },
   "furtherItemOfferMessage": {
     "upbeat": "The spider is smirking as it presents %ITEM%.",
     "timid": "The spider seems distressed as it pushes forth %ITEM%.",
     "irritable": "The spider throws out %ITEM% with mighty force.",
-    "gloomy": "The spider appears unmoving as %ITEM% is brought forth"
+    "gloomy": "The spider appears unmoving as %ITEM% is brought forth.",
+    "upbeatTextType": "ACTION",
+    "timidTextType": "ACTION",
+    "irritableTextType": "ACTION",
+    "gloomyTextType": "ACTION"
   },
   "furtherItemOfferMessageVariant": {
     "upbeat": "The spider's curious glare continues as a %ITEM% comes out.",
     "timid": "The spider's presentations continue cautiously as it presents %ITEM%.",
     "irritable": "The spider seems to hesitate with fury before unveiling %ITEM%.",
-    "gloomy": "A %ITEM% is dragged out by the spider."
+    "gloomy": "A %ITEM% is dragged out by the spider.",
+    "upbeatTextType": "ACTION",
+    "timidTextType": "ACTION",
+    "irritableTextType": "ACTION",
+    "gloomyTextType": "ACTION"
   },
   "acceptedItemOfferMessage": {
     "upbeat": "The spider takes its leave...",
     "timid": "The spider takes its leave...",
     "irritable": "The spider takes its leave...",
-    "gloomy": "The spider takes its leave..."
+    "gloomy": "The spider takes its leave...",
+    "upbeatTextType": "ACTION",
+    "timidTextType": "ACTION",
+    "irritableTextType": "ACTION",
+    "gloomyTextType": "ACTION"
   },
   "refuseItemDemandMessage": {
     "upbeat": "The spider has become antagonistic!",
     "timid": "The spider has become antagonistic!",
     "irritable": "The spider has become antagonistic!",
-    "gloomy": "The spider has become antagonistic!"
+    "gloomy": "The spider has become antagonistic!",
+    "upbeatTextType": "ACTION",
+    "timidTextType": "ACTION",
+    "irritableTextType": "ACTION",
+    "gloomyTextType": "ACTION"
   },
   "initialMoneyOfferMessage": {
     "upbeat": "The spider unveils %MONEY%, though it's not clear where from...",
     "timid": "The spider cautiously drops down %MONEY%.",
     "irritable": "The spider spits %MONEY% at you.",
-    "gloomy": "The spider plucks %MONEY% from its hairs."
+    "gloomy": "The spider plucks %MONEY% from its hairs.",
+    "upbeatTextType": "ACTION",
+    "timidTextType": "ACTION",
+    "irritableTextType": "ACTION",
+    "gloomyTextType": "ACTION"
   },
   "furtherMoneyOfferMessage": {
     "upbeat": "A total of %MONEY% seems to have been retrieved from the same origin...",
     "timid": "The spider slowly adds to the pile, for a total of %MONEY%.",
     "irritable": "More is spat at you, totalling %MONEY% overall.",
-    "gloomy": "From a deeper dive into its filth, the spider makes for a total of %MONEY%."
+    "gloomy": "From a deeper dive into its filth, the spider makes for a total of %MONEY%.",
+    "upbeatTextType": "ACTION",
+    "timidTextType": "ACTION",
+    "irritableTextType": "ACTION",
+    "gloomyTextType": "ACTION"
   },
   "furtherMoneyOfferMessageVariant": {
     "upbeat": "As the mystery of the origin deepens, so does the value as the spider presents a total of %MONEY%.",
     "timid": "With great hesitation, the pile is expanded further for a total of %MONEY%.",
     "irritable": "The spider seems to now be depositing from the less favourable end for a total of %MONEY%.",
-    "gloomy": "You gag as the spider retrieves from within itself once again, totalling %MONEY%."
+    "gloomy": "You gag as the spider retrieves from within itself once again, totalling %MONEY%.",
+    "upbeatTextType": "ACTION",
+    "timidTextType": "ACTION",
+    "irritableTextType": "ACTION",
+    "gloomyTextType": "ACTION"
   },
   "acceptedMoneyOfferMessage": {
     "upbeat": "The spider takes its leave...",
     "timid": "The spider takes its leave...",
     "irritable": "The spider takes its leave...",
-    "gloomy": "The spider takes its leave..."
+    "gloomy": "The spider takes its leave...",
+    "upbeatTextType": "ACTION",
+    "timidTextType": "ACTION",
+    "irritableTextType": "ACTION",
+    "gloomyTextType": "ACTION"
   },
   "refuseMoneyDemandMessage": {
     "upbeat": "The spider has become antagonistic!",
     "timid": "The spider has become antagonistic!",
     "irritable": "The spider has become antagonistic!",
-    "gloomy": "The spider has become antagonistic!"
+    "gloomy": "The spider has become antagonistic!",
+    "upbeatTextType": "ACTION",
+    "timidTextType": "ACTION",
+    "irritableTextType": "ACTION",
+    "gloomyTextType": "ACTION"
   },
   "powerSuccessMessage": {
     "upbeat": "The spider shoots off with a spring in its step as it leaves behind %POWER% power.",
     "timid": "The spider takes its leave, rushing for solace, as it leaves behind %POWER% power.",
     "irritable": "The spider scurries off, leaving behind a %POWER% power.",
-    "gloomy": "The spider slowly crawls off as it drops behind %POWER% power."
+    "gloomy": "The spider slowly crawls off as it drops behind %POWER% power.",
+    "upbeatTextType": "ACTION",
+    "timidTextType": "ACTION",
+    "irritableTextType": "ACTION",
+    "gloomyTextType": "ACTION"
   },
   "powerTrees": [
     {
       "text": "The spider doesn't seem to understand...",
+      "textType": "ACTION",
       "mood": "NEUTRAL",
       "responses": [
         {
           "text": "Say it again, but louder.",
+          "textType": "ACTION",
           "successRates": {
             "upbeat": 75.0,
             "timid": 20.0,
@@ -100,17 +158,26 @@
             "upbeat": "The spider appears to be chuckling back at you...",
             "timid": "You got the spider's attention!",
             "irritable": "The spider appears to be... bowing?",
-            "gloomy": "The spider shows some signs of attention..."
+            "gloomy": "The spider shows some signs of attention...",
+            "upbeatTextType": "ACTION",
+            "timidTextType": "ACTION",
+            "irritableTextType": "ACTION",
+            "gloomyTextType": "ACTION"
           },
           "failureResponses": {
             "upbeat": "The spider noisily leaps out!",
             "timid": "The spider's become defensive!",
             "irritable": "The spider's loudly readying an attack!",
-            "gloomy": "The spider's groaning with a deadly stare!"
+            "gloomy": "The spider's groaning with a deadly stare!",
+            "upbeatTextType": "ACTION",
+            "timidTextType": "ACTION",
+            "irritableTextType": "ACTION",
+            "gloomyTextType": "ACTION"
           }
         },
         {
           "text": "Say it again, but slower.",
+          "textType": "ACTION",
           "successRates": {
             "upbeat": 5.0,
             "timid": 95.0,
@@ -121,17 +188,26 @@
             "upbeat": "The spider's started moving in slow motion. It appears to be mocking you.",
             "timid": "The spider seems to be understanding a little better now?",
             "irritable": "...",
-            "gloomy": "The spider seems a little more interested now."
+            "gloomy": "The spider seems a little more interested now.",
+            "upbeatTextType": "ACTION",
+            "timidTextType": "ACTION",
+            "irritableTextType": "ACTION",
+            "gloomyTextType": "ACTION"
           },
           "failureResponses": {
             "upbeat": "The spider excitedly leaps out at speed!",
             "timid": "The spider's become defensive!",
             "irritable": "The spider looks to be readying an attack and definitely not slowly!",
-            "gloomy": "It's no use. The spider isn't responding!"
+            "gloomy": "It's no use. The spider isn't responding!",
+            "upbeatTextType": "ACTION",
+            "timidTextType": "ACTION",
+            "irritableTextType": "ACTION",
+            "gloomyTextType": "ACTION"
           }
         },
         {
           "text": "Wait.",
+          "textType": "ACTION",
           "successRates": {
             "upbeat": 5.0,
             "timid": 60.0,
@@ -142,23 +218,33 @@
             "upbeat": "The spider seems to have taken that as some sort of game.",
             "timid": "The spider remains silent...",
             "irritable": "The spider seems to be waiting for you...",
-            "gloomy": "The spider remains silent..."
+            "gloomy": "The spider remains silent...",
+            "upbeatTextType": "ACTION",
+            "timidTextType": "ACTION",
+            "irritableTextType": "ACTION",
+            "gloomyTextType": "ACTION"
           },
           "failureResponses": {
             "upbeat": "The spider looks to have become bored. It's looking for other entertainment!",
             "timid": "The spider's become cynical of you!",
             "irritable": "The spider's patience has worn thin! It's become aggressive!",
-            "gloomy": "The spider's giving you an unnerving glare..."
+            "gloomy": "The spider's giving you an unnerving glare...",
+            "upbeatTextType": "ACTION",
+            "timidTextType": "ACTION",
+            "irritableTextType": "ACTION",
+            "gloomyTextType": "ACTION"
           }
         }
       ],
       "children": [
         {
           "text": "It seems to be eyeing up your inventory...",
+          "textType": "ACTION",
           "mood": "NEUTRAL",
           "responses": [
             {
               "text": "Eye it back.",
+              "textType": "ACTION",
               "successRates": {
                 "upbeat": 15.0,
                 "timid": 5.0,
@@ -169,17 +255,26 @@
                 "upbeat": "The spider's starting a staring competition!",
                 "timid": "The spider is easing off...",
                 "irritable": "... Neither of you are breaking down.",
-                "gloomy": "The spider is gradually drifting its eyes away."
+                "gloomy": "The spider is gradually drifting its eyes away.",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               },
               "failureResponses": {
                 "upbeat": "The spider's gaze has turned to you and become more deadly!",
                 "timid": "The spider seems to now be considering something more nefarious!",
                 "irritable": "The spider's become agitated!",
-                "gloomy": "The spider seems to have given up talking!"
+                "gloomy": "The spider seems to have given up talking!",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               }
             },
             {
               "text": "Pretend to offer something.",
+              "textType": "ACTION",
               "successRates": {
                 "upbeat": 85.0,
                 "timid": 10.0,
@@ -190,17 +285,26 @@
                 "upbeat": "Seems the spider knows that's the oldest trick in the book! It's smirking!",
                 "timid": "Got 'em! The spider seems ashamed to have fallen for that.",
                 "irritable": "...",
-                "gloomy": "It didn't even bother looking up to notice..."
+                "gloomy": "It didn't even bother looking up to notice...",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               },
               "failureResponses": {
                 "upbeat": "Bad idea! The spider looks like it's about to play its own trick!",
                 "timid": "The spider's shying away...",
                 "irritable": "Now it's irritated!",
-                "gloomy": "It doesn't seem amused..."
+                "gloomy": "It doesn't seem amused...",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               }
             },
             {
               "text": "Shake your head.",
+              "textType": "ACTION",
               "successRates": {
                 "upbeat": 15.0,
                 "timid": 85.0,
@@ -211,23 +315,33 @@
                 "upbeat": "The spider nods back.",
                 "timid": "It seems rather dismayed by your response...",
                 "irritable": "The spider has retracted its attention.",
-                "gloomy": "It seems rather dismayed by your response..."
+                "gloomy": "It seems rather dismayed by your response...",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               },
               "failureResponses": {
                 "upbeat": "The spider's shaking something up! It's readying to attack!'",
                 "timid": "It's lost interest in negotiation!",
                 "irritable": "That's riled it up!",
-                "gloomy": "It's lost the will to continue on!"
+                "gloomy": "It's lost the will to continue on!",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               }
             }
           ]
         },
         {
           "text": "It appears to be deep in thought...",
+          "textType": "ACTION",
           "mood": "NEUTRAL",
           "responses": [
             {
               "text": "Say it again.",
+              "textType": "ACTION",
               "successRates": {
                 "upbeat": 10.0,
                 "timid": 35.0,
@@ -238,17 +352,26 @@
                 "upbeat": "Oddly enough, it still doesn't seem to understand.",
                 "timid": "The spider appears concerned about your repetitive nature.",
                 "irritable": "...",
-                "gloomy": "The look it's giving you... The spider may be starting to take you for a parrot."
+                "gloomy": "The look it's giving you... The spider may be starting to take you for a parrot.",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               },
               "failureResponses": {
                 "upbeat": "That's done it! It's had enough fun and games!",
                 "timid": "The spider hasn't taken kindly to that!",
                 "irritable": "Once might've been enough! Now you're in trouble!",
-                "gloomy": "It doesn't seem to have much hope for your intellect..."
+                "gloomy": "It doesn't seem to have much hope for your intellect...",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               }
             },
             {
               "text": "Pull a pose like The Thinker.",
+              "textType": "ACTION",
               "successRates": {
                 "upbeat": 95.0,
                 "timid": 20.0,
@@ -259,17 +382,26 @@
                 "upbeat": "That seems to have humoured it. It seems friendlier now!",
                 "timid": "The spider seems to genuinely think you're in deep thought...",
                 "irritable": "The spider gives you a nod.",
-                "gloomy": "It seems more at ease now."
+                "gloomy": "It seems more at ease now.",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               },
               "failureResponses": {
                 "upbeat": "There's no denying the face it's giving you - It thinks you look ridiculous!",
                 "timid": "It hasn't taken well to being mocked!",
                 "irritable": "Looks like it doesn't have time for tomfoolery!",
-                "gloomy": "That's set it off!"
+                "gloomy": "That's set it off!",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               }
             },
             {
               "text": "Whistle a tune while waiting.",
+              "textType": "ACTION",
               "successRates": {
                 "upbeat": 75.0,
                 "timid": 75.0,
@@ -280,13 +412,21 @@
                 "upbeat": "It's getting its boogie on!",
                 "timid": "It seems like it wants to learn this tune...",
                 "irritable": "Whistling a calming tune seems to have appeased it.",
-                "gloomy": "Whistling a gloomy tune, it seems to relate."
+                "gloomy": "Whistling a gloomy tune, it seems to relate.",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               },
               "failureResponses": {
                 "upbeat": "Looks like it's not a fan!",
                 "timid": "It seems to prefer silence!",
                 "irritable": "It's lost its train of thought - Now it's mad!",
-                "gloomy": "No bueno. That's irritated it!"
+                "gloomy": "No bueno. That's irritated it!",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               }
             }
           ]
@@ -297,10 +437,12 @@
 
     {
       "text": "The spider seems disinterested...",
+      "textType": "ACTION",
       "mood": "NEUTRAL",
       "responses": [
         {
           "text": "Snap your fingers at it.",
+          "textType": "ACTION",
           "successRates": {
             "upbeat": 5.0,
             "timid": 20.0,
@@ -311,17 +453,26 @@
             "upbeat": "It's got its eyes on you now!",
             "timid": "It's looking up with fear in its eyes.",
             "irritable": "You've got its full attention with that!",
-            "gloomy": "It's giving you a look... But at least it's paying attention."
+            "gloomy": "It's giving you a look... But at least it's paying attention.",
+            "upbeatTextType": "ACTION",
+            "timidTextType": "ACTION",
+            "irritableTextType": "ACTION",
+            "gloomyTextType": "ACTION"
           },
           "failureResponses": {
             "upbeat": "It's snapping back!",
             "timid": "It hasn't responded well to hostility!",
             "irritable": "That enraged it!",
-            "gloomy": "It's turned on you!"
+            "gloomy": "It's turned on you!",
+            "upbeatTextType": "ACTION",
+            "timidTextType": "ACTION",
+            "irritableTextType": "ACTION",
+            "gloomyTextType": "ACTION"
           }
         },
         {
           "text": "Tell it a fairy-tale.",
+          "textType": "ACTION",
           "successRates": {
             "upbeat": 40.0,
             "timid": 90.0,
@@ -331,18 +482,27 @@
           "successResponses": {
             "upbeat": "It seems to have enjoyed that.",
             "timid": "It looks like it's taken the message of the story to heart... Somehow.",
-            "irritable": "It's eyes are on you now. It might be waiting for another.",
-            "gloomy": "It quietly listened. Seems you have its attention."
+            "irritable": "Its eyes are on you now. It might be waiting for another.",
+            "gloomy": "It quietly listened. Seems you have its attention.",
+            "upbeatTextType": "ACTION",
+            "timidTextType": "ACTION",
+            "irritableTextType": "ACTION",
+            "gloomyTextType": "ACTION"
           },
           "failureResponses": {
             "upbeat": "Doesn't look like it's a fan of the classics!",
             "timid": "It hasn't taken the moral of the story to heart!",
             "irritable": "No good. It's at a higher reading level.",
-            "gloomy": "It doesn't appear to appreciate the happy ending."
+            "gloomy": "It doesn't appear to appreciate the happy ending.",
+            "upbeatTextType": "ACTION",
+            "timidTextType": "ACTION",
+            "irritableTextType": "ACTION",
+            "gloomyTextType": "ACTION"
           }
         },
         {
           "text": "Stare into its deep red eyes...",
+          "textType": "ACTION",
           "successRates": {
             "upbeat": 5.0,
             "timid": 30.0,
@@ -353,23 +513,33 @@
             "upbeat": "As your eyes lock, you lean in for a kiss... Eurgh. No. It's a spider. Enough of that. At least that's garnered some attention...",
             "timid": "It's blushing...",
             "irritable": "It's certainly more engaged now, and perhaps a little attracted...",
-            "gloomy": "It's staring back, right into your very soul, with a longing for love in it's 8 sparkling peepers."
+            "gloomy": "It's staring back, right into your very soul, with a longing for love in it's 8 sparkling peepers.",
+            "upbeatTextType": "ACTION",
+            "timidTextType": "ACTION",
+            "irritableTextType": "ACTION",
+            "gloomyTextType": "ACTION"
           },
           "failureResponses": {
             "upbeat": "The eyes are looking a little angrier now. Here it comes!",
             "timid": "That seems to have made it uncomfortable...",
             "irritable": "It hasn't got time for that. Watch out!",
-            "gloomy": "It doesn't appear to be in the mood..."
+            "gloomy": "It doesn't appear to be in the mood...",
+            "upbeatTextType": "ACTION",
+            "timidTextType": "ACTION",
+            "irritableTextType": "ACTION",
+            "gloomyTextType": "ACTION"
           }
         }
       ],
       "children": [
         {
           "text": "The spider is beckoning you closer...",
+          "textType": "ACTION",
           "mood": "NEUTRAL",
           "responses": [
             {
               "text": "Go closer.",
+              "textType": "ACTION",
               "successRates": {
                 "upbeat": 90.0,
                 "timid": 50.0,
@@ -380,17 +550,26 @@
                 "upbeat": "The spider seems elated! It's sniffing you up.",
                 "timid": "It's become more at ease.",
                 "irritable": "Your prompt response seems to have appeased it!",
-                "gloomy": "Its demeanour seems to be slightly happier to have you close."
+                "gloomy": "Its demeanour seems to be slightly happier to have you close.",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               },
               "failureResponses": {
                 "upbeat": "It was a trick! Watch out!",
                 "timid": "Too close! It's retaliating!",
                 "irritable": "It was a revenge trick! Watch out!",
-                "gloomy": "Looks like it wanted you to come closer for a fight!"
+                "gloomy": "Looks like it wanted you to come closer for a fight!",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               }
             },
             {
               "text": "Stay back.",
+              "textType": "ACTION",
               "successRates": {
                 "upbeat": 50.0,
                 "timid": 10.0,
@@ -401,17 +580,26 @@
                 "upbeat": "It's slowly edging towards you instead!",
                 "timid": "It seems to relate to your shyness.",
                 "irritable": "The spider seems to respect your determined stance!",
-                "gloomy": "Your decision has sent the spider into deep thought..."
+                "gloomy": "Your decision has sent the spider into deep thought...",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               },
               "failureResponses": {
                 "upbeat": "Not one for a stand-off it seems! Here it comes!",
                 "timid": "It doesn't seem to trust you anymore!",
                 "irritable": "It's grown impatient! Watch out!",
-                "gloomy": "It didn't appreciate your hesitation."
+                "gloomy": "It didn't appreciate your hesitation.",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               }
             },
             {
               "text": "Gesture back.",
+              "textType": "ACTION",
               "successRates": {
                 "upbeat": 85.0,
                 "timid": 25.0,
@@ -422,23 +610,33 @@
                 "upbeat": "It's coming over, with a skip in its step!",
                 "timid": "It's approaching cautiously...",
                 "irritable": "It's coming over, though seems to have a bit of a huff on!",
-                "gloomy": "It appears curious as it slogs its way over."
+                "gloomy": "It appears curious as it slogs its way over.",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               },
               "failureResponses": {
                 "upbeat": "It's charging over!!!",
                 "timid": "It seems to suspect you're up to something. Watch out!",
                 "irritable": "It's not having any of that!",
-                "gloomy": "It can't be bothered. It's grown more hostile."
+                "gloomy": "It can't be bothered. It's grown more hostile.",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               }
             }
           ]
         },
         {
           "text": "It's looking at you expectantly...",
+          "textType": "ACTION",
           "mood": "NEUTRAL",
           "responses": [
             {
               "text": "Show off your loot.",
+              "textType": "ACTION",
               "successRates": {
                 "upbeat": 30.0,
                 "timid": 20.0,
@@ -449,17 +647,26 @@
                 "upbeat": "The spider seems curious about your items.",
                 "timid": "It's inspecting your items with awe.",
                 "irritable": "It appears to be quite impressed!",
-                "gloomy": "It seems perplexed by your treasures..."
+                "gloomy": "It seems perplexed by your treasures...",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               },
               "failureResponses": {
                 "upbeat": "It doesn't look too impressed!",
                 "timid": "It doesn't agree with your wealth!",
                 "irritable": "It hasn't taken well to your showing off!",
-                "gloomy": "It's become rather bored..."
+                "gloomy": "It's become rather bored...",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               }
             },
             {
               "text": "Bust a move.",
+              "textType": "ACTION",
               "successRates": {
                 "upbeat": 95.0,
                 "timid": 30.0,
@@ -470,17 +677,26 @@
                 "upbeat": "It's joined in a synchronised dance!",
                 "timid": "It appears rather impressed!",
                 "irritable": "It seems to appreciate your skill.",
-                "gloomy": "It looks to be reading into your dance..."
+                "gloomy": "It looks to be reading into your dance...",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               },
               "failureResponses": {
                 "upbeat": "It was a ruse! It's laughing at you!",
                 "timid": "It's intimidated by your raw skill. It knows it could never match up...",
                 "irritable": "It doesn't appear to be a fan of that favour of dance...",
-                "gloomy": "It doesn't seem keen on the mainstream dance style..."
+                "gloomy": "It doesn't seem keen on the mainstream dance style...",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               }
             },
             {
               "text": "Enlighten it with knowledge.",
+              "textType": "ACTION",
               "successRates": {
                 "upbeat": 10.0,
                 "timid": 30.0,
@@ -491,13 +707,21 @@
                 "upbeat": "It appears flabbergasted by this new revelation!",
                 "timid": "It's carefully reflecting on this new knowledge...",
                 "irritable": "It seems to appreciate your teachings.",
-                "gloomy": "It appears to be pondering over the meaning of life..."
+                "gloomy": "It appears to be pondering over the meaning of life...",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               },
               "failureResponses": {
                 "upbeat": "You've bored it!",
                 "timid": "It feels stupid...",
                 "irritable": "It's offended by the simplicity of your teachings.",
-                "gloomy": "It appears disinterested."
+                "gloomy": "It appears disinterested.",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               }
             }
           ]
@@ -508,10 +732,12 @@
 
     {
       "text": "The spider is trying to get away...",
+      "textType": "ACTION",
       "mood": "NEUTRAL",
       "responses": [
         {
           "text": "Stop it.",
+          "textType": "ACTION",
           "successRates": {
             "upbeat": 40.0,
             "timid": 40.0,
@@ -522,17 +748,26 @@
             "upbeat": "You successfully held it back!",
             "timid": "You managed to keep it around!",
             "irritable": "The spider appears to respect your might and remains.",
-            "gloomy": "The spider is curious of your intentions..."
+            "gloomy": "The spider is curious of your intentions...",
+            "upbeatTextType": "ACTION",
+            "timidTextType": "ACTION",
+            "irritableTextType": "ACTION",
+            "gloomyTextType": "ACTION"
           },
           "failureResponses": {
             "upbeat": "No use! It's too fast!",
             "timid": "No use! It's scuttled away in fear!",
             "irritable": "No use! It's determined to shoot off!",
-            "gloomy": "No use! It's evading all attempts with reckless abandon!"
+            "gloomy": "No use! It's evading all attempts with reckless abandon!",
+            "upbeatTextType": "ACTION",
+            "timidTextType": "ACTION",
+            "irritableTextType": "ACTION",
+            "gloomyTextType": "ACTION"
           }
         },
         {
           "text": "Let it leave.",
+          "textType": "ACTION",
           "successRates": {
             "upbeat": 5.0,
             "timid": 85.0,
@@ -543,17 +778,26 @@
             "upbeat": "It's circled back around! It might've wanted to play chase.",
             "timid": "The spider stuck around after your kindness, it doesn't appear so intimidated anymore.",
             "irritable": "...",
-            "gloomy": "It seems curious as to why you would let it get away..."
+            "gloomy": "It seems curious as to why you would let it get away...",
+            "upbeatTextType": "ACTION",
+            "timidTextType": "ACTION",
+            "irritableTextType": "ACTION",
+            "gloomyTextType": "ACTION"
           },
           "failureResponses": {
             "upbeat": "It's turned back with aggression!",
             "timid": "Gah! It was a trick to strike back!",
             "irritable": "It was distancing for an attack!",
-            "gloomy": "It's returning the favour, and not in a good way!"
+            "gloomy": "It's returning the favour, and not in a good way!",
+            "upbeatTextType": "ACTION",
+            "timidTextType": "ACTION",
+            "irritableTextType": "ACTION",
+            "gloomyTextType": "ACTION"
           }
         },
         {
           "text": "Plead for it to stay.",
+          "textType": "ACTION",
           "successRates": {
             "upbeat": 15.0,
             "timid": 60.0,
@@ -564,13 +808,21 @@
             "upbeat": "It seems humoured by your weakness and has stuck around.",
             "timid": "It's staying around to relieve you of your turmoil...",
             "irritable": "It seems to appreciate your honesty and has stuck around.",
-            "gloomy": "It's struck by your unusual behaviour!"
+            "gloomy": "It's struck by your unusual behaviour!",
+            "upbeatTextType": "ACTION",
+            "timidTextType": "ACTION",
+            "irritableTextType": "ACTION",
+            "gloomyTextType": "ACTION"
           },
           "failureResponses": {
             "upbeat": "It's taken that as a sign of weakness!",
             "timid": "It's ineffective!",
-            "irritable": "It's annoyed by your blubbering. Watch out!.",
-            "gloomy": "It seems disinterested in your plea."
+            "irritable": "It's annoyed by your blubbering. Watch out!",
+            "gloomy": "It seems disinterested in your plea.",
+            "upbeatTextType": "ACTION",
+            "timidTextType": "ACTION",
+            "irritableTextType": "ACTION",
+            "gloomyTextType": "ACTION"
           }
         }
       ],
@@ -581,6 +833,7 @@
           "responses": [
             {
               "text": "Gently let it down.",
+              "textType": "ACTION",
               "successRates": {
                 "upbeat": 30.0,
                 "timid": 85.0,
@@ -591,17 +844,26 @@
                 "upbeat": "It seems relatively unfazed!",
                 "timid": "It seems to have appreciated the soft response!",
                 "irritable": "It seems to understand.",
-                "gloomy": "It appears disappointed, but understanding."
+                "gloomy": "It appears disappointed, but understanding.",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               },
               "failureResponses": {
                 "upbeat": "It hasn't taken that well!",
                 "timid": "That's upset it!",
                 "irritable": "That's offended it!",
-                "gloomy": "It's consumed with despair!"
+                "gloomy": "It's consumed with despair!",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               }
             },
             {
               "text": "Reject it.",
+              "textType": "ACTION",
               "successRates": {
                 "upbeat": 10.0,
                 "timid": 0.0,
@@ -612,17 +874,26 @@
                 "upbeat": "It's acting like it wasn't serious anyway! There's no way of telling if it was or not...",
                 "timid": "...",
                 "irritable": "It seems appeased by your direct nature!",
-                "gloomy": "Looks like it was anticipating that response..."
+                "gloomy": "Looks like it was anticipating that response...",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               },
               "failureResponses": {
                 "upbeat": "It's ready to send you to the reject pile! Watch out!",
                 "timid": "That's shaken it to the core!",
                 "irritable": "It doesn't appear to appreciate your tone.",
-                "gloomy": "It's now longing for something more... deadly."
+                "gloomy": "It's now longing for something more... deadly.",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               }
             },
             {
               "text": "Explain that you work alone.",
+              "textType": "ACTION",
               "successRates": {
                 "upbeat": 5.0,
                 "timid": 15.0,
@@ -633,65 +904,93 @@
                 "upbeat": "It's humoured by your attempt to look cool!",
                 "timid": "It seems to understand...",
                 "irritable": "It's impressed!",
-                "gloomy": "It appears to relate to the sombre lifestyle..."
+                "gloomy": "It appears to relate to the sombre lifestyle...",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               },
               "failureResponses": {
                 "upbeat": "It hasn't taken that well!",
                 "timid": "That's upset it!",
                 "irritable": "That's offended it!",
-                "gloomy": "It's consumed with despair!"
+                "gloomy": "It's consumed with despair!",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               }
             }
           ]
         },
         {
           "text": "It seems curious about who you are...",
+          "textType": "ACTION",
           "mood": "NEUTRAL",
           "responses": [
             {
               "text": "Tell it that's secret.",
+              "textType": "ACTION",
               "successRates": {
                 "upbeat": 10.0,
                 "timid": 5.0,
-                "irritable": 2.0,
+                "irritable": 30.0,
                 "gloomy": 90.0
               },
               "successResponses": {
-                "upbeat": "C'mon, you can tell me.",
-                "timid": "I ssseee.",
-                "irritable": "We all have our sssecrets.",
-                "gloomy": "I get that. Yoursss isss probably better than mine. Thanksss for not bragging."
+                "upbeat": "It seems pretty confident it can sniff you out.",
+                "timid": "It appears enamoured with your mysterious persona!",
+                "irritable": "It seems a little antsy about not knowing.",
+                "gloomy": "It too seems to be harbouring secrets...",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               },
               "failureResponses": {
-                "upbeat": "Don't you trussst me?",
-                "timid": "Do you not like me enough to ssshare?",
-                "irritable": "It wasss a sssimple quessstion.",
-                "gloomy": "Eh, doesssn't matter anyway..."
+                "upbeat": "Looks like it's tired of playing ''Guess Who?''!",
+                "timid": "That seems to have destroyed any trust it had!",
+                "irritable": "Seems it's not keen on not knowing!",
+                "gloomy": "It can sense your weak attempt to be honest edgy.",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               }
             },
             {
               "text": "Tell it you're a fancy banker.",
+              "textType": "ACTION",
               "successRates": {
                 "upbeat": 90.0,
-                "timid": 5.0,
+                "timid": 75.0,
                 "irritable": 2.0,
                 "gloomy": 8.0
               },
               "successResponses": {
-                "upbeat": "Ssssure you are.",
-                "timid": "I wisssh I could be that cool...",
-                "irritable": "Careful with that confidenccce.",
-                "gloomy": "I usssed to think the sssame..."
+                "upbeat": "Looks like you may have just set yourself up as the Monopoly banker for Spider Games night next week.",
+                "timid": "It seems to appreciate your supposed honesty... Better not tell it too much more.",
+                "irritable": "It... Looks like it wants financial advice?",
+                "gloomy": "It's dreaming about such a life for itself...",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               },
               "failureResponses": {
-                "upbeat": "But not asss cool asss me.",
-                "timid": "You ssshouldn't talk to me, then...",
-                "irritable": "Arroganccce will get you nowhere.",
-                "gloomy": "I can't ssstand your attitude."
+                "upbeat": "Nope. It's not buying that.",
+                "timid": "It appears to be offended that you would think it so gullible.",
+                "irritable": "It's not taken well to your joking around!",
+                "gloomy": "It seems a little too down on how its life turned out... Be careful!",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               }
             },
             {
               "text": "Tell it your life story.",
+              "textType": "ACTION",
               "successRates": {
                 "upbeat": 5.0,
                 "timid": 95.0,
@@ -699,16 +998,24 @@
                 "gloomy": 5.0
               },
               "successResponses": {
-                "upbeat": "Honesssty is the bessst policy!",
-                "timid": "We have that in common.",
-                "irritable": "It'sss irritating, right?",
-                "gloomy": "That mussst sssuck. Trussst me, I'd know."
+                "upbeat": "It seems to have really enjoyed the parts where you failed.",
+                "timid": "Understanding you better, it seems closer now.",
+                "irritable": "It's listening intently - Seems honesty is the best policy!",
+                "gloomy": "It's enamoured by your story...",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               },
               "failureResponses": {
-                "upbeat": "Sssucks to be you.",
-                "timid": "You sssound like you can take it, though...",
-                "irritable": "Don't lie.",
-                "gloomy": "You're worssse than me."
+                "upbeat": "You've bored it into madness! Watch out!",
+                "timid": "It's edging away, feeling I sufficient against your achievements.",
+                "irritable": "Your over-answering has really rather irritated it.",
+                "gloomy": "Its become disinterested....",
+                "upbeatTextType": "ACTION",
+                "timidTextType": "ACTION",
+                "irritableTextType": "ACTION",
+                "gloomyTextType": "ACTION"
               }
             }
           ]
