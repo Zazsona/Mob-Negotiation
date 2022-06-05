@@ -96,7 +96,10 @@ public class EntityActionLockListener extends EntityListener
                 player.teleport(playerLocation);
             }
             if (entity instanceof Mob)
-                ((Mob) entity).setAware(mobAwareState);
+            {
+                Mob mob = ((Mob) entity);
+                mob.setAware(mobAwareState);
+            }
             if (entity instanceof Creeper)
             {
                 Creeper creeper = (Creeper) entity;

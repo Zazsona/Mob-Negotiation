@@ -662,6 +662,11 @@ public class Negotiation
         if (!terminatingState.isErroneous())
             cooldownRespository.setCooldown(player, PluginConfig.getNegotiationCooldownTicks());
 
+        // Successful negotiations remove the mob. If it persists, the negotiation went badly.
+        // Spiders are only hostile at night, so we force them to be hostile if it's day.
+        if (mob != null && mob.isValid())
+            mob.setTarget(player);
+
         this.updateStateListeners();
         plugin.getLogger().info(String.format("%s completed negotiation with %s.", player.getName(), mob.getName()));
     }
