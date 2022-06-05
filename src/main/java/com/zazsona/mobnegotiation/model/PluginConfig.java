@@ -60,7 +60,7 @@ public class PluginConfig
         dataFolderDir = plugin.getDataFolder().getAbsolutePath();
         plugin.getConfig().options().copyDefaults(true);
         plugin.getConfig().options().copyHeader(true);
-        plugin.saveConfig();
+        plugin.saveDefaultConfig();
 
         File powerFileDir = new File(dataFolderDir+"/"+PWR_FILE);
         updateConfigFile(PWR_FILE, PWR_VERSION_KEY, powerFileDir, PWR_VERSION_KEY);
