@@ -1,4 +1,4 @@
-name: HoldUp
+name: MobNegotiation
 version: 1.0
 author: Zazsona
 main: com.zazsona.mobnegotiation.MobNegotiationPlugin
@@ -8,23 +8,23 @@ commands:
   __negotiation_response__:
     description: Used for internal logic.
 permissions:
-  holdup.negotiation.*:
+  mobnegotiation.*:
     description: Allow all enabled negotiation actions
     default: true
     children:
-      holdup.negotiation.power: true
-      holdup.negotiation.money: true
-      holdup.negotiation.items: true
-      holdup.negotiation.attack: true
-  holdup.negotiation.power:
+      mobnegotiation.power: true
+      mobnegotiation.money: true
+      mobnegotiation.items: true
+      mobnegotiation.attack: true
+  mobnegotiation.power:
     description: Allow the player to negotiate powers
     default: true
-  holdup.negotiation.money:
+  mobnegotiation.money:
     description: Allow the player to negotiate for money
     default: true
-  holdup.negotiation.items:
+  mobnegotiation.items:
     description: Allow the player to negotiate for items
     default: true
-  holdup.negotiation.attack:
+  mobnegotiation.attack:
     description: Allow the player to use ALl out Attack
     default: true

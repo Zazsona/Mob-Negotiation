@@ -10,7 +10,7 @@ import java.util.Map;
 
 public class MetricsManager
 {
-    private static final int BSTATS_PLUGIN_ID = 13208;
+    private static final int BSTATS_PLUGIN_ID = 15343;
     private static final String NEGOTIATIONS_TRIGGERED_KEY = "negotiations_triggered";
     private static final String NEGOTIATIONS_TYPE_KEY = "negotiation_type";
     private static final String NEGOTIATIONS_MOB_KEY = "negotiation_mob";

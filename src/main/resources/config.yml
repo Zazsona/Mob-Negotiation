@@ -26,7 +26,7 @@ negotiation-item-success-rate: 33.0
 negotiation-money-success-rate: 33.0
 negotiation-hp-threshold: 0.0
 power-effect-duration-ticks: 9600
-negotiation-idle-timeout-ticks: 400
+negotiation-idle-timeout-ticks: 1200
 negotiation-cooldown-ticks: 3600
 negotiation-damage-grace-ticks: 10
 mob-chat-tag: "<%PERSONALITY% %NAME%>"
