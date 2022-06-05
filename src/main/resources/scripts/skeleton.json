@@ -33,7 +33,7 @@
     "upbeat": "I'd SaY yoU'rE flEeciN' mE, bUt i'D neEd sKin fOr thAt. HeRe's thIs %ITEM%.",
     "timid": "%ITEM% fOr yoU...",
     "irritable": "%ITEM%. TaKe it Or lEavE iT.",
-    "gloomy": "%ITEM%...?1"
+    "gloomy": "%ITEM%...?"
   },
   "acceptedItemOfferMessage": {
     "upbeat": "EnJoy. Be sEeyiN' yA'.",
@@ -223,7 +223,7 @@
           ]
         },
         {
-          "text": "C'mOn thOugh, I knOw all sOrts of gOod loOkerS I cAn intRoduCe yoU to!",
+          "text": "C'mOn thOugh, iF yOu caN't wOo mE I knOw all sOrts of gOod loOkerS I cAn intRoduCe yoU to!",
           "mood": "NEUTRAL",
           "responses": [
             {
@@ -296,11 +296,11 @@
 
 
     {
-      "text": "I’lL neEd sOmE lunCh firSt. Can wE taKe a bReaK anD go eAt soMewhEre?",
+      "text": "I'lL neEd sOmE lunCh firSt. Can wE taKe a bReaK anD go eAt soMethIng?",
       "mood": "NEUTRAL",
       "responses": [
         {
-          "text": "I’m not hungry.",
+          "text": "I'm not hungry.",
           "successRates": {
             "upbeat": 5.0,
             "timid": 25.0,
@@ -308,16 +308,16 @@
             "gloomy": 5.0
           },
           "successResponses": {
-            "upbeat": "YoU beEn snacKing? C’moN, let’S tHinK abOuT thIs.",
-            "timid": "CaN We gO foR mE aT leaSt?",
-            "irritable": "WE’lL gEt soMe jUst fOr mE, thEn...",
-            "gloomy": "GuEsS it’lL be a tAble fOr oNe..."
+            "upbeat": "YoU beEn snacKing? C'moN, let'S tHinK abOuT thIs.",
+            "timid": "CaN We gO gEt soMethiNg foR mE aT leaSt?",
+            "irritable": "WE'lL gEt soMe jUst fOr mE, thEn...",
+            "gloomy": "GuEsS it'lL be a tAble fOr oNe..."
           },
           "failureResponses": {
-            "upbeat": "WeLl, I’lL mAke it A taBle foR onE, thEn!",
+            "upbeat": "WeLl, I'lL mAke it A taBle foR onE, thEn!",
             "timid": "Oh... OkAy...",
             "irritable": "FiNe, thEn.",
-            "gloomy": "I’lL kilL mY oWn foOd thEn."
+            "gloomy": "I'lL kilL mY oWn foOd thEn."
           }
         },
         {
@@ -332,17 +332,17 @@
             "upbeat": "SuRe, 70/30!",
             "timid": "AlRigHt, sOunDs faIr!",
             "irritable": "WoRks fOr mE.",
-            "gloomy": "NoThiN’ coMes fRee, I guEss."
+            "gloomy": "NoThiN' coMes fRee, I guEss."
           },
           "failureResponses": {
             "upbeat": "Or I CoUlD splIt yoU!",
             "timid": "Oh... nO thanKs.",
-            "irritable": "YoU cAn’T spRinG thAt oN me nOw!",
-            "gloomy": "I thOughT it’D be oN yoU..."
+            "irritable": "YoU cAn'T spRinG thAt oN me nOw!",
+            "gloomy": "I thOughT it'D be oN yoU..."
           }
         },
         {
-          "text": "Let’s grab something.",
+          "text": "Let's grab something.",
           "successRates": {
             "upbeat": 15.0,
             "timid": 60.0,
@@ -350,16 +350,16 @@
             "gloomy": 75.0
           },
           "successResponses": {
-            "upbeat": "I’lL tAke aNythIn’!",
-            "timid": "I’m nOt fUsSy!",
-            "irritable": "Now wE’rE geTtinG soMewheRe.",
+            "upbeat": "I'lL tAke aNythIn'!",
+            "timid": "I'm nOt fUsSy!",
+            "irritable": "Now wE'rE geTtinG soMewheRe.",
             "gloomy": "SuRe..."
           },
           "failureResponses": {
-            "upbeat": "I’lL gRab yoUr flEsh!",
-            "timid": "I thOughT you’D haVe soMethIng...",
-            "irritable": "GiVe me WhaT yoU haVe.",
-            "gloomy": "Ugh... CaN’t be BothEred. GivE me yoUrs."
+            "upbeat": "I'lL gRab yoUr flEsh!",
+            "timid": "I thOughT you'D haVe soMethIng...",
+            "irritable": "GiVe me WhaT yoU haVe iNstEaD.",
+            "gloomy": "Ugh... CaN't be BothEred. GivE me yoUrs."
           }
         }
       ],
@@ -377,20 +377,20 @@
                 "gloomy": 95.0
               },
               "successResponses": {
-                "upbeat": "HeH, hoW abOut soMe miLk? CalCium’s gOod foR thEse bOnes!",
+                "upbeat": "HeH, hoW abOut soMe miLk? CalCium's gOod foR thEse bOnes!",
                 "timid": "If yoU sAy sO...",
-                "irritable": "I’lL picK thEn, How aboUt pIe tiMe?",
-                "gloomy": "YeAh, I’d eAt diRt."
+                "irritable": "I'lL picK thEn. I wAs thInKinG aboUt sOmE pIe.",
+                "gloomy": "YeAh, I'd eAt diRt."
               },
               "failureResponses": {
-                "upbeat": "I fiGurE yoU’ll do NiceLy.",
+                "upbeat": "I fiGurE yoU'll do NiceLy.",
                 "timid": "I thOughT you hAd a pLan...",
-                "irritable": "ShouLda piCked soMethin’, fleShbaG.",
+                "irritable": "ShouLda piCked soMethin', fleShbaG.",
                 "gloomy": "ArE yoU eVen stIll IntErestEd?"
               }
             },
             {
-              "text": "I’ve got this dirt block...",
+              "text": "I've got this dirt block...",
               "successRates": {
                 "upbeat": 90.0,
                 "timid": 15.0,
@@ -399,15 +399,15 @@
               },
               "successResponses": {
                 "upbeat": "SouNds scRummY!",
-                "timid": "GuEsS it’lL do...",
-                "irritable": "UgH, foOd’s fooD.",
-                "gloomy": "It’S jUst tHe soRt of thIng I’m Worth..."
+                "timid": "GuEsS it'lL do...",
+                "irritable": "UgH, foOd's fooD.",
+                "gloomy": "It'S jUst tHe soRt of thIng I'm Worth..."
               },
               "failureResponses": {
                 "upbeat": "HaHa, I coUld dO betTer thAn thAt!",
-                "timid": "Oh... I wAs expeCtin’ SomethiNg bettEr.",
+                "timid": "Oh... I wAs expeCtin' SomethiNg bettEr.",
                 "irritable": "YoU caN do BetTer thAn thAt.",
-                "gloomy": "ThAt’s nOt woRth eaTing..."
+                "gloomy": "ThAt's nOt woRth eaTing..."
               }
             },
             {
@@ -419,26 +419,26 @@
                 "gloomy": 10.0
               },
               "successResponses": {
-                "upbeat": "NoW we’Re talKin’. It’S a PartY!",
-                "timid": "ThAt’d be Nice...",
-                "irritable": "ThEn it’S setTleD!",
+                "upbeat": "NoW we'Re talKin'. It'S a PartY!",
+                "timid": "ThAt'd be Nice...",
+                "irritable": "ThEn it'S setTleD!",
                 "gloomy": "YeaH, soUnds gOod..."
               },
               "failureResponses": {
-                "upbeat": "I RecKon I’lL kiLl you For aN eXtra slIce!",
-                "timid": "I... doN’t lIke caKe.",
+                "upbeat": "I RecKon I'lL kiLl you For aN eXtra slIce!",
+                "timid": "I... doN't lIke caKe.",
                 "irritable": "YoU haVe no CultUre, skinBod.",
-                "gloomy": "ARe yoU tryIn’ to Make thIs a paRty? No thAnks."
+                "gloomy": "ARe yoU tryIn' to Make thIs a paRty? No thAnks."
               }
             }
           ]
         },
         {
-          "text": "LeT’s plAy a gaMe then, gueSs what I wAnnA eat!",
+          "text": "LeT's plAy a gaMe then, gueSs what I wAnnA eat!",
           "mood": "NEUTRAL",
           "responses": [
             {
-              "text": "You don’t look like you can eat...",
+              "text": "You don't look like you can eat...",
               "successRates": {
                 "upbeat": 95.0,
                 "timid": 5.0,
@@ -447,12 +447,12 @@
               },
               "successResponses": {
                 "upbeat": "FaIr poInT!",
-                "timid": "YeAh, thanKs foR notiCin’.",
+                "timid": "YeAh, thanKs foR notiCin'.",
                 "irritable": "AlriGht, EinSteiN. Well pLayed.",
                 "gloomy": "I uSed tO, thOugh. JuSt liKe yoU."
               },
               "failureResponses": {
-                "upbeat": "ThAt’s nOt hOw you Play thE game!",
+                "upbeat": "ThAt's nOt hOw you Play thE game!",
                 "timid": "ThAnkS foR poIntIng it oUt mE...",
                 "irritable": "DUH!",
                 "gloomy": "I kNow..."
@@ -469,14 +469,14 @@
               "successResponses": {
                 "upbeat": "AwhhHhhh yIsssSsss.",
                 "timid": "YEah, I gueSs so...",
-                "irritable": "That’D do Me weLl.",
+                "irritable": "That'D do Me weLl.",
                 "gloomy": "MiGht lIft my SpritS..."
               },
               "failureResponses": {
                 "upbeat": "YuP! YoU ouGht To do!",
                 "timid": "Is thAt suPposeD to be A joke?",
                 "irritable": "No.",
-                "gloomy": "UgghHhhHhh. DoN’t BorE me wiTh thAt oNe."
+                "gloomy": "UgghHhhHhh. DoN't BorE me wiTh thAt oNe."
               }
             },
             {
@@ -494,10 +494,10 @@
                 "gloomy": "-"
               },
               "failureResponses": {
-                "upbeat": "AwhHh. YoU’rE noT as Fun as I thOughT you’D be.",
+                "upbeat": "AwhHh. YoU'rE noT as Fun as I thOughT you'D be.",
                 "timid": "FiNe...",
-                "irritable": "DoN’t giVe me thAt lip!",
-                "gloomy": "YoU’rE toO cockY."
+                "irritable": "DoN't giVe me thAt lip!",
+                "gloomy": "YoU'rE toO cockY."
               }
             }
           ]
@@ -540,14 +540,14 @@
             "gloomy": 5.0
           },
           "successResponses": {
-            "upbeat": "DoN’t thInK iT’d Much boTher mIne eiTher.",
-            "timid": "At leAst yOu’rE hoNest...",
-            "irritable": "At leAst yOu’rE hoNest.",
+            "upbeat": "DoN't thInK iT'd Much boTher mIne eiTher.",
+            "timid": "At leAst yOu'rE hoNest...",
+            "irritable": "At leAst yOu'rE hoNest.",
             "gloomy": "ShoUlda eXpecTed aS muCh..."
           },
           "failureResponses": {
-            "upbeat": "GoOd. ThIs woN’t wEigh oN mIne.",
-            "timid": "YoU... You’Re moRe hEartLesS thAn mE! And I doN’t eVen haVe oNe no mOrE!",
+            "upbeat": "GoOd. ThIs woN't wEigh oN mIne.",
+            "timid": "YoU... You'Re moRe hEartLesS thAn mE! And I doN't eVen haVe oNe no mOrE!",
             "irritable": "YoU neEd tEacHinG a lEssOn!",
             "gloomy": "Oh... RiGht..."
           }
@@ -567,16 +567,16 @@
             "gloomy": "I KnoW..."
           },
           "failureResponses": {
-            "upbeat": "I doN’t tHinK sO!",
-            "timid": "I’m nOt reAdy! NoT yeT!",
-            "irritable": "YoU’rE riGht. TiMe to End yOu.",
-            "gloomy": "I dOn’T caRe muCh for YouR naRratiVe."
+            "upbeat": "I doN't tHinK sO!",
+            "timid": "I'm nOt reAdy! NoT yeT!",
+            "irritable": "YoU'rE riGht. TiMe to End yOu.",
+            "gloomy": "I dOn'T caRe muCh for YouR naRratiVe."
           }
         }
       ],
       "children": [
         {
-          "text": "ThiS couLda bEen the OthEr waY arOunD, y’kNow?",
+          "text": "ThiS couLda bEen the OthEr waY arOunD, y'kNow?",
           "mood": "NEUTRAL",
           "responses": [
             {
@@ -588,14 +588,14 @@
                 "gloomy": 15.0
               },
               "successResponses": {
-                "upbeat": "I’m LikiN’ The MacHo aCt!",
-                "timid": "I GueSs So, I’vE nOt goT the SkilLs I uSed tO.",
+                "upbeat": "I'm LikiN' The MacHo aCt!",
+                "timid": "I GueSs So, I'vE nOt goT the SkilLs I uSed tO.",
                 "irritable": "AlrIghT, alRighT.",
-                "gloomy": "YoU’rE riGht..."
+                "gloomy": "YoU'rE riGht..."
               },
               "failureResponses": {
-                "upbeat": "We’Ll seE aboUt thAt!",
-                "timid": "NaH’, I wOn’T falL thAt eaSily.",
+                "upbeat": "We'Ll seE aboUt thAt!",
+                "timid": "NaH', I wOn'T falL thAt eaSily.",
                 "irritable": "I diSagRee.",
                 "gloomy": "ThEn whY bOthEr TalkIng...?"
               }
@@ -609,16 +609,16 @@
                 "gloomy": 15.0
               },
               "successResponses": {
-                "upbeat": "AhhHhh. ThE ol’ SwitCheroO! YoU keEp thIngs YouR waY, for thIs tiMe.",
-                "timid": "YeAh... It’S oKay thOugh, yoU eaRneD thIs...",
-                "irritable": "We’Re toO faR in nOw, buT thanKs.",
-                "gloomy": "TheRe’d bE nO poiNt noW..."
+                "upbeat": "AhhHhh. ThE ol' SwitCheroO! YoU keEp thIngs YouR waY, for thIs tiMe.",
+                "timid": "YeAh... It'S oKay thOugh, yoU eaRneD thIs...",
+                "irritable": "We'Re toO faR in nOw, buT thanKs.",
+                "gloomy": "TheRe'd bE nO poiNt noW..."
               },
               "failureResponses": {
-                "upbeat": "YoU kiDdin’? I gOt the BesT angLe to kNock yoU doWn frOm heRe!",
-                "timid": "DoN’t TeaSe me...",
-                "irritable": "DoN’t patRonise Me.",
-                "gloomy": "WhaT’d bE the pOint!?"
+                "upbeat": "YoU kiDdin'? I gOt the BesT angLe to kNock yoU doWn frOm heRe!",
+                "timid": "DoN't TeaSe me...",
+                "irritable": "DoN't patRonise Me.",
+                "gloomy": "WhaT'd bE the pOint!?"
               }
             },
             {
@@ -633,11 +633,11 @@
                 "upbeat": "YeAh, YeaH. I gEt it.",
                 "timid": "... SupPose thIs is wHat faTe had iN stoRe...",
                 "irritable": "GoT tO deAl with It nOw thEn.",
-                "gloomy": "ThAt’s jUst thE waY of tHe caRds..."
+                "gloomy": "ThAt's jUst thE waY of tHe caRds..."
               },
               "failureResponses": {
-                "upbeat": "LeT’s chAnge thAt arOund!",
-                "timid": "I... I’lL fiGht it!",
+                "upbeat": "LeT's chAnge thAt arOund!",
+                "timid": "I... I'lL fiGht it!",
                 "irritable": "NoT foR loNg.",
                 "gloomy": "FaTe haS someThing elSe in sTore for Us botH."
               }
@@ -649,7 +649,7 @@
           "mood": "NEUTRAL",
           "responses": [
             {
-              "text": "You’re right.",
+              "text": "You're right.",
               "successRates": {
                 "upbeat": 30.0,
                 "timid": 100.0,
@@ -670,7 +670,7 @@
               }
             },
             {
-              "text": "That’s absurd.",
+              "text": "That's absurd.",
               "successRates": {
                 "upbeat": 30.0,
                 "timid": 0.0,
@@ -691,7 +691,7 @@
               }
             },
             {
-              "text": "I’ll be the judge of that.",
+              "text": "I'll be the judge of that.",
               "successRates": {
                 "upbeat": 5.0,
                 "timid": 5.0,
@@ -699,15 +699,15 @@
                 "gloomy": 80.0
               },
               "successResponses": {
-                "upbeat": "AlriGht, I’lL tAke thAt rolL of The DiCe.",
-                "timid": "I’lL leT yoU arrIve at yoUr oWn decSionS, thEn...",
-                "irritable": "FiNe, jUst doN’t MeSs me abOut.",
+                "upbeat": "AlriGht, I'lL tAke thAt rolL of The DiCe.",
+                "timid": "I'lL leT yoU arrIve at yoUr oWn decSionS, thEn...",
+                "irritable": "FiNe, jUst doN't MeSs me abOut.",
                 "gloomy": "No neEd to suGar coAt it..."
               },
               "failureResponses": {
-                "upbeat": "I aiN’t gOnnA waIt all Day foR yoU to mAke uP yoUr miNd.",
-                "timid": "I doN’t thInk I cAn taKe noT knOwing...",
-                "irritable": "I doN’t tAke wEll tO suCh amBiguity.",
+                "upbeat": "I aiN't gOnnA waIt all Day foR yoU to mAke uP yoUr miNd.",
+                "timid": "I doN't thInk I cAn taKe noT knOwing...",
+                "irritable": "I doN't tAke wEll tO suCh amBiguity.",
                 "gloomy": "SoMetiMes it Pays to jUst comMit to hAtred, yoU knOw?"
               }
             }
