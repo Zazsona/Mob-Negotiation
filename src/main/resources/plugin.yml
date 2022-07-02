@@ -1,30 +1,47 @@
 name: MobNegotiation
-version: 1.0
+version: 1.0.0
 author: Zazsona
 main: com.zazsona.mobnegotiation.MobNegotiationPlugin
 api-version: 1.17
 softdepend: [Vault]
 commands:
+  mobnegotiation:
+    aliases:
+      - mobnegotiationconfig
+      - mn
+      - mnconfig
+    description: Enables/Disables the plugin
+    usage: /MobNegotiation
+    permission: mobnegotiation.admin.*
   __negotiation_response__:
     description: Used for internal logic.
 permissions:
   mobnegotiation.*:
+    description: Grant all MobNegotiation features & commands
+    default: op
+    children:
+      mobnegotiation.negotiation.*: true
+      mobnegotiation.admin.*: true
+  mobnegotiation.admin.*:
+    description: Grant plugin configuration access
+    default: op
+  mobnegotiation.negotiation.*:
     description: Allow all enabled negotiation actions
     default: true
     children:
-      mobnegotiation.power: true
-      mobnegotiation.money: true
-      mobnegotiation.items: true
-      mobnegotiation.attack: true
-  mobnegotiation.power:
+      mobnegotiation.negotiation.power: true
+      mobnegotiation.negotiation.money: true
+      mobnegotiation.negotiation.items: true
+      mobnegotiation.negotiation.attack: true
+  mobnegotiation.negotiation.power:
     description: Allow the player to negotiate powers
     default: true
-  mobnegotiation.money:
+  mobnegotiation.negotiation.money:
     description: Allow the player to negotiate for money
     default: true
-  mobnegotiation.items:
+  mobnegotiation.negotiation.items:
     description: Allow the player to negotiate for items
     default: true
-  mobnegotiation.attack:
-    description: Allow the player to use ALl out Attack
+  mobnegotiation.negotiation.attack:
+    description: Allow the player to use All out Attack
     default: true

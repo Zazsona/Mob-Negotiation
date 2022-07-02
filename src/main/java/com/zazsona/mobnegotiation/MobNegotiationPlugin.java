@@ -7,6 +7,7 @@ import com.zazsona.mobnegotiation.repository.CooldownRespository;
 import com.zazsona.mobnegotiation.repository.NegotiationRepository;
 import com.zazsona.mobnegotiation.repository.PersonalityNamesRepository;
 import com.zazsona.mobnegotiation.repository.TalkSoundsRepository;
+import com.zazsona.mobnegotiation.view.MobNegotiationCommand;
 import com.zazsona.mobnegotiation.view.NegotiationViewInteractionExecutor;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -48,6 +49,8 @@ public class MobNegotiationPlugin extends JavaPlugin
         super.onEnable();
         NegotiationViewInteractionExecutor responseCommand = NegotiationViewInteractionExecutor.getInstance();
         getCommand(NegotiationViewInteractionExecutor.COMMAND_KEY).setExecutor(responseCommand);
+        MobNegotiationCommand mobNegotiationCommand = new MobNegotiationCommand();
+        getCommand(MobNegotiationCommand.COMMAND_KEY).setExecutor(mobNegotiationCommand);
         NegotiationRepository negotiationRepository = new NegotiationRepository();
         CooldownRespository cooldownRespository = new CooldownRespository();
         PersonalityNamesRepository personalityNamesRepository = new PersonalityNamesRepository();

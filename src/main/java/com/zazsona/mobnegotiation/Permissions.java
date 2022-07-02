@@ -5,10 +5,11 @@ import org.bukkit.inventory.ItemStack;
 
 public class Permissions
 {
-    public static String NEGOTIATION_POWER = "mobnegotiation.power";
-    public static String NEGOTIATION_MONEY = "mobnegotiation.money";
-    public static String NEGOTIATION_ITEMS = "mobnegotiation.items";
-    public static String NEGOTIATION_ATTACK = "mobnegotiation.attack";
+    public static String ADMIN = "mobnegotiation.admin.*";
+    public static String NEGOTIATION_POWER = "mobnegotiation.negotiation.power";
+    public static String NEGOTIATION_MONEY = "mobnegotiation.negotiation.money";
+    public static String NEGOTIATION_ITEMS = "mobnegotiation.negotiation.items";
+    public static String NEGOTIATION_ATTACK = "mobnegotiation.negotiation.attack";
 
     /**
      * Returns if this player has at least one permission enabling them to perform a negotiation action
