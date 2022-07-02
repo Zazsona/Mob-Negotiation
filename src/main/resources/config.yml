@@ -14,7 +14,7 @@
 #  alert-messages : Alert message spread on the player's screen when a negotiation is triggered
 #  ========================================================================
 
-version: 1.0
+version: 1.0.1
 plugin-enabled: true
 power-negotiation-enabled: true
 item-negotiation-enabled: true
@@ -25,7 +25,6 @@ negotiation-power-success-rate: 100.0
 negotiation-item-success-rate: 33.0
 negotiation-money-success-rate: 33.0
 negotiation-hp-threshold: 0.0
-power-effect-duration-ticks: 9600
 negotiation-idle-timeout-ticks: 1200
 negotiation-cooldown-ticks: 3600
 negotiation-damage-grace-ticks: 10

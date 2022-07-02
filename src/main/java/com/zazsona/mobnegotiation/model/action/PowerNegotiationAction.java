@@ -1,16 +1,12 @@
 package com.zazsona.mobnegotiation.model.action;
 
-import com.zazsona.mobnegotiation.model.Mood;
-import com.zazsona.mobnegotiation.model.PersonalityType;
-import com.zazsona.mobnegotiation.model.PluginConfig;
-import com.zazsona.mobnegotiation.model.TextType;
+import com.zazsona.mobnegotiation.model.*;
 import com.zazsona.mobnegotiation.model.script.NegotiationScript;
 import com.zazsona.mobnegotiation.model.script.NegotiationScriptNode;
 import com.zazsona.mobnegotiation.model.script.NegotiationScriptResponseNode;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.potion.PotionEffect;
-import org.bukkit.potion.PotionEffectType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -145,16 +141,11 @@ public class PowerNegotiationAction extends Action
      */
     private PotionEffect givePower()
     {
-        PotionEffectType powerType = PluginConfig.getOfferedPower(mob.getType());
-        if (powerType != null)
-        {
-            int ticks = PluginConfig.getPowerDurationTicks();
-            PotionEffect power = new PotionEffect(powerType, ticks, 0);
-            player.addPotionEffect(power);
-            givenPowers.add(power);
-            return power;
-        }
-        return null;
+        MobPowerConfig powerConfig = PluginConfig.getOfferedPower(mob.getType());
+        PotionEffect power = new PotionEffect(powerConfig.getEffectType(), powerConfig.getDurationTicks(), 0);
+        player.addPotionEffect(power);
+        givenPowers.add(power);
+        return power;
     }
 
     /**

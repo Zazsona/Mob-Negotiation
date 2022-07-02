@@ -14,6 +14,7 @@ import java.util.logging.Logger;
 
 public class PluginConfig
 {
+    public static final String CFG_FILE = "config.yml";
     public static final String CFG_VERSION_KEY = "version";
     public static final String CFG_PLUGIN_ENABLED_KEY = "plugin-enabled";
     public static final String CFG_POWER_NEGOTIATION_ENABLED_KEY = "power-negotiation-enabled";
@@ -34,7 +35,9 @@ public class PluginConfig
 
     public static final String PWR_FILE = "powers.yml";
     public static final String PWR_VERSION_KEY = "version";
-    private static final HashMap<EntityType, PotionEffectType> entityPowersMap = new HashMap<>();
+    public static final String POWER_NAME_KEY = "power";
+    public static final String POWER_DURATION_KEY = "duration-ticks";
+    private static final HashMap<EntityType, MobPowerConfig> entityPowersMap = new HashMap<>();
 
     public static final String ITEM_FILE = "items.yml";
     public static final String ITEM_VERSION_KEY = "version";
@@ -71,6 +74,9 @@ public class PluginConfig
 
         File economyFileDir = new File(dataFolderDir+"/"+ECON_FILE);
         updateConfigFile(ECON_FILE, ECON_VERSION_KEY, economyFileDir, ECON_VERSION_KEY);
+
+        File configFileDir = new File(dataFolderDir+"/"+CFG_FILE);
+        updateConfigFile(CFG_FILE, CFG_VERSION_KEY, configFileDir, CFG_FILE);
     }
 
     /**
@@ -222,7 +228,7 @@ public class PluginConfig
      * Gets the rate, as a percentage, that negotiations should occur
      * @return the chance of a negotiation occurring
      */
-    public static double getNegotiationRate() // TODO: Remember not to leave this at 100%.
+    public static double getNegotiationRate()
     {
         Plugin plugin = MobNegotiationPlugin.getInstance();
         return plugin.getConfig().getDouble(CFG_NEGOTIATION_RATE_KEY);
@@ -321,16 +327,6 @@ public class PluginConfig
         Plugin plugin = MobNegotiationPlugin.getInstance();
         plugin.getConfig().set(CFG_POWER_DURATION_KEY, ticks);
         save();
-    }
-
-    /**
-     * Gets the number of ticks a PotionEffect bestowed as a "power" by a mob lasts.
-     * @return the ticks to last
-     */
-    public static int getPowerDurationTicks()
-    {
-        Plugin plugin = MobNegotiationPlugin.getInstance();
-        return plugin.getConfig().getInt(CFG_POWER_DURATION_KEY);
     }
 
     /**
@@ -445,7 +441,7 @@ public class PluginConfig
      * @param entity the entity to get the paired power for
      * @return the power as a potion effect type, or null if none is assigned.
      */
-    public static PotionEffectType getOfferedPower(EntityType entity)
+    public static MobPowerConfig getOfferedPower(EntityType entity)
     {
         return entityPowersMap.getOrDefault(entity, null);
     }
@@ -514,8 +510,8 @@ public class PluginConfig
         boolean writeRequired = false;
         InputStream inputStream = PluginConfig.class.getClassLoader().getResourceAsStream(internalDir);
         InputStreamReader reader = new InputStreamReader(inputStream);
-        YamlConfiguration powersConfig = YamlConfiguration.loadConfiguration(reader);
-        String internalVersion = powersConfig.getString(internalVersionKey);
+        YamlConfiguration config = YamlConfiguration.loadConfiguration(reader);
+        String internalVersion = config.getString(internalVersionKey);
 
         if (targetDir.exists())
         {
@@ -524,12 +520,13 @@ public class PluginConfig
             if (existingVersion == null || internalVersion.compareTo(existingVersion) > 0)
             {
                 writeRequired = true;
-                for (String key : existingConfig.getKeys(true))
+                for (String key : config.getKeys(true))
                 {
-                    if (!existingConfig.isConfigurationSection(key) && !key.equals(targetVersionKey))
+                    if (!config.isConfigurationSection(key) && !key.equals(internalVersionKey))
                     {
                         Object value = existingConfig.get(key); // Maintain existing entries as to not remove user settings
-                        powersConfig.set(key, value);
+                        if (value != null)
+                            config.set(key, value);
                     }
                 }
             }
@@ -538,7 +535,7 @@ public class PluginConfig
             writeRequired = true;
 
         if (writeRequired)
-            powersConfig.save(targetDir);
+            config.save(targetDir);
     }
 
     /**
@@ -558,12 +555,16 @@ public class PluginConfig
             {
                 if (!key.equals(versionKey))
                 {
+                    ConfigurationSection mobPowerConfigYaml = powersConfig.getConfigurationSection(key);
                     String mobName = key.toUpperCase();
-                    String effectName = powersConfig.getString(key);
+                    String effectName = mobPowerConfigYaml.getString(POWER_NAME_KEY);
+                    int effectDurationTicks = mobPowerConfigYaml.getInt(POWER_DURATION_KEY);
+
                     EntityType entityType = EntityType.valueOf(mobName);
-                    PotionEffectType effectType = PotionEffectType.getByName(effectName); // Doesn't throw IAException.
-                    if (effectType != null)                                               // So we'll make our own!
-                        entityPowersMap.put(entityType, effectType);
+                    PotionEffectType effectType = PotionEffectType.getByName(effectName);
+                    MobPowerConfig mobPowerConfig = new MobPowerConfig(effectType, effectDurationTicks);
+                    if (mobPowerConfig.getEffectType() != null && mobPowerConfig.getDurationTicks() > 0)
+                        entityPowersMap.put(entityType, mobPowerConfig);
                     else
                         throw new IllegalArgumentException();
                 }

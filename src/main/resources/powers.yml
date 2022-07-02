@@ -1,6 +1,14 @@
 # The effect powers offered by various mob types.
-version: 1.0.0
-creeper: FAST_DIGGING
-zombie: DAMAGE_RESISTANCE
-skeleton: INCREASE_DAMAGE
-spider: SPEED
+version: 1.1.0
+creeper:
+  power: FAST_DIGGING
+  duration-ticks: 9600
+zombie:
+  power: DAMAGE_RESISTANCE
+  duration-ticks: 9600
+skeleton:
+  power: INCREASE_DAMAGE
+  duration-ticks: 9600
+spider:
+  power: SPEED
+  duration-ticks: 9600
