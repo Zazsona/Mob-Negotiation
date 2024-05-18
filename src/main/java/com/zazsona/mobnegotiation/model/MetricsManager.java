@@ -3,8 +3,13 @@ package com.zazsona.mobnegotiation.model;
 import com.zazsona.mobnegotiation.MobNegotiationPlugin;
 import org.apache.commons.lang.WordUtils;
 import org.bstats.bukkit.Metrics;
+import org.bstats.charts.AdvancedPie;
+import org.bstats.charts.SimplePie;
+import org.bstats.charts.SingleLineChart;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -19,14 +24,22 @@ public class MetricsManager
 
     private static MetricsManager instance;
     private Metrics metrics;
+    private YamlConfiguration metricsConfig;
     private int negotiationsTriggeredSinceLastUpdate = 0;
     private HashMap<EntityType, Integer> mobFrequencyMap = new HashMap<>();
     private HashMap<String, Integer> negotiationTypeMap = new HashMap<>();
 
     private MetricsManager()
     {
+        // Taken from https://github.com/Bastian/bstats-metrics/blob/6660b2b308c768df622088d2aea029ca6e2cf2c1/bukkit/src/main/java/org/bstats/bukkit/Metrics.java
+        // Annoyingly, config details aren't exposed by bStats, so we need to duplicate the config file retrieval logic
+        File bStatsFolder = new File(MobNegotiationPlugin.getInstance().getDataFolder().getParentFile(), "bStats");
+        File configFile = new File(bStatsFolder, "config.yml");
+        this.metricsConfig = YamlConfiguration.loadConfiguration(configFile);
+
         metrics = new Metrics(MobNegotiationPlugin.getInstance(), BSTATS_PLUGIN_ID);
-        if (metrics.isEnabled())
+
+        if (isEnabled())
         {
             addNegotiationsTriggeredChart(metrics);
             addNegotiationsTypeChart(metrics);
@@ -48,12 +61,23 @@ public class MetricsManager
     }
 
     /**
+     * Gets whether Metrics reporting is currently enabled
+     * @return true/false
+     */
+    public boolean isEnabled() {
+        String path = "enabled";
+        if (metricsConfig.contains(path) && metricsConfig.isBoolean(path))
+            return metricsConfig.getBoolean((path));
+        return false;
+    }
+
+    /**
      * Logs the statistics for this negotiation
      * @param negotiation the negotiation to track
      */
     public void trackNegotiation(Negotiation negotiation)
     {
-        if (!metrics.isEnabled())
+        if (!isEnabled())
             return;
 
         if (negotiation.getState().isTerminating())
@@ -130,7 +154,8 @@ public class MetricsManager
      */
     private void addNegotiationsTriggeredChart(Metrics metrics)
     {
-        metrics.addCustomChart(new Metrics.SingleLineChart(NEGOTIATIONS_TRIGGERED_KEY, () ->
+
+        metrics.addCustomChart(new SingleLineChart(NEGOTIATIONS_TRIGGERED_KEY, () ->
         {
             int negotiationsCount = negotiationsTriggeredSinceLastUpdate;
             negotiationsTriggeredSinceLastUpdate = 0;
@@ -144,7 +169,7 @@ public class MetricsManager
      */
     private void addNegotiationsTypeChart(Metrics metrics)
     {
-        metrics.addCustomChart(new Metrics.AdvancedPie(NEGOTIATIONS_TYPE_KEY, () ->
+        metrics.addCustomChart(new AdvancedPie(NEGOTIATIONS_TYPE_KEY, () ->
         {
             Map<String, Integer> pieMap = new HashMap<>(negotiationTypeMap);
             negotiationTypeMap.clear();
@@ -158,7 +183,7 @@ public class MetricsManager
      */
     private void addNegotiationsMobChart(Metrics metrics)
     {
-        metrics.addCustomChart(new Metrics.AdvancedPie(NEGOTIATIONS_MOB_KEY, () ->
+        metrics.addCustomChart(new AdvancedPie(NEGOTIATIONS_MOB_KEY, () ->
         {
             Map<String, Integer> pieMap = new HashMap<>();
             for (Map.Entry<EntityType, Integer> mobEntry : mobFrequencyMap.entrySet())
@@ -177,7 +202,7 @@ public class MetricsManager
      */
     private void addNegotiationsTriggerRateChart(Metrics metrics)
     {
-        metrics.addCustomChart(new Metrics.SimplePie(NEGOTIATIONS_TRIGGER_RATE_KEY, () ->
+        metrics.addCustomChart(new SimplePie(NEGOTIATIONS_TRIGGER_RATE_KEY, () ->
         {
             double triggerRate = PluginConfig.getNegotiationRate();
             return String.valueOf(triggerRate);
@@ -190,7 +215,7 @@ public class MetricsManager
      */
     private void addNegotiationsHPThresholdChart(Metrics metrics)
     {
-        metrics.addCustomChart(new Metrics.SimplePie(NEGOTIATIONS_HP_THRESHOLD_KEY, () ->
+        metrics.addCustomChart(new SimplePie(NEGOTIATIONS_HP_THRESHOLD_KEY, () ->
         {
             double healthThreshold = PluginConfig.getNegotiationHealthThreshold();
             return String.valueOf(healthThreshold);
