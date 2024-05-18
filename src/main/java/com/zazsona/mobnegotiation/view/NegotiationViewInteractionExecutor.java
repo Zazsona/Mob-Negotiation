@@ -1,6 +1,6 @@
 package com.zazsona.mobnegotiation.view;
 
-import com.zazsona.mobnegotiation.view.interfaces.IClickableNegotiationView;
+import com.zazsona.mobnegotiation.view.interfaces.ISelectableNegotiationView;
 import com.zazsona.mobnegotiation.view.interfaces.IContainerNegotiationView;
 import com.zazsona.mobnegotiation.view.interfaces.INegotiationView;
 import com.zazsona.mobnegotiation.view.interfaces.IViewInteractionExecutor;
@@ -56,15 +56,15 @@ public class NegotiationViewInteractionExecutor implements CommandExecutor, IVie
             INegotiationView child = containerView.getChild(ids[level + 1]);
             traverseViewTree(child, ids, level + 1);
         }
-        else if (view instanceof IClickableNegotiationView) // Leaf node
+        else if (view instanceof ISelectableNegotiationView) // Leaf node
         {
-            IClickableNegotiationView clickableView = (IClickableNegotiationView) view;
-            clickableView.click();
+            ISelectableNegotiationView clickableView = (ISelectableNegotiationView) view;
+            clickableView.select();
         }
     }
 
     /**
-     * Adds a view and its children to receives interactions
+     * Adds a view and its children to receive interactions
      * @param view the view to add
      */
     @Override

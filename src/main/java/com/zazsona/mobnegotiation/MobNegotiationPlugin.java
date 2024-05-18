@@ -9,6 +9,7 @@ import com.zazsona.mobnegotiation.repository.PersonalityNamesRepository;
 import com.zazsona.mobnegotiation.repository.TalkSoundsRepository;
 import com.zazsona.mobnegotiation.view.MobNegotiationCommand;
 import com.zazsona.mobnegotiation.view.NegotiationViewInteractionExecutor;
+import com.zazsona.mobnegotiation.view.TextButtonSelectionListener;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -57,7 +58,9 @@ public class MobNegotiationPlugin extends JavaPlugin
         TalkSoundsRepository talkSoundsRepository = new TalkSoundsRepository();
         NegotiationEntityEligibilityChecker negotiationEntityEligibilityChecker = new NegotiationEntityEligibilityChecker(negotiationRepository, cooldownRespository);
         NegotiationController negotiationController = new NegotiationController(negotiationRepository, cooldownRespository, personalityNamesRepository, talkSoundsRepository, negotiationEntityEligibilityChecker, responseCommand);
+        TextButtonSelectionListener textButtonSelectionListener = new TextButtonSelectionListener(negotiationController);
         getServer().getPluginManager().registerEvents(negotiationController, this);
+        getServer().getPluginManager().registerEvents(textButtonSelectionListener, this);
     }
 
 

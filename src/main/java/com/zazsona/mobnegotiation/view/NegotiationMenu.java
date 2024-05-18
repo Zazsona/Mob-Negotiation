@@ -52,7 +52,7 @@ public class NegotiationMenu implements IContainerNegotiationView
     }
 
     @Override
-    public Collection<INegotiationView> getChildren()
+    public ArrayList<INegotiationView> getChildren()
     {
         return children;
     }
@@ -121,13 +121,18 @@ public class NegotiationMenu implements IContainerNegotiationView
 
         if (hasElements)
             promptBuilder.append("\n");
-        for (INegotiationView child : getChildren())
+
+        ArrayList<INegotiationView> childViews = getChildren();
+        for (int i = 0; i < childViews.size(); i++)
         {
+            INegotiationView childView = childViews.get(i);
+            String command = String.format("/%s %s %s", NegotiationViewInteractionExecutor.COMMAND_KEY, id, childView.getId());
+
             promptBuilder
                     .append("  ")
-                    .append(child.getFormattedComponent(), ComponentBuilder.FormatRetention.ALL)
-                    .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, String.format("/%s %s %s", NegotiationViewInteractionExecutor.COMMAND_KEY, id, child.getId())))
+                    .append(childView.getFormattedComponent(), ComponentBuilder.FormatRetention.ALL)
                     .append("\n")
+                    .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
                     .reset();
         }
         return promptBuilder.create();

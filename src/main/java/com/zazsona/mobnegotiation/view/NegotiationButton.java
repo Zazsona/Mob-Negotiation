@@ -1,6 +1,6 @@
 package com.zazsona.mobnegotiation.view;
 
-import com.zazsona.mobnegotiation.view.interfaces.IClickableNegotiationView;
+import com.zazsona.mobnegotiation.view.interfaces.ISelectableNegotiationView;
 import com.zazsona.mobnegotiation.view.interfaces.INegotiationView;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -11,7 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class NegotiationButton implements IClickableNegotiationView
+public class NegotiationButton implements ISelectableNegotiationView
 {
     private INegotiationView parent;
     private String itemId;
@@ -23,7 +23,7 @@ public class NegotiationButton implements IClickableNegotiationView
     private boolean strikethrough;
     private ChatColor colour;
     private HoverEvent hoverEvent;
-    private List<NegotiationButtonClickListener> listeners;
+    private List<NegotiationButtonSelectListener> listeners;
 
     public NegotiationButton(String text, String icon, ChatColor colour, INegotiationView parent, HoverEvent hoverEvent)
     {
@@ -48,20 +48,20 @@ public class NegotiationButton implements IClickableNegotiationView
     }
 
     /**
-     * Adds a listener that gets fired when this button is clicked
+     * Adds a listener that gets fired when this button is selected
      * @param listener the listener to add
      */
-    public void addListener(NegotiationButtonClickListener listener)
+    public void addListener(NegotiationButtonSelectListener listener)
     {
         listeners.add(listener);
     }
 
     /**
-     * Removes a listener that gets fired when this button is clicked
+     * Removes a listener that gets fired when this button is selected
      * @param listener the listener to remove
      * @return boolean on removed
      */
-    public boolean removeListener(NegotiationButtonClickListener listener)
+    public boolean removeListener(NegotiationButtonSelectListener listener)
     {
         return listeners.remove(listener);
     }
@@ -79,12 +79,12 @@ public class NegotiationButton implements IClickableNegotiationView
     }
 
     /**
-     * Clicks the button.
+     * Activates the button.
      */
-    public void click()
+    public void select()
     {
         for (int i = listeners.size() - 1; i > -1; i--)
-            listeners.get(i).onButtonClicked(this);
+            listeners.get(i).onButtonSelected(this);
     }
 
     /**

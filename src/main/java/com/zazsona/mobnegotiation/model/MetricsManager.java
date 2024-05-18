@@ -23,11 +23,11 @@ public class MetricsManager
     private static final String NEGOTIATIONS_HP_THRESHOLD_KEY = "negotiation_hp_threshold";
 
     private static MetricsManager instance;
-    private Metrics metrics;
-    private YamlConfiguration metricsConfig;
+    private final Metrics metrics;
+    private final YamlConfiguration metricsConfig;
     private int negotiationsTriggeredSinceLastUpdate = 0;
-    private HashMap<EntityType, Integer> mobFrequencyMap = new HashMap<>();
-    private HashMap<String, Integer> negotiationTypeMap = new HashMap<>();
+    private final HashMap<EntityType, Integer> mobFrequencyMap = new HashMap<>();
+    private final HashMap<String, Integer> negotiationTypeMap = new HashMap<>();
 
     private MetricsManager()
     {
@@ -37,7 +37,7 @@ public class MetricsManager
         File configFile = new File(bStatsFolder, "config.yml");
         this.metricsConfig = YamlConfiguration.loadConfiguration(configFile);
 
-        metrics = new Metrics(MobNegotiationPlugin.getInstance(), BSTATS_PLUGIN_ID);
+        this.metrics = new Metrics(MobNegotiationPlugin.getInstance(), BSTATS_PLUGIN_ID);
 
         if (isEnabled())
         {

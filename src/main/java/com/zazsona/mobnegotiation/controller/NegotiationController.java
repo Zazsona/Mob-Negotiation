@@ -12,7 +12,7 @@ import com.zazsona.mobnegotiation.repository.IPersonalityNamesRepository;
 import com.zazsona.mobnegotiation.repository.ITalkSoundsRepository;
 import com.zazsona.mobnegotiation.view.NegotiationButton;
 import com.zazsona.mobnegotiation.view.NegotiationMenu;
-import com.zazsona.mobnegotiation.view.interfaces.IClickableNegotiationView;
+import com.zazsona.mobnegotiation.view.interfaces.ISelectableNegotiationView;
 import com.zazsona.mobnegotiation.view.interfaces.INegotiationView;
 import com.zazsona.mobnegotiation.view.interfaces.IViewInteractionExecutor;
 import net.md_5.bungee.api.ChatColor;
@@ -48,7 +48,8 @@ public class NegotiationController implements Listener
     private ITalkSoundsRepository taskSoundsRepo;
     private INegotiationEntityEligibilityChecker eligibilityChecker;
     private IViewInteractionExecutor interactionExecutor;
-    private HashMap<Negotiation, NegotiationMenu> menuMap;
+    private HashMap<Negotiation, NegotiationMenu> menusByNegotiation;
+    private HashMap<NegotiationMenu, Negotiation> negotiationsByMenu;
     private NegotiationPromptUpdateListener promptListener;
     private NegotiationStateListener stateListener;
     private Random random;
@@ -61,10 +62,23 @@ public class NegotiationController implements Listener
         this.taskSoundsRepo = talkSoundsRepo;
         this.eligibilityChecker = eligibilityChecker;
         this.interactionExecutor = interactionExecutor;
-        this.menuMap = new HashMap<>();
+        this.menusByNegotiation = new HashMap<>();
+        this.negotiationsByMenu = new HashMap<>();
         this.promptListener = this::displayPrompt;
         this.stateListener = this::handleNegotiationTermination;
         this.random = new Random();
+    }
+
+    public NegotiationMenu getNegotiationMenuForPlayer(Player player)
+    {
+        Negotiation negotiation = negotiationRepo.getNegotiationForPlayer(player);
+        if (negotiation != null)
+            return menusByNegotiation.get(negotiation);
+        return null;
+    }
+
+    public boolean isPlayerNegotiating(Player player) {
+        return negotiationRepo.getNegotiationForPlayer(player) != null;
     }
 
     /**
@@ -135,11 +149,12 @@ public class NegotiationController implements Listener
                     formattedText = getTextTypeFormatting(response.getTextType()) + formattedText;
                     HoverEvent hoverEvent = new HoverEvent(HoverEvent.Action.SHOW_TEXT, new Text(HOVER_HINT_TEXT));
                     NegotiationButton button = new NegotiationButton(formattedText, icon, colour, negotiationMenu, hoverEvent);
-                    button.addListener((clickedButton -> handleButtonClick(negotiationMenu, negotiation, response)));
+                    button.addListener((selectButton) -> handleButtonSelection(negotiation, response));
                     negotiationMenu.addChild(button);
                 }
             }
-            menuMap.put(negotiation, negotiationMenu);
+            menusByNegotiation.put(negotiation, negotiationMenu);
+            negotiationsByMenu.put(negotiationMenu, negotiation);
         }
         Mob mob = negotiation.getMob();
         Player player = negotiation.getPlayer();
@@ -147,16 +162,17 @@ public class NegotiationController implements Listener
         player.spigot().sendMessage(negotiationMenu.getFormattedComponent());
     }
 
-    private void handleButtonClick(NegotiationMenu menu, Negotiation negotiation, NegotiationResponse response)
+    private void handleButtonSelection(Negotiation negotiation, NegotiationResponse response)
     {
         Player player = negotiation.getPlayer();
+        NegotiationMenu menu = menusByNegotiation.get(negotiation);
         player.playSound(player.getLocation(), Sound.UI_BUTTON_CLICK, 0.25f, 1.0f);
         if (!negotiation.getState().isTerminating() && menu != null)
         {
             for (INegotiationView child : menu.getChildren())
             {
-                if (child instanceof IClickableNegotiationView)
-                    ((IClickableNegotiationView) child).clearListeners();
+                if (child instanceof ISelectableNegotiationView)
+                    ((ISelectableNegotiationView) child).clearListeners();
             }
         }
         negotiation.nextPrompt(response);
@@ -169,13 +185,14 @@ public class NegotiationController implements Listener
             negotiation.removeListener(promptListener);
             negotiation.removeListener(stateListener);
 
-            NegotiationMenu menu = menuMap.remove(negotiation);
+            NegotiationMenu menu = menusByNegotiation.remove(negotiation);
             if (menu != null)
             {
+                negotiationsByMenu.remove(menu);
                 for (INegotiationView child : menu.getChildren())
                 {
-                    if (child instanceof IClickableNegotiationView)
-                        ((IClickableNegotiationView) child).clearListeners();
+                    if (child instanceof ISelectableNegotiationView)
+                        ((ISelectableNegotiationView) child).clearListeners();
                 }
             }
         }
