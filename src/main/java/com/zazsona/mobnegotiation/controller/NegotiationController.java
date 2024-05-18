@@ -126,6 +126,7 @@ public class NegotiationController implements Listener
     {
         if (prompt == null)
             return;
+
         NegotiationMenu negotiationMenu = new NegotiationMenu(interactionExecutor);
         String headerText = (prompt.getMobMessage() != null) ? createHeaderText(negotiation, prompt) : null;
         negotiationMenu.setHeaderText(headerText);
@@ -227,6 +228,16 @@ public class NegotiationController implements Listener
             line = fillPlaceholderValues(line, negotiation);
             line = applyMinecraftFormatting(line);
             stringBuilder.append(moodFormatting).append(textTypeFormatting).append(line).append("\n");
+        }
+
+        if (negotiation.getState() == NegotiationState.STARTED)
+        {
+            stringBuilder
+                    .append("\n")
+                    .append(ChatColor.DARK_GRAY)
+                    .append(ChatColor.ITALIC)
+                    .append("To select an option, click on it or enter the corresponding number in chat...")
+                    .append("\n");
         }
         return stringBuilder.toString().trim();
     }

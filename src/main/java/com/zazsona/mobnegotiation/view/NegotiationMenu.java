@@ -129,7 +129,9 @@ public class NegotiationMenu implements IContainerNegotiationView
             String command = String.format("/%s %s %s", NegotiationViewInteractionExecutor.COMMAND_KEY, id, childView.getId());
 
             promptBuilder
-                    .append("  ")
+                    .color(ChatColor.DARK_GRAY)
+                    .append("[").append(Integer.toString(i)).append("] ")
+                    .reset()
                     .append(childView.getFormattedComponent(), ComponentBuilder.FormatRetention.ALL)
                     .append("\n")
                     .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
