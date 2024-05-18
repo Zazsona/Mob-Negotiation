@@ -4,6 +4,7 @@ import com.zazsona.mobnegotiation.controller.NegotiationController;
 import com.zazsona.mobnegotiation.view.interfaces.INegotiationView;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.bukkit.event.Listener;
 
@@ -18,7 +19,7 @@ public class TextButtonSelectionListener implements Listener
         this.controller = controller;
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onPlayerChatAsync(AsyncPlayerChatEvent e)
     {
         String messageContents = e.getMessage();
@@ -37,5 +38,8 @@ public class TextButtonSelectionListener implements Listener
         String menuId = menu.getId();
         String selectedChildMenuId = menu.getChildren().get(selectionIndex).getId();
         player.performCommand(String.format("/%s %s %s", NegotiationViewInteractionExecutor.COMMAND_KEY, menuId, selectedChildMenuId));
+
+        // Cancel the message to prevent it getting broadcast
+        e.setCancelled(true);
     }
 }
