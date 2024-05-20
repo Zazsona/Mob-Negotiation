@@ -7,6 +7,7 @@ import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
 
 import java.util.*;
 
@@ -23,7 +24,7 @@ public class NegotiationMenu implements IContainerNegotiationView
         this.id = UUID.randomUUID().toString();
         this.children = new ArrayList<>();
         this.headerText = null;
-        this.headerTextColour = ChatColor.GRAY;
+        this.headerTextColour = ChatColor.WHITE;
         this.interactionExecutor = interactionExecutor;
         this.interactionExecutor.addView(this);
     }
@@ -110,17 +111,39 @@ public class NegotiationMenu implements IContainerNegotiationView
      */
     public BaseComponent[] getFormattedComponent()
     {
+        return getFormattedComponent(false);
+    }
+
+    /**
+     * Creates a representation of this prompt as an array of BaseComponents for presentation to users
+     * @param includeInstructions - Sets whether to include the GUI usage instructions
+     * @return a {@link BaseComponent} array
+     */
+    public BaseComponent[] getFormattedComponent(boolean includeInstructions)
+    {
         ComponentBuilder promptBuilder = new ComponentBuilder();
-        boolean hasElements = getChildren().size() > 0;
+        boolean hasElements = !getChildren().isEmpty();
 
         if (headerText != null)
         {
+            TextComponent headerComponent = new TextComponent();
             String verticalSpacer = (hasElements) ? "\n" : "";
-            promptBuilder.append(verticalSpacer).append(headerText).append(verticalSpacer).color(headerTextColour).reset();
+            headerComponent.setColor(headerTextColour);
+            headerComponent.setText(String.format("%s%s%s", verticalSpacer, headerText, verticalSpacer));
+            promptBuilder.append(headerComponent, ComponentBuilder.FormatRetention.NONE);
         }
 
-        if (hasElements)
-            promptBuilder.append("\n");
+        if (!hasElements)
+            return promptBuilder.create();
+
+        if (includeInstructions)
+        {
+            TextComponent instructionsComponent = new TextComponent();
+            instructionsComponent.setItalic(true);
+            instructionsComponent.setColor(ChatColor.GRAY);
+            instructionsComponent.setText("To select an option, click it or enter the matched number in chat...");
+            promptBuilder.append("\n").append(instructionsComponent, ComponentBuilder.FormatRetention.NONE);
+        }
 
         ArrayList<INegotiationView> childViews = getChildren();
         for (int i = 0; i < childViews.size(); i++)
@@ -128,15 +151,15 @@ public class NegotiationMenu implements IContainerNegotiationView
             INegotiationView childView = childViews.get(i);
             String command = String.format("/%s %s %s", NegotiationViewInteractionExecutor.COMMAND_KEY, id, childView.getId());
 
-            promptBuilder
-                    .color(ChatColor.DARK_GRAY)
-                    .append("[").append(Integer.toString(i)).append("] ")
-                    .reset()
-                    .append(childView.getFormattedComponent(), ComponentBuilder.FormatRetention.ALL)
-                    .append("\n")
+            ComponentBuilder buttonBuilder = new ComponentBuilder();
+            buttonBuilder
+                    .color(ChatColor.GRAY)
                     .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, command))
-                    .reset();
+                    .append(String.format("[%d] ", (i + 1)))
+                    .append(childView.getFormattedComponent(), ComponentBuilder.FormatRetention.FORMATTING);
+            promptBuilder.append("\n").append(buttonBuilder.create(), ComponentBuilder.FormatRetention.NONE);
         }
+        promptBuilder.append("\n");
         return promptBuilder.create();
     }
 }

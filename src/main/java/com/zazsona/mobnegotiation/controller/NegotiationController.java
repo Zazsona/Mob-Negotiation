@@ -160,7 +160,8 @@ public class NegotiationController implements Listener
         Mob mob = negotiation.getMob();
         Player player = negotiation.getPlayer();
         player.playSound(mob.getLocation(), taskSoundsRepo.getSound(mob.getType()), 1.0f, 1.0f);
-        player.spigot().sendMessage(negotiationMenu.getFormattedComponent());
+        boolean displayInstructions = (negotiation.getState() == NegotiationState.STARTED && prompt instanceof RespondableNegotiationPrompt);
+        player.spigot().sendMessage(negotiationMenu.getFormattedComponent(displayInstructions));
     }
 
     private void handleButtonSelection(Negotiation negotiation, NegotiationResponse response)
@@ -230,15 +231,6 @@ public class NegotiationController implements Listener
             stringBuilder.append(moodFormatting).append(textTypeFormatting).append(line).append("\n");
         }
 
-        if (negotiation.getState() == NegotiationState.STARTED)
-        {
-            stringBuilder
-                    .append("\n")
-                    .append(ChatColor.DARK_GRAY)
-                    .append(ChatColor.ITALIC)
-                    .append("To select an option, click on it or enter the corresponding number in chat...")
-                    .append("\n");
-        }
         return stringBuilder.toString().trim();
     }
 
@@ -336,7 +328,7 @@ public class NegotiationController implements Listener
         {
             case PARLEY -> ChatColor.WHITE;
             case ATTACK -> ChatColor.RED;
-            case CANCEL -> ChatColor.GRAY;
+            case CANCEL -> ChatColor.DARK_GRAY;
         };
     }
 
