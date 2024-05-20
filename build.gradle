@@ -1,6 +1,6 @@
 plugins {
     id 'java'
-    id 'com.github.johnrengelman.shadow' version '6.0.0'
+    id 'com.github.johnrengelman.shadow' version '8.1.1'
 }
 String classPath = 'com.zazsona.mobnegotiation'
 group classPath
@@ -30,6 +30,7 @@ artifacts {
 
 shadowJar {
     dependencies { include dependency('org.bstats:bstats-bukkit') }
-    dependencies { relocate('org.bstats.bukkit', classPath + '.dependencies.bstats')}
+    dependencies { include dependency('org.bstats:bstats-base') }
+    dependencies { relocate('org.bstats', classPath + '.dependencies.bstats')}
     archiveClassifier.set(null)
 }
