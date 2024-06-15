@@ -322,7 +322,7 @@
                 "gloomyTextType": "ACTION"
               },
               "failureResponses": {
-                "upbeat": "The spider's shaking something up! It's readying to attack!'",
+                "upbeat": "The spider's shaking something up! It's readying to attack!",
                 "timid": "It's lost interest in negotiation!",
                 "irritable": "That's riled it up!",
                 "gloomy": "It's lost the will to continue on!",
