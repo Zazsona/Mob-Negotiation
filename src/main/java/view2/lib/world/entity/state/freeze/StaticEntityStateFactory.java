@@ -1,11 +1,11 @@
-package view2.world.entity;
+package view2.lib.world.entity.state.freeze;
 
 import org.bukkit.entity.*;
 import org.bukkit.plugin.Plugin;
 
 public class StaticEntityStateFactory {
 
-    public static StaticEntityState create(Plugin plugin, Entity entity)
+    public StaticEntityState create(Plugin plugin, Entity entity)
     {
         if (entity instanceof Player)
             return new StaticPlayerState(plugin, (Player) entity);

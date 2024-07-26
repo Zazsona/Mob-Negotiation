@@ -1,4 +1,4 @@
-package view2.world.entity;
+package view2.lib.world.entity.state.freeze;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Entity;
@@ -22,6 +22,16 @@ public class StaticPlayerState extends StaticEntityState {
 
     public StaticPlayerState(Plugin plugin, Player player) {
         super(plugin, player);
+    }
+
+    public boolean isAllowHeadMovement()
+    {
+        return allowHeadMovement;
+    }
+
+    public void setAllowHeadMovement(boolean allowHeadMovement)
+    {
+        this.allowHeadMovement = allowHeadMovement;
     }
 
     @Override

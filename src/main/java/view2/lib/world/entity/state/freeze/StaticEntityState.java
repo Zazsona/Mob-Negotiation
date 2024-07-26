@@ -1,25 +1,30 @@
-package view2.world.entity;
+package view2.lib.world.entity.state.freeze;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.*;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
+import org.bukkit.event.HandlerList;
+import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
+import view2.lib.world.entity.state.IEntityState;
+import view2.lib.world.entity.state.ListenableEntityState;
 
-// TODO: Wrap into a "NegotiationEntityState" class to manage both the player & mob, with any negotiation specific customisations
-
-public class StaticEntityState {
+public class StaticEntityState extends ListenableEntityState implements IEntityState, Listener {
 
     protected Plugin plugin;
+    private boolean isRendered;
     private Entity entity;
     private Location targetEntityLocation;
     private BukkitTask tickMovementTask;
 
 
     public StaticEntityState(Plugin plugin, Entity entity) {
+        this.isRendered = false;
         this.plugin = plugin;
         this.entity = entity;
     }
@@ -30,6 +35,11 @@ public class StaticEntityState {
 
     public void setEntity(Entity entity) {
         this.entity = entity;
+    }
+
+    public boolean isRendered()
+    {
+        return isRendered;
     }
 
     /**
@@ -57,7 +67,10 @@ public class StaticEntityState {
         if (targetEntityLocation == null)
             targetEntityLocation = entity.getLocation();
 
+        Bukkit.getPluginManager().registerEvents(this, plugin);
         this.tickMovementTask = plugin.getServer().getScheduler().runTaskTimer(plugin, this::onEntityMove, 1, 1);
+        this.isRendered = true;
+        super.render();
     }
 
     /**
@@ -66,6 +79,10 @@ public class StaticEntityState {
     public void destroy() {
         if (tickMovementTask != null)
             tickMovementTask.cancel();
+
+        HandlerList.unregisterAll(this);
+        this.isRendered = false;
+        super.render();
     }
 
     /**

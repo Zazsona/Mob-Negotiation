@@ -1,4 +1,4 @@
-package view2.world.entity;
+package view2.lib.world.entity.state.freeze;
 
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
