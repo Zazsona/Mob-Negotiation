@@ -1,5 +1,6 @@
 package view2.lib.world.entity.state.freeze;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.plugin.Plugin;
@@ -10,6 +11,10 @@ public class StaticCreeperState extends StaticCreatureState {
 
     public StaticCreeperState(Plugin plugin, Creeper creeper) {
         super(plugin, creeper);
+    }
+
+    public StaticCreeperState(Plugin plugin, Creeper creeper, Location location) {
+        super(plugin, creeper, location);
     }
 
     @Override

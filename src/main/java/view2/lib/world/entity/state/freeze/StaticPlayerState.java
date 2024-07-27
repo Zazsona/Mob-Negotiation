@@ -24,6 +24,10 @@ public class StaticPlayerState extends StaticEntityState {
         super(plugin, player);
     }
 
+    public StaticPlayerState(Plugin plugin, Player player, Location targetLocation) {
+        super(plugin, player, targetLocation);
+    }
+
     public boolean isAllowHeadMovement()
     {
         return allowHeadMovement;

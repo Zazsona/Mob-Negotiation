@@ -29,6 +29,13 @@ public class StaticEntityState extends RenderListenableEntityState implements IE
         this.entity = entity;
     }
 
+    public StaticEntityState(Plugin plugin, Entity entity, Location targetLocation) {
+        this.isRendered = false;
+        this.plugin = plugin;
+        this.entity = entity;
+        setLocation(targetLocation);
+    }
+
     public Entity getEntity() {
         return entity;
     }

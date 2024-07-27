@@ -1,5 +1,6 @@
 package view2.lib.world.entity.state.freeze;
 
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.Mob;
 import org.bukkit.plugin.Plugin;
@@ -10,6 +11,10 @@ public class StaticMobState extends StaticEntityState {
 
     public StaticMobState(Plugin plugin, Mob mob) {
         super(plugin, mob);
+    }
+
+    public StaticMobState(Plugin plugin, Mob mob, Location targetLocation) {
+        super(plugin, mob, targetLocation);
     }
 
     @Override
