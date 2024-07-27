@@ -11,14 +11,14 @@ import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
 import view2.lib.world.entity.state.IEntityState;
-import view2.lib.world.entity.state.ListenableEntityState;
+import view2.lib.world.entity.state.RenderListenableEntityState;
 import view2.lib.world.entity.state.freeze.StaticEntityState;
 import view2.lib.world.entity.state.freeze.StaticEntityStateFactory;
 import view2.lib.world.entity.state.invincible.UnassailableEntityState;
 import view2.lib.world.entity.state.invincible.UnassailableEntityStateFactory;
 
 // TODO: Aggregate class that combines the Static State & Invincibility state, while also adding some invalidation checks (e.g Entity leaving the game, dying, or self-exploding)
-public class NegotiationEntityState extends ListenableEntityState implements IEntityState, Listener {
+public class NegotiationEntityState extends RenderListenableEntityState implements IEntityState, Listener {
 
     private Plugin plugin;
     private Entity entity;

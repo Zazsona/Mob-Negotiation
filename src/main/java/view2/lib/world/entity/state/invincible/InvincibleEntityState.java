@@ -12,11 +12,11 @@ import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.plugin.Plugin;
 import view2.lib.world.entity.state.IEntityState;
-import view2.lib.world.entity.state.ListenableEntityState;
+import view2.lib.world.entity.state.RenderListenableEntityState;
 
 import java.util.List;
 
-public class InvincibleEntityState extends ListenableEntityState implements IEntityState, Listener {
+public class InvincibleEntityState extends RenderListenableEntityState implements IEntityState, Listener {
 
     protected Plugin plugin;
     private boolean isRendered;
