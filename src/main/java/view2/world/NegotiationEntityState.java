@@ -1,6 +1,7 @@
 package view2.world;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -17,7 +18,6 @@ import view2.lib.world.entity.state.freeze.StaticEntityStateFactory;
 import view2.lib.world.entity.state.invincible.UnassailableEntityState;
 import view2.lib.world.entity.state.invincible.UnassailableEntityStateFactory;
 
-// TODO: Aggregate class that combines the Static State & Invincibility state, while also adding some invalidation checks (e.g Entity leaving the game, dying, or self-exploding)
 public class NegotiationEntityState extends RenderListenableEntityState implements IEntityState, Listener {
 
     private Plugin plugin;
@@ -25,6 +25,7 @@ public class NegotiationEntityState extends RenderListenableEntityState implemen
 
     private StaticEntityStateFactory staticStateFactory;
     private StaticEntityState staticState;
+    private Location targetLocation;
     private UnassailableEntityStateFactory unassailableEntityStateFactory;
     private UnassailableEntityState unassailableState;
 
@@ -32,6 +33,14 @@ public class NegotiationEntityState extends RenderListenableEntityState implemen
     {
         this.plugin = plugin;
         this.entity = entity;
+        this.staticStateFactory = new StaticEntityStateFactory();
+        this.unassailableEntityStateFactory = new UnassailableEntityStateFactory();
+    }
+
+    public NegotiationEntityState(Plugin plugin, Entity entity, Location targetLocation)
+    {
+        this(plugin, entity);
+        setLocation(targetLocation);
     }
 
     @Override
@@ -49,6 +58,26 @@ public class NegotiationEntityState extends RenderListenableEntityState implemen
         return staticState.isRendered() && unassailableState.isRendered();
     }
 
+    /**
+     * Gets the Location the entity is locked to
+     * @return location the lock location
+     */
+    public Location getLocation()
+    {
+        return this.targetLocation;
+    }
+
+    /**
+     * Sets the location to lock the entity to.
+     * @param location the location to lock to
+     */
+    public void setLocation(Location location)
+    {
+        this.targetLocation = location;
+        if (this.staticState != null)
+            this.staticState.setLocation(location);
+    }
+
     @Override
     public void render() {
         if (this.isRendered())
@@ -60,6 +89,7 @@ public class NegotiationEntityState extends RenderListenableEntityState implemen
             unassailableState.destroy();
 
         staticState = staticStateFactory.create(plugin, entity);
+        staticState.setLocation(targetLocation);
         unassailableState = unassailableEntityStateFactory.create(plugin, entity);
 
         Bukkit.getPluginManager().registerEvents(this, plugin);
