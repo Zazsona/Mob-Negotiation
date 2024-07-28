@@ -9,10 +9,8 @@ import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
-import view2.lib.world.entity.state.freeze.StaticEntityState;
-import view2.lib.world.entity.state.freeze.StaticEntityStateFactory;
-import view2.lib.world.entity.state.freeze.StaticPlayerState;
-import view2.world.state.NegotiationStaticEntityStateFactory;
+import view2.lib.RenderState;
+import view2.lib.world.entity.state.IEntityStateRenderedListener;
 
 import java.security.InvalidParameterException;
 
@@ -22,14 +20,20 @@ public class NegotiationWorldState {
     private Mob negotiatingMob;
     private Player negotiatingPlayer;
 
-    private StaticEntityState staticMobState;
-    private StaticEntityState staticPlayerState;
+    private NegotiationEntityState negotiationMobState;
+    private NegotiationEntityState negotiationPlayerState;
+    private IEntityStateRenderedListener entityStateDestroyedListener;
 
     public NegotiationWorldState(Mob negotiatingMob, Player negotiatingPlayer)
     {
         this.plugin = MobNegotiationPlugin.getInstance();
         this.negotiatingMob = negotiatingMob;
         this.negotiatingPlayer = negotiatingPlayer;
+        this.entityStateDestroyedListener = (entityState, prevState, newState) -> {
+            if (newState == RenderState.DESTROYED)
+                destoy();
+            // TODO: Feed back to the controller to say "Hey, World State broken"
+        };
     }
 
     public Mob getNegotiatingMob()
@@ -44,40 +48,35 @@ public class NegotiationWorldState {
 
     public void render()
     {
-        if (staticMobState.isRendered())
-            staticMobState.destroy();
-        if (staticPlayerState.isRendered())
-            staticPlayerState.destroy();
-
-        StaticEntityStateFactory stateFactory = new StaticEntityStateFactory();
+        if (negotiationMobState.isRendered())
+            negotiationMobState.destroy();
+        if (negotiationPlayerState.isRendered())
+            negotiationPlayerState.destroy();
 
         // Build Player Location
-        Location playerLocationTarget = negotiatingPlayer.getLocation();
-        Location playerLocation = getEntityNegotiationLocation(negotiatingPlayer, playerLocationTarget);
-
-        staticPlayerState = stateFactory.create(plugin, negotiatingPlayer);
-        staticPlayerState.setLocation(playerLocation);
+        Location playerLocation = negotiatingPlayer.getLocation();
+        Location playerLocationTarget = getEntityNegotiationLocation(negotiatingPlayer, playerLocation);
+        negotiationPlayerState = new NegotiationEntityState(plugin, negotiatingPlayer, playerLocationTarget);
+        negotiationPlayerState.addListener(entityStateDestroyedListener);
 
         // Build Mob Location
-        Location mobLocationTarget = negotiatingMob.getLocation();
-        Vector mobToPlayerDirection = playerLocationTarget.toVector().subtract(mobLocationTarget.toVector());
-        mobLocationTarget.setDirection(mobToPlayerDirection);
-        mobLocationTarget.setPitch(50); // Look down; Sad expression
-        Location mobLocation = getEntityNegotiationLocation(negotiatingMob, mobLocationTarget);
-
-        staticMobState = stateFactory.create(plugin, negotiatingMob);
-        staticMobState.setLocation(mobLocation);
+        Location mobLocation = negotiatingMob.getLocation();
+        Vector mobToPlayerDirection = playerLocationTarget.toVector().subtract(mobLocation.toVector());
+        mobLocation.setDirection(mobToPlayerDirection);
+        mobLocation.setPitch(50); // Look down; Sad expression
+        Location mobLocationTarget = getEntityNegotiationLocation(negotiatingMob, mobLocation);
+        negotiationMobState = new NegotiationEntityState(plugin, negotiatingMob, mobLocationTarget);
+        negotiationMobState.addListener(entityStateDestroyedListener);
 
         // Render
-        staticPlayerState.render();
-        staticMobState.render();
-
-        // TODO: Invincibility, Invalidation (e.g Player disconnect)
+        negotiationPlayerState.render();
+        negotiationMobState.render();
     }
 
     public void destoy()
     {
-
+        negotiationPlayerState.destroy();
+        negotiationMobState.destroy();
     }
 
     /**
