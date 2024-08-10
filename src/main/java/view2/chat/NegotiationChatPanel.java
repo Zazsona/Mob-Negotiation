@@ -1,8 +1,8 @@
 package view2.chat;
 
 import view2.lib.chat.control.input.ChatTextInputField;
+import view2.lib.chat.control.layout.ChatBoxLayout;
 import view2.lib.chat.control.layout.VerticalChatBoxLayout;
-import view2.lib.chat.control.output.ChatTextField;
 import view2.lib.chat.control.panel.ChatPanel;
 
 public class NegotiationChatPanel extends ChatPanel {
@@ -16,8 +16,7 @@ public class NegotiationChatPanel extends ChatPanel {
      *  [4] > [Return to Battle]
      */
 
-    private ChatTextField mobMessageField;
-
+    private NegotiationMobMessageTextField mobMessageField;
     private ChatTextInputField textInputField;
     private VerticalChatBoxLayout playerActionButtonLayout;
 
@@ -25,8 +24,22 @@ public class NegotiationChatPanel extends ChatPanel {
         super(new VerticalChatBoxLayout());
         VerticalChatBoxLayout chatBoxLayout = (VerticalChatBoxLayout) super.getRootLayout();
 
-        mobMessageField = new ChatTextField("<Unknown Creature> ...");
+        mobMessageField = new NegotiationMobMessageTextField();
         textInputField = new ChatTextInputField();
         playerActionButtonLayout = new VerticalChatBoxLayout();
+
+        chatBoxLayout.addControl(0, mobMessageField);
+        chatBoxLayout.addControl(1, playerActionButtonLayout);
+        chatBoxLayout.addControl(2, textInputField);
+    }
+
+    public NegotiationMobMessageTextField getMobMessageField()
+    {
+        return mobMessageField;
+    }
+
+    public ChatBoxLayout getNegotiationActionButtonLayout()
+    {
+        return playerActionButtonLayout;
     }
 }
