@@ -1,14 +1,10 @@
 package com.zazsona.mobnegotiation.controller2;
 
-import com.zazsona.mobnegotiation.MobNegotiationPlugin;
 import com.zazsona.mobnegotiation.model.Negotiation;
 import com.zazsona.mobnegotiation.model.NegotiationResponse;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.EventPriority;
-import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import view2.chat.NegotiationActionButton;
 import view2.chat.NegotiationChatPanel;
 import view2.chat.NegotiationMobMessageTextField;
@@ -21,49 +17,29 @@ import java.util.*;
 
 public class NegotiationController
 {
-    private Map<UUID, NegotiationSession> negotiationSessionsByPlayerId;
+    private Negotiation negotiation;
+    private NegotiationWorldState negotiationWorldState;
+    private NegotiationChatPanel negotiationChatPanel;
+
     private NegotiationTextFormatter textFormatter;
 
-    public NegotiationController()
+    public NegotiationController(Negotiation negotiation)
     {
-        this.negotiationSessionsByPlayerId = new HashMap<>();
+        this.negotiation = negotiation;
         this.textFormatter = new NegotiationTextFormatter();
     }
 
-    /**
-     * Detects when a valid mob is hit, and if parameters are valid, begins a negotiation session.
-     * @param e the event
-     */
-    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
-    public void onMobAttack(EntityDamageByEntityEvent e)
+    public void renderNegotiation()
     {
-        if (!(e.getDamager() instanceof Player) && !(e.getEntity() instanceof Mob))
-            return;
+        if (this.negotiationWorldState == null || !this.negotiationWorldState.isRendered())
+            this.negotiationWorldState = renderNegotiationToWorld();
 
-        Player player = (Player) e.getDamager();
-        Mob mob = (Mob) e.getEntity();
-
-        // TODO: Verify eligibility of player & mob for negotiation
-        // TODO: Create Negotiation
+        if (this.negotiationChatPanel != null)
+            this.negotiationChatPanel.destroy();
+        this.negotiationChatPanel = renderNegotiationToChat();
     }
 
-    private void renderNegotiation(Negotiation negotiation)
-    {
-        Player player = negotiation.getPlayer();
-        UUID playerId = player.getUniqueId();
-        NegotiationSession session = negotiationSessionsByPlayerId.get(playerId);
-        if (session == null)
-        {
-            NegotiationWorldState worldState = new NegotiationWorldState(negotiation.getMob(), player);
-            session = new NegotiationSession(negotiation, worldState);
-            negotiationSessionsByPlayerId.put(playerId, session);
-        }
-
-        renderNegotiationToChat(negotiation);
-        // TODO: Render World
-    }
-
-    private void renderNegotiationToChat(Negotiation negotiation)
+    private NegotiationChatPanel renderNegotiationToChat()
     {
         NegotiationChatPanel chatPanel = new NegotiationChatPanel();
         NegotiationMobMessageTextField mobMessageTextField = chatPanel.getMobMessageField();
@@ -73,9 +49,22 @@ public class NegotiationController
         mobMessageTextField.setMobMessage(negotiation.getCurrentPrompt().getMobMessage());
 
         // TODO: Get responses & loop
+        // The Negotiation object currently doesn't expose responses... What crackpot devised that stupid API?
+        // Oh...
+
+        return chatPanel;
     }
 
-    private NegotiationActionButton createNegotiationActionButton(Negotiation negotiation, NegotiationResponse responseOption)
+    private NegotiationWorldState renderNegotiationToWorld()
+    {
+        Player player = negotiation.getPlayer();
+        Mob mob = negotiation.getMob();
+        NegotiationWorldState worldState = new NegotiationWorldState(mob, player);
+        worldState.render();
+        return worldState;
+    }
+
+    private NegotiationActionButton createNegotiationActionButton(NegotiationResponse responseOption)
     {
         String text = responseOption.getText();
         List<ChatColor> formattingOptions = textFormatter.getResponseTypeFormatting(responseOption.getResponseType());
@@ -92,14 +81,6 @@ public class NegotiationController
     private void onNegotiationActionButtonSelected(PlayerTriggerEvent playerTriggerEvent, NegotiationResponse responseOption) {
         Player player = playerTriggerEvent.getTriggeringPlayer();
         UUID playerId = player.getUniqueId();
-        NegotiationSession negotiationSession = negotiationSessionsByPlayerId.get(playerId);
-        if (negotiationSession == null)
-        {
-            MobNegotiationPlugin.getInstance().getLogger().warning(String.format("Player %s selected a Negotiation Response, but has no active Negotiation.", player.getName()));
-            return;
-        }
-
-        Negotiation negotiation = negotiationSession.getNegotiation();
         negotiation.nextPrompt(responseOption);
     }
 }
