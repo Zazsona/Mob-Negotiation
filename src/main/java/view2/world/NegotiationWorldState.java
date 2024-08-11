@@ -46,6 +46,12 @@ public class NegotiationWorldState {
         return negotiatingPlayer;
     }
 
+    public boolean isRendered()
+    {
+        return negotiationPlayerState != null && negotiationMobState != null
+            && negotiationPlayerState.isRendered() && negotiationMobState.isRendered();
+    }
+
     public void render()
     {
         if (negotiationMobState.isRendered())
