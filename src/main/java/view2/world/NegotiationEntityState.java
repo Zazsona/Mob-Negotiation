@@ -11,14 +11,14 @@ import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.Plugin;
+import view2.lib.RenderListenable;
 import view2.lib.world.entity.state.IEntityState;
-import view2.lib.world.entity.state.RenderListenableEntityState;
 import view2.lib.world.entity.state.freeze.StaticEntityState;
 import view2.lib.world.entity.state.freeze.StaticEntityStateFactory;
 import view2.lib.world.entity.state.invincible.UnassailableEntityState;
 import view2.lib.world.entity.state.invincible.UnassailableEntityStateFactory;
 
-public class NegotiationEntityState extends RenderListenableEntityState implements IEntityState, Listener {
+public class NegotiationEntityState extends RenderListenable implements IEntityState, Listener {
 
     private Plugin plugin;
     private Entity entity;
@@ -31,6 +31,7 @@ public class NegotiationEntityState extends RenderListenableEntityState implemen
 
     public NegotiationEntityState(Plugin plugin, Entity entity)
     {
+        super();
         this.plugin = plugin;
         this.entity = entity;
         this.staticStateFactory = new StaticEntityStateFactory();

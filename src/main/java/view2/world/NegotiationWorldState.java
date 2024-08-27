@@ -9,12 +9,13 @@ import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
+import view2.lib.IRenderStateListener;
+import view2.lib.RenderListenable;
 import view2.lib.RenderState;
-import view2.lib.world.entity.state.IEntityStateRenderedListener;
 
 import java.security.InvalidParameterException;
 
-public class NegotiationWorldState {
+public class NegotiationWorldState extends RenderListenable {
 
     private Plugin plugin;
     private Mob negotiatingMob;
@@ -22,17 +23,17 @@ public class NegotiationWorldState {
 
     private NegotiationEntityState negotiationMobState;
     private NegotiationEntityState negotiationPlayerState;
-    private IEntityStateRenderedListener entityStateDestroyedListener;
+    private IRenderStateListener<RenderListenable> entityStateDestroyedListener;
 
     public NegotiationWorldState(Mob negotiatingMob, Player negotiatingPlayer)
     {
+        super();
         this.plugin = MobNegotiationPlugin.getInstance();
         this.negotiatingMob = negotiatingMob;
         this.negotiatingPlayer = negotiatingPlayer;
         this.entityStateDestroyedListener = (entityState, prevState, newState) -> {
             if (newState == RenderState.DESTROYED)
                 destoy();
-            // TODO: Feed back to the controller to say "Hey, World State broken"
         };
     }
 
@@ -77,12 +78,14 @@ public class NegotiationWorldState {
         // Render
         negotiationPlayerState.render();
         negotiationMobState.render();
+        super.render();
     }
 
     public void destoy()
     {
         negotiationPlayerState.destroy();
         negotiationMobState.destroy();
+        super.destroy();
     }
 
     /**

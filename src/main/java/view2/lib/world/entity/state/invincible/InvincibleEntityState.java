@@ -11,12 +11,12 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.plugin.Plugin;
+import view2.lib.RenderListenable;
 import view2.lib.world.entity.state.IEntityState;
-import view2.lib.world.entity.state.RenderListenableEntityState;
 
 import java.util.List;
 
-public class InvincibleEntityState extends RenderListenableEntityState implements IEntityState, Listener {
+public class InvincibleEntityState extends RenderListenable implements IEntityState, Listener {
 
     protected Plugin plugin;
     private boolean isRendered;
@@ -24,6 +24,7 @@ public class InvincibleEntityState extends RenderListenableEntityState implement
 
 
     public InvincibleEntityState(Plugin plugin, Entity entity) {
+        super();
         this.isRendered = false;
         this.plugin = plugin;
         this.entity = entity;
@@ -57,7 +58,7 @@ public class InvincibleEntityState extends RenderListenableEntityState implement
     public void destroy() {
         HandlerList.unregisterAll(this);
         this.isRendered = false;
-        super.render();
+        super.destroy();
     }
 
     /**

@@ -11,10 +11,10 @@ import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
+import view2.lib.RenderListenable;
 import view2.lib.world.entity.state.IEntityState;
-import view2.lib.world.entity.state.RenderListenableEntityState;
 
-public class StaticEntityState extends RenderListenableEntityState implements IEntityState, Listener {
+public class StaticEntityState extends RenderListenable implements IEntityState, Listener {
 
     protected Plugin plugin;
     private boolean isRendered;
@@ -24,12 +24,14 @@ public class StaticEntityState extends RenderListenableEntityState implements IE
 
 
     public StaticEntityState(Plugin plugin, Entity entity) {
+        super();
         this.isRendered = false;
         this.plugin = plugin;
         this.entity = entity;
     }
 
     public StaticEntityState(Plugin plugin, Entity entity, Location targetLocation) {
+        super();
         this.isRendered = false;
         this.plugin = plugin;
         this.entity = entity;
@@ -89,7 +91,7 @@ public class StaticEntityState extends RenderListenableEntityState implements IE
 
         HandlerList.unregisterAll(this);
         this.isRendered = false;
-        super.render();
+        super.destroy();
     }
 
     /**
