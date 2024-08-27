@@ -17,12 +17,12 @@ import java.util.List;
 public class NegotiationEligibilityChecker implements INegotiationEligibilityChecker
 {
     private INegotiationRepository negotiationRepository;
-    private ICooldownRespository cooldownRespository;
+    private ICooldownRespository cooldownRepository;
 
-    public NegotiationEligibilityChecker(INegotiationRepository negotiationRepository, ICooldownRespository cooldownRespository)
+    public NegotiationEligibilityChecker(INegotiationRepository negotiationRepository, ICooldownRespository cooldownRepository)
     {
         this.negotiationRepository = negotiationRepository;
-        this.cooldownRespository = cooldownRespository;
+        this.cooldownRepository = cooldownRepository;
     }
 
     /**
@@ -38,11 +38,11 @@ public class NegotiationEligibilityChecker implements INegotiationEligibilityChe
             return false;
         if (negotiationRepository.hasNegotiationForPlayer(player))
             return false;
-        if (cooldownRespository.isPlayerInCooldown(player))
+        if (cooldownRepository.isPlayerInCooldown(player))
             return false;
 
         int mobTargetingBlockRange = 7;
-        // While not required, this below reduces wasteful O(n) searches.
+        // While not required, below reduces wasteful O(n) searches.
         boolean playerCanNegotiate = isEntityAbleToNegotiate(player);
         boolean mobCanNegotiate = isEntityAbleToNegotiate(mob);
         if (!playerCanNegotiate || !mobCanNegotiate)
@@ -107,12 +107,12 @@ public class NegotiationEligibilityChecker implements INegotiationEligibilityChe
 
         for (Entity nearbyEntity : nearbyEntities)
         {
-            if (nearbyEntity instanceof Creature)
-            {
-                Creature creature = (Creature) nearbyEntity;
-                if (creature.getTarget() == entity)
-                    return true;
-            }
+            if (!(nearbyEntity instanceof Creature))
+                continue;
+
+            Creature creature = (Creature) nearbyEntity;
+            if (creature.getTarget() == entity)
+                return true;
         }
         return false;
     }
