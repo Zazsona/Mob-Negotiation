@@ -12,8 +12,10 @@ import com.zazsona.mobnegotiation.view.NegotiationViewInteractionExecutor;
 import com.zazsona.mobnegotiation.view.TextButtonSelectionListener;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.flywaydb.core.Flyway;
 
 import java.io.IOException;
+import java.nio.file.Path;
 import java.util.logging.Level;
 
 public class MobNegotiationPlugin extends JavaPlugin
@@ -48,6 +50,12 @@ public class MobNegotiationPlugin extends JavaPlugin
     public void onEnable()
     {
         super.onEnable();
+        String dbPath = Path.of(this.getDataFolder().getAbsolutePath(), "script.db").toString();
+        String dbUrl = String.format("jdbc:sqlite:%s", dbPath);
+        Flyway flyway = Flyway.configure().dataSource(dbUrl, null, null).load();
+        flyway.migrate();
+
+
         NegotiationViewInteractionExecutor responseCommand = NegotiationViewInteractionExecutor.getInstance();
         getCommand(NegotiationViewInteractionExecutor.COMMAND_KEY).setExecutor(responseCommand);
         MobNegotiationCommand mobNegotiationCommand = new MobNegotiationCommand();
