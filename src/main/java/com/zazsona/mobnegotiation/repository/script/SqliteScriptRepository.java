@@ -55,64 +55,21 @@ public class SqliteScriptRepository {
      * @return a list of IDs for prompts that meet the criteria
      * @throws SQLException error querying database
      */
-    public List<Integer> getPromptIds(PromptTypeSchema promptTypeSchema, NegotiationEntityType[] entityTypes, PersonalityType[] personalityTypes, int batchOffset, int batchSize) throws SQLException {
-        if (promptTypeSchema == PromptTypeSchema.POWER && personalityTypes != null)
-            throw new IllegalArgumentException(String.format("The provided Prompt Schema \"%s\" does not support filtering by PersonalityType.", promptTypeSchema.toString()));
+    public List<Integer> getPromptIds(PromptTypeSchema promptTypeSchema, List<NegotiationEntityType> entityTypes, List<PersonalityType> personalityTypes, int batchOffset, int batchSize) throws SQLException {
+        String query = new PromptIdQueryBuilder()
+                .setEntities(entityTypes)
+                .setIncludeEntityTypesFilter(entityTypes != null)
+                .setPersonalities(personalityTypes)
+                .setIncludePersonalityTypesFilter(personalityTypes != null)
+                .setBatchOffset(batchOffset)
+                .setBatchSize(batchSize)
+                .setPromptType(promptTypeSchema)
+                .buildQuery();
 
-        boolean filterOnEntityType = entityTypes != null;
-        boolean filterOnPersonalityType = personalityTypes != null;
-
-        String queryFormat = getPromptIdsQueryFormat(filterOnEntityType, filterOnPersonalityType);
-        String entityIdsCSV = (filterOnEntityType) ? Arrays.stream(entityTypes).map(et -> Integer.toString(et.getId())).collect(Collectors.joining(", ")) : null;
-        String personalityIdsCSV = (filterOnPersonalityType) ? Arrays.stream(personalityTypes).map(pt -> Integer.toString(pt.getId())).collect(Collectors.joining(", ")) : null;
-
-        Map<String, Object> tokens = addSchemaTokensToMap(promptTypeSchema, new HashMap<>());
-        tokens.put("entityIds", entityIdsCSV);
-        tokens.put("personalityIds", personalityIdsCSV);
-        tokens.put("personalityWildcardId", PersonalityType.WILDCARD);
-        tokens.put("batchSize", batchSize);
-        tokens.put("batchOffset", batchOffset);
-
-        String query = StringSubstitutor.replace(queryFormat, tokens, "${", "}");
         return getIntegerValuesAsList(query, promptTypeSchema.getPromptTableId());
     }
 
-    private static String getPromptIdsQueryFormat(boolean includeEntityTypesFilter, boolean includePersonalityTypesFilter) {
-        final String BASE_QUERY_FORMAT =
-                """
-                SELECT
-                    PT."${promptIdColumn}"
-                FROM "${promptTable}" PT
-                """;
 
-        final String ENTITIES_FILTER_QUERY_FORMAT =
-                """
-                INNER JOIN "${promptEntitiesTable}" PTE
-                    ON PT."${promptIdColumn}" = PTE."${promptIdColumn}"
-                    AND PTE.EntityTypeId IN (${entityIds})
-                """;
-
-        final String PERSONALITY_FILTER_QUERY_FORMAT =
-                """
-                WHERE PT.PersonalityId IN (${personalityIds})
-                OR PT.PersonalityId = ${personalityWildcardId}
-                """;
-
-        final String QUERY_SUFFIX =
-                """
-                LIMIT ${batchSize}
-                OFFSET ${batchOffset}
-                ;""";
-
-        StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append(BASE_QUERY_FORMAT);
-        if (includeEntityTypesFilter)
-            queryBuilder.append(ENTITIES_FILTER_QUERY_FORMAT);
-        if (includePersonalityTypesFilter)
-            queryBuilder.append(PERSONALITY_FILTER_QUERY_FORMAT);
-        queryBuilder.append(QUERY_SUFFIX);
-        return queryBuilder.toString();
-    }
 
     /**
      * Gets the languages supported by this script.
@@ -129,7 +86,7 @@ public class SqliteScriptRepository {
 
             statement = getConnection().createStatement();
             lastConnQueryTimestamp = Instant.now();
-            ResultSet rs = statement.executeQuery(String.format("SELECT %s, %s FROM %s;", codeCol, nameCol, tableName));
+            ResultSet rs = statement.executeQuery(String.format("SELECT \"%s\", \"%s\" FROM \"%s\";", codeCol, nameCol, tableName));
 
             ArrayList<Language> languages = new ArrayList<>();
             while (rs.next())
@@ -147,31 +104,7 @@ public class SqliteScriptRepository {
         }
     }
 
-    /**
-     * Adds values to the provided tokens map for the various schema properties of the given PromptType.
-     * If the property value in {@link PromptTypeSchema} is null or blank, no mapping will be added.
-     * If a mapping is already present for a given key, it will not be altered.
-     * @param promptTypeSchema the prompt type schema details
-     * @param tokens the map to add to
-     * @return reference to the same map that was passed in for easy chaining
-     */
-    private Map<String, Object> addSchemaTokensToMap(PromptTypeSchema promptTypeSchema, Map<String, Object> tokens)
-    {
-        if (promptTypeSchema.getPromptTable() != null && !promptTypeSchema.getPromptTable().isBlank())
-            tokens.putIfAbsent("promptTable", promptTypeSchema.getPromptTable());
-        if (promptTypeSchema.getPromptTableId() != null && !promptTypeSchema.getPromptTableId().isBlank())
-            tokens.putIfAbsent("promptTableId", promptTypeSchema.getPromptTableId());
-        if (promptTypeSchema.getPromptEntitiesTable() != null && !promptTypeSchema.getPromptEntitiesTable().isBlank())
-            tokens.putIfAbsent("promptEntitiesTable", promptTypeSchema.getPromptEntitiesTable());
-        if (promptTypeSchema.getPromptResponsesTable() != null && !promptTypeSchema.getPromptResponsesTable().isBlank())
-            tokens.putIfAbsent("promptResponsesTable", promptTypeSchema.getPromptResponsesTable());
-        if (promptTypeSchema.getPromptResponseSuccessRateTable() != null && !promptTypeSchema.getPromptResponseSuccessRateTable().isBlank())
-            tokens.putIfAbsent("promptResponseSuccessRateTable", promptTypeSchema.getPromptResponseSuccessRateTable());
-        if (promptTypeSchema.getPromptLinkTable() != null && !promptTypeSchema.getPromptLinkTable().isBlank())
-            tokens.putIfAbsent("promptLinkTable", promptTypeSchema.getPromptLinkTable());
 
-        return tokens;
-    }
 
     private Connection getConnection() throws SQLException {
         if (this.connection != null && !this.connection.isClosed())
