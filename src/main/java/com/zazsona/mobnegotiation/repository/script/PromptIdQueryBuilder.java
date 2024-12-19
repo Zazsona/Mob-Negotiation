@@ -5,9 +5,8 @@ import com.zazsona.mobnegotiation.model2.NegotiationEntityType;
 import com.zazsona.mobnegotiation.model2.PersonalityType;
 import org.apache.commons.text.StringSubstitutor;
 
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 public class PromptIdQueryBuilder extends AbstractPromptQueryBuilder {
@@ -105,50 +104,46 @@ public class PromptIdQueryBuilder extends AbstractPromptQueryBuilder {
         if (isIncludePersonalityTypesFilter() && getPersonalities() == null)
             throw new NullPointerException("Personality Type filter is enabled, but no personalities have been provided.");
 
-        String queryFormat = getPromptIdsQueryFormat();
+        String queryTemplate = getQueryTemplate();
         String entityIdsCSV = (isIncludeEntityTypesFilter()) ? getEntities().stream().map(et -> Integer.toString(et.getId())).collect(Collectors.joining(", ")) : null;
         String personalityIdsCSV = (isIncludePersonalityTypesFilter()) ? getPersonalities().stream().map(pt -> Integer.toString(pt.getId())).collect(Collectors.joining(", ")) : null;
         getTokens().put("entityIds", entityIdsCSV);
         getTokens().put("personalityIds", personalityIdsCSV);
 
-        String query = StringSubstitutor.replace(queryFormat, getTokens(), "${", "}");
-        return query;
+        return StringSubstitutor.replace(queryTemplate, getTokens(), "${", "}");
     }
 
-    private String getPromptIdsQueryFormat() {
-        final String BASE_QUERY_FORMAT =
-                """
-                SELECT
-                    PT."${promptIdColumn}"
-                FROM "${promptTable}" PT
-                """;
+    @Override
+    protected String getQuerySourceTable() {
+        return "\"${promptTable}\" PT";
+    }
 
-        final String ENTITIES_FILTER_QUERY_FORMAT =
-                """
-                INNER JOIN "${promptEntitiesTable}" PTE
-                    ON PT."${promptIdColumn}" = PTE."${promptIdColumn}"
-                    AND PTE.EntityTypeId IN (${entityIds})
-                """;
+    @Override
+    protected ArrayList<String> getQueryColumns() {
+        ArrayList<String> columns = new ArrayList<>();
+        columns.add("PT.\"${promptTableIdColumn}\"");
+        return columns;
+    }
 
-        final String PERSONALITY_FILTER_QUERY_FORMAT =
-                """
-                WHERE PT.PersonalityId IN (${personalityIds})
-                OR PT.PersonalityId = ${personalityWildcardId}
-                """;
-
-        final String QUERY_SUFFIX =
-                """
-                LIMIT ${batchSize}
-                OFFSET ${batchOffset}
-                ;""";
-
-        StringBuilder queryBuilder = new StringBuilder();
-        queryBuilder.append(BASE_QUERY_FORMAT);
-        if (isIncludeEntityTypesFilter())
-            queryBuilder.append(ENTITIES_FILTER_QUERY_FORMAT);
+    @Override
+    protected ArrayList<String> getQueryFilters() {
+        ArrayList<String> filters = new ArrayList<>();
         if (isIncludePersonalityTypesFilter())
-            queryBuilder.append(PERSONALITY_FILTER_QUERY_FORMAT);
-        queryBuilder.append(QUERY_SUFFIX);
-        return queryBuilder.toString();
+            filters.add("WHERE PT.PersonalityId IN (${personalityIds}) OR PT.PersonalityId = ${personalityWildcardId}");
+        return filters;
+    }
+
+    @Override
+    protected ArrayList<String> getQueryJoins() {
+        ArrayList<String> joins = new ArrayList<>();
+        if (isIncludeEntityTypesFilter())
+            joins.add("INNER JOIN \"${promptEntitiesTable}\" PTE ON PT.\"${promptTableIdColumn}\" = PTE.\"${promptTableIdColumn}\" AND PTE.EntityTypeId IN (${entityIds})");
+        return joins;
+    }
+
+    @Override
+    protected String getQueryFormat() {
+        String baseTemplate = super.getQueryFormat();
+        return String.format("%s%nOFFSET ${batchOffset}%nLIMIT ${batchSize}", baseTemplate);
     }
 }
