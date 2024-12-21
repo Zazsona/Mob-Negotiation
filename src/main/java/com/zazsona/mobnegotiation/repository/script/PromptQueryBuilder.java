@@ -1,5 +1,6 @@
 package com.zazsona.mobnegotiation.repository.script;
 
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.text.StringSubstitutor;
 
 import java.util.*;
@@ -17,6 +18,13 @@ public class PromptQueryBuilder extends AbstractPromptQueryBuilder {
         setLanguageCode("en");
     }
 
+    @Override
+    public AbstractPromptQueryBuilder setPromptType(PromptTypeSchema promptType) {
+        if (promptType != PromptTypeSchema.UNCLASSIFIED && promptType.getPromptTable() == null)
+            throw new NotImplementedException("The provided type does not have a Prompt table.");
+        return super.setPromptType(promptType);
+    }
+
     public List<Integer> getPromptIds() {
         return promptIds;
     }
@@ -25,8 +33,9 @@ public class PromptQueryBuilder extends AbstractPromptQueryBuilder {
         return filterOnPromptIds;
     }
 
-    public void setFilterOnPromptIds(boolean filterOnPromptIds) {
+    public PromptQueryBuilder setFilterOnPromptIds(boolean filterOnPromptIds) {
         this.filterOnPromptIds = filterOnPromptIds;
+        return this;
     }
 
     public PromptQueryBuilder setPromptIds(List<Integer> promptIds) {
@@ -68,9 +77,9 @@ public class PromptQueryBuilder extends AbstractPromptQueryBuilder {
         columns.add("COALESCE(TCT.Text, TC.Text) AS Text");
         columns.add("SL.ScriptLineTypeId");
         columns.add("SL.ScriptLineToneId");
-        if (getPromptType() == PromptTypeSchema.IDLE_WARNING || getPromptType() == PromptTypeSchema.IDLE_TIMEOUT || getPromptType() == PromptTypeSchema.HOLD_UP)
+        if (getPromptType().isPersonablePrompt())
             columns.add("PT.PersonalityId");
-        else if (getPromptType() == PromptTypeSchema.MONEY || getPromptType() == PromptTypeSchema.ITEM) {
+        else if (getPromptType().isCyclicPrompt()) {
             columns.add("PT.CanBeInitialOffer");
             columns.add("PT.CanBeRevisedOffer");
             columns.add("PT.CanBeRepeatOffer");

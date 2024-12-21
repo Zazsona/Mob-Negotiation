@@ -3,17 +3,21 @@ package com.zazsona.mobnegotiation.repository.script;
 import com.zazsona.mobnegotiation.MobNegotiationPlugin;
 import com.zazsona.mobnegotiation.model2.NegotiationEntityType;
 import com.zazsona.mobnegotiation.model2.PersonalityType;
+import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.text.StringSubstitutor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class PromptIdQueryBuilder extends AbstractPromptQueryBuilder {
     private List<NegotiationEntityType> entities;
     private List<PersonalityType> personalities;
+    private Set<CyclicPromptScenario> cyclicPromptScenarios;
     private boolean includeEntityTypesFilter;
     private boolean includePersonalityTypesFilter;
+    private boolean includeCyclicPromptScenarioFilter;
     private int wildcardPersonalityId;
     private int batchOffset;
     private int batchSize;
@@ -27,6 +31,13 @@ public class PromptIdQueryBuilder extends AbstractPromptQueryBuilder {
         setWildcardPersonalityId(PersonalityType.WILDCARD.getId());
         setBatchOffset(0);
         setBatchSize(100);
+    }
+
+    @Override
+    public AbstractPromptQueryBuilder setPromptType(PromptTypeSchema promptType) {
+        if (promptType != PromptTypeSchema.UNCLASSIFIED && promptType.getPromptTable() == null)
+            throw new NotImplementedException("The provided type does not have a Prompt table.");
+        return super.setPromptType(promptType);
     }
 
     public List<NegotiationEntityType> getEntities() {
@@ -95,14 +106,34 @@ public class PromptIdQueryBuilder extends AbstractPromptQueryBuilder {
         return this;
     }
 
+    public Set<CyclicPromptScenario> getCyclicPromptScenarios() {
+        return cyclicPromptScenarios;
+    }
+
+    public PromptIdQueryBuilder setCyclicPromptScenarios(Set<CyclicPromptScenario> cyclicPromptScenarios) {
+        this.cyclicPromptScenarios = cyclicPromptScenarios;
+        return this;
+    }
+
+    public boolean isIncludeCyclicPromptScenarioFilter() {
+        return includeCyclicPromptScenarioFilter;
+    }
+
+    public PromptIdQueryBuilder setIncludeCyclicPromptScenarioFilter(boolean includeCyclicPromptScenarioFilter) {
+        this.includeCyclicPromptScenarioFilter = includeCyclicPromptScenarioFilter;
+        return this;
+    }
+
     @Override
     public String buildQuery() {
-        if (getPromptType() == PromptTypeSchema.POWER && isIncludePersonalityTypesFilter())
-            MobNegotiationPlugin.getInstance().getLogger().warning(String.format("The provided Prompt Schema \"%s\" does not support filtering by PersonalityType. Filter will be ignored.", getPromptType().toString()));
         if (isIncludeEntityTypesFilter() && getEntities() == null)
             throw new NullPointerException("Entity Type filter is enabled, but no entities have been provided.");
         if (isIncludePersonalityTypesFilter() && getPersonalities() == null)
             throw new NullPointerException("Personality Type filter is enabled, but no personalities have been provided.");
+        if (!getPromptType().isPersonablePrompt() && isIncludePersonalityTypesFilter())
+            MobNegotiationPlugin.getInstance().getLogger().info(String.format("The provided Prompt Schema \"%s\" does not support filtering by PersonalityType. Filter will be ignored.", getPromptType().toString()));
+        if (!getPromptType().isCyclicPrompt() && isIncludeCyclicPromptScenarioFilter())
+            MobNegotiationPlugin.getInstance().getLogger().info(String.format("The provided Prompt Schema \"%s\" does not support filtering by cyclic prompt scenarios. Filter will be ignored.", getPromptType().toString()));
 
         String queryTemplate = getQueryTemplate();
         String entityIdsCSV = (isIncludeEntityTypesFilter()) ? getEntities().stream().map(et -> Integer.toString(et.getId())).collect(Collectors.joining(", ")) : null;
@@ -121,15 +152,28 @@ public class PromptIdQueryBuilder extends AbstractPromptQueryBuilder {
     @Override
     protected ArrayList<String> getQueryColumns() {
         ArrayList<String> columns = new ArrayList<>();
-        columns.add("PT.\"${promptTableIdColumn}\"");
+        columns.add("PT.\"${promptTableIdColumn}\" AS PromptId");
         return columns;
     }
 
     @Override
     protected ArrayList<String> getQueryFilters() {
         ArrayList<String> filters = new ArrayList<>();
-        if (isIncludePersonalityTypesFilter())
-            filters.add("WHERE PT.PersonalityId IN (${personalityIds}) OR PT.PersonalityId = ${personalityWildcardId}");
+        if (getPromptType().isPersonablePrompt() && isIncludePersonalityTypesFilter())
+            filters.add("AND PT.PersonalityId IN (${personalityIds}) OR PT.PersonalityId = ${personalityWildcardId}");
+        if (getPromptType().isCyclicPrompt() && isIncludeCyclicPromptScenarioFilter()) {
+            Set<CyclicPromptScenario> scenarios = getCyclicPromptScenarios();
+            if (scenarios.contains(CyclicPromptScenario.INITIAL_OFFER))
+                filters.add("AND PT.CanBeInitialOffer = 1");
+            if (scenarios.contains(CyclicPromptScenario.REVISED_OFFER))
+                filters.add("AND PT.CanBeRevisedOffer = 1");
+            if (scenarios.contains(CyclicPromptScenario.REPEAT_OFFER))
+                filters.add("AND PT.CanBeRepeatOffer = 1");
+            if (scenarios.contains(CyclicPromptScenario.REJECTION))
+                filters.add("AND PT.CanBeRejection = 1");
+            if (scenarios.contains(CyclicPromptScenario.ACCEPTANCE))
+                filters.add("AND PT.CanBeAcceptance = 1");
+        }
         return filters;
     }
 
