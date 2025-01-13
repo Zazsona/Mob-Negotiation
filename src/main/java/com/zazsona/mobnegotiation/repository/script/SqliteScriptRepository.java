@@ -24,6 +24,7 @@ public class SqliteScriptRepository {
     private final String DB_PASSWORD;
     private final int CONNECTION_IDLE_TIMEOUT_SECONDS;
 
+    private String preferredLanguageCode;
     private Connection connection;
     private Instant lastConnQueryTimestamp;
     private Timer connIdleTimer;
@@ -33,10 +34,15 @@ public class SqliteScriptRepository {
     }
 
     public SqliteScriptRepository(String dbUrl, @Nullable String username, @Nullable String password, int connectionIdleTimeoutSeconds) {
+        this(dbUrl, username, password, connectionIdleTimeoutSeconds, "en");
+    }
+
+    public SqliteScriptRepository(String dbUrl, @Nullable String username, @Nullable String password, int connectionIdleTimeoutSeconds, String preferredLanguageCode) {
         this.DB_URL = dbUrl;
         this.DB_USERNAME = username;
         this.DB_PASSWORD = password;
         this.CONNECTION_IDLE_TIMEOUT_SECONDS = connectionIdleTimeoutSeconds;
+        this.preferredLanguageCode = preferredLanguageCode;
         this.connection = null;
         this.connIdleTimer = null;
         this.lastConnQueryTimestamp = Instant.EPOCH;
@@ -49,27 +55,122 @@ public class SqliteScriptRepository {
      * Gets the IDs for Prompts that satisfy the provided filters
      * @param promptTypeSchema the type of prompt to get
      * @param entityTypes the entity type(s) that the prompts can be associated with
-     * @param personalityTypes the personality type(s) that the prompts can be associated with
+     * @param personalityTypes the personality type(s) that the prompts can be associated with (only applied if the provided promptTypeSchema represents a personable prompt)
+     * @param cyclicPromptScenarios the cyclic prompt scenarios that prompts can possess (only applied if the provided promptTypeSchema represents a cyclic prompt)
      * @param batchOffset the offset for the current batch
      * @param batchSize the size of the batches
      * @return a list of IDs for prompts that meet the criteria
      * @throws SQLException error querying database
      */
-    public List<Integer> getPromptIds(PromptTypeSchema promptTypeSchema, List<NegotiationEntityType> entityTypes, List<PersonalityType> personalityTypes, int batchOffset, int batchSize) throws SQLException {
+    public List<Integer> getPromptIds(PromptTypeSchema promptTypeSchema, List<NegotiationEntityType> entityTypes, List<PersonalityType> personalityTypes, Set<CyclicPromptScenario> cyclicPromptScenarios, int batchOffset, int batchSize) throws SQLException {
         String query = new PromptIdQueryBuilder()
                 .setEntities(entityTypes)
                 .setIncludeEntityTypesFilter(entityTypes != null)
                 .setPersonalities(personalityTypes)
-                .setIncludePersonalityTypesFilter(personalityTypes != null)
+                .setIncludePersonalityTypesFilter(personalityTypes != null && promptTypeSchema.isPersonablePrompt())
+                .setIncludeCyclicPromptScenarioFilter(cyclicPromptScenarios != null && promptTypeSchema.isCyclicPrompt())
+                .setCyclicPromptScenarios(cyclicPromptScenarios)
                 .setBatchOffset(batchOffset)
                 .setBatchSize(batchSize)
                 .setPromptType(promptTypeSchema)
                 .buildQuery();
 
         return getIntegerValuesAsList(query, promptTypeSchema.getPromptTableId());
+        return getIntegerValuesAsList(query, "PromptId");
     }
 
+    /**
+     * Gets the IDs for prompt responses that satisfy the provided filters
+     * @param promptTypeSchema the type of prompt response to get
+     * @param promptIds the IDs of prompts the provided responses should be linked to
+     * @param installedPluginKeys the currently installed plugin keys to exclude responses that require non-installed plugin dependencies
+     * @param grantedPermissionKeys the permission keys for a target user to exclude responses that require non-granted permission dependencies
+     * @param batchOffset the offset for the current batch
+     * @param batchSize the size of the batches
+     * @return a list of IDs for prompt responses that meet the criteria
+     * @throws SQLException error querying database
+     */
+    public List<Integer> getPromptResponseIds(PromptTypeSchema promptTypeSchema, List<Integer> promptIds, List<String> installedPluginKeys, List<String> grantedPermissionKeys, int batchOffset, int batchSize) throws SQLException {
+        String query = new PromptResponseIdQueryBuilder()
+                .setFilterOnPromptIds(promptIds != null)
+                .setPromptIds(promptIds)
+                .setFilterResponsesOnPlugins(installedPluginKeys != null)
+                .setInstalledPluginsKeys(installedPluginKeys)
+                .setFilterResponsesOnPlugins(grantedPermissionKeys != null)
+                .setPlayerPermissionKeys(grantedPermissionKeys)
+                .setBatchOffset(batchOffset)
+                .setBatchSize(batchSize)
+                .setPromptType(promptTypeSchema)
+                .buildQuery();
 
+        return getIntegerValuesAsList(query, "PromptResponseId");
+    }
+
+    public List<NegotiationScriptPrompt> getPrompts(PromptTypeSchema promptTypeSchema, List<Integer> promptIds) throws SQLException {
+
+        String promptQuery = new PromptQueryBuilder()
+                .setFilterOnPromptIds(promptIds != null)
+                .setPromptIds(promptIds)
+                .setLanguageCode(preferredLanguageCode)
+                .setPromptType(promptTypeSchema)
+                .buildQuery();
+
+        List<Integer> responseIds = getPromptResponseIds(promptTypeSchema, promptIds, null, null, 0, Integer.MAX_VALUE);
+        String responseQuery = new PromptResponseQueryBuilder()
+                .setFilterOnPromptResponseIds(true)
+                .setPromptResponseIds(responseIds)
+                .setLanguageCode(preferredLanguageCode)
+                .setIncludePermissionDependencies(true)
+                .setIncludePluginDependencies(true)
+                .setPromptType(promptTypeSchema)
+                .buildQuery();
+
+        try (Statement statement = getConnection().createStatement()) {
+            lastConnQueryTimestamp = Instant.now();
+            ResultSet promptResponseResults = statement.executeQuery(responseQuery);
+            HashMap<Integer, ArrayList<NegotiationScriptResponse>> responsesByPromptId = new HashMap<>();
+            while (promptResponseResults.next()) {
+                int promptId = promptResponseResults.getInt("PromptId");
+                String text = promptResponseResults.getString("ResponseText");
+                ScriptLineType lineType = ScriptLineType.fromId(promptResponseResults.getInt("ScriptLineTypeId"));
+                ScriptLineTone lineTone = ScriptLineTone.fromId(promptResponseResults.getInt("ScriptLineToneId"));
+                ScriptLine scriptLine = new ScriptLine(text, lineType, lineTone);
+
+                String pluginDependenciesCSV = promptResponseResults.getString("PluginDependencyKeys");
+                String permissionDependenciesCSV = promptResponseResults.getString("PermissionDependencyKeys");
+                List<String> pluginDependencies = Arrays.asList(pluginDependenciesCSV.split(","));
+                List<String> permissionDependencies = Arrays.asList(permissionDependenciesCSV.split(","));
+
+                NegotiationScriptResponse response = new NegotiationScriptResponse(scriptLine, pluginDependencies, permissionDependencies);
+                if (!responsesByPromptId.containsKey(promptId))
+                    responsesByPromptId.put(promptId, new ArrayList<>());
+                responsesByPromptId.get(promptId).add(response);
+            }
+            promptResponseResults.close();
+
+            lastConnQueryTimestamp = Instant.now();
+            ResultSet promptResults = statement.executeQuery(promptQuery);
+            ArrayList<NegotiationScriptPrompt> prompts = new ArrayList<>();
+            while (promptResults.next()) {
+                int promptId = promptResults.getInt("PromptId");
+                String text = promptResults.getString("Text");
+                ScriptLineType lineType = ScriptLineType.fromId(promptResults.getInt("ScriptLineTypeId"));
+                ScriptLineTone lineTone = ScriptLineTone.fromId(promptResults.getInt("ScriptLineToneId"));
+                ScriptLine scriptLine = new ScriptLine(text, lineType, lineTone);
+
+                ArrayList<NegotiationScriptResponse> responses = responsesByPromptId.get(promptId);
+                NegotiationScriptPrompt prompt;
+                if (responses != null && !responses.isEmpty())
+                    prompt = new NegotiationScriptRespondablePrompt(scriptLine, responses);
+                else
+                    prompt = new NegotiationScriptPrompt(scriptLine);
+                prompts.add(prompt);
+            }
+
+            return prompts;
+        }
+
+    }
 
     /**
      * Gets the languages supported by this script.
