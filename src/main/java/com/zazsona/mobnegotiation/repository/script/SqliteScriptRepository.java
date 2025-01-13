@@ -4,21 +4,26 @@ import com.zazsona.mobnegotiation.MobNegotiationPlugin;
 import com.zazsona.mobnegotiation.model2.Language;
 import com.zazsona.mobnegotiation.model2.PersonalityType;
 import com.zazsona.mobnegotiation.model2.NegotiationEntityType;
-import com.zazsona.mobnegotiation.model2.script.ScriptLine;
-import com.zazsona.mobnegotiation.model2.script.ScriptLineTone;
-import com.zazsona.mobnegotiation.model2.script.ScriptLineType;
-import org.apache.commons.text.StringSubstitutor;
+import com.zazsona.mobnegotiation.model2.script.*;
 
 import javax.annotation.Nullable;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.sql.*;
 import java.time.Instant;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /**
  * Interfaces with the script database to retrieve data
  */
 public class SqliteScriptRepository {
+
+
+    // TODO: Use adhoc SQL scripts to get Prompts
+
+
     private final String DB_URL;
     private final String DB_USERNAME;
     private final String DB_PASSWORD;
@@ -48,128 +53,109 @@ public class SqliteScriptRepository {
         this.lastConnQueryTimestamp = Instant.EPOCH;
     }
 
-    // TODO: Review the below function
-    // TODO: Make a getPrompts function with similar abstraction
-
-    /**
-     * Gets the IDs for Prompts that satisfy the provided filters
-     * @param promptTypeSchema the type of prompt to get
-     * @param entityTypes the entity type(s) that the prompts can be associated with
-     * @param personalityTypes the personality type(s) that the prompts can be associated with (only applied if the provided promptTypeSchema represents a personable prompt)
-     * @param cyclicPromptScenarios the cyclic prompt scenarios that prompts can possess (only applied if the provided promptTypeSchema represents a cyclic prompt)
-     * @param batchOffset the offset for the current batch
-     * @param batchSize the size of the batches
-     * @return a list of IDs for prompts that meet the criteria
-     * @throws SQLException error querying database
-     */
-    public List<Integer> getPromptIds(PromptTypeSchema promptTypeSchema, List<NegotiationEntityType> entityTypes, List<PersonalityType> personalityTypes, Set<CyclicPromptScenario> cyclicPromptScenarios, int batchOffset, int batchSize) throws SQLException {
-        String query = new PromptIdQueryBuilder()
-                .setEntities(entityTypes)
-                .setIncludeEntityTypesFilter(entityTypes != null)
-                .setPersonalities(personalityTypes)
-                .setIncludePersonalityTypesFilter(personalityTypes != null && promptTypeSchema.isPersonablePrompt())
-                .setIncludeCyclicPromptScenarioFilter(cyclicPromptScenarios != null && promptTypeSchema.isCyclicPrompt())
-                .setCyclicPromptScenarios(cyclicPromptScenarios)
-                .setBatchOffset(batchOffset)
-                .setBatchSize(batchSize)
-                .setPromptType(promptTypeSchema)
-                .buildQuery();
-
-        return getIntegerValuesAsList(query, promptTypeSchema.getPromptTableId());
-        return getIntegerValuesAsList(query, "PromptId");
+    public String getPreferredLanguageCode() {
+        return preferredLanguageCode;
     }
 
-    /**
-     * Gets the IDs for prompt responses that satisfy the provided filters
-     * @param promptTypeSchema the type of prompt response to get
-     * @param promptIds the IDs of prompts the provided responses should be linked to
-     * @param installedPluginKeys the currently installed plugin keys to exclude responses that require non-installed plugin dependencies
-     * @param grantedPermissionKeys the permission keys for a target user to exclude responses that require non-granted permission dependencies
-     * @param batchOffset the offset for the current batch
-     * @param batchSize the size of the batches
-     * @return a list of IDs for prompt responses that meet the criteria
-     * @throws SQLException error querying database
-     */
-    public List<Integer> getPromptResponseIds(PromptTypeSchema promptTypeSchema, List<Integer> promptIds, List<String> installedPluginKeys, List<String> grantedPermissionKeys, int batchOffset, int batchSize) throws SQLException {
-        String query = new PromptResponseIdQueryBuilder()
-                .setFilterOnPromptIds(promptIds != null)
-                .setPromptIds(promptIds)
-                .setFilterResponsesOnPlugins(installedPluginKeys != null)
-                .setInstalledPluginsKeys(installedPluginKeys)
-                .setFilterResponsesOnPlugins(grantedPermissionKeys != null)
-                .setPlayerPermissionKeys(grantedPermissionKeys)
-                .setBatchOffset(batchOffset)
-                .setBatchSize(batchSize)
-                .setPromptType(promptTypeSchema)
-                .buildQuery();
-
-        return getIntegerValuesAsList(query, "PromptResponseId");
+    public void setPreferredLanguageCode(String preferredLanguageCode) {
+        this.preferredLanguageCode = preferredLanguageCode;
     }
 
-    public List<NegotiationScriptPrompt> getPrompts(PromptTypeSchema promptTypeSchema, List<Integer> promptIds) throws SQLException {
+    public List<Integer> getHoldUpPromptIds(List<NegotiationEntityType> entityTypes, List<PersonalityType> personalityTypes) throws IOException, SQLException {
+        int[] entityIds = entityTypes.stream().mapToInt(NegotiationEntityType::getId).toArray();
+        int[] personalityIds = personalityTypes.stream().mapToInt(PersonalityType::getId).toArray();
 
-        String promptQuery = new PromptQueryBuilder()
-                .setFilterOnPromptIds(promptIds != null)
-                .setPromptIds(promptIds)
-                .setLanguageCode(preferredLanguageCode)
-                .setPromptType(promptTypeSchema)
-                .buildQuery();
+        Path path = Paths.get("src/test/resources/GetPromptIdsHoldUpForEntityAndPersonality.sql");
+        String sqlQuery = String.join("", Files.readAllLines(path));
+        sqlQuery = sqlQuery.replace(":entityTypeIds", Arrays.toString(entityIds))
+                           .replace(":personalityTypeIds", Arrays.toString(personalityIds));
 
-        List<Integer> responseIds = getPromptResponseIds(promptTypeSchema, promptIds, null, null, 0, Integer.MAX_VALUE);
-        String responseQuery = new PromptResponseQueryBuilder()
-                .setFilterOnPromptResponseIds(true)
-                .setPromptResponseIds(responseIds)
-                .setLanguageCode(preferredLanguageCode)
-                .setIncludePermissionDependencies(true)
-                .setIncludePluginDependencies(true)
-                .setPromptType(promptTypeSchema)
-                .buildQuery();
-
-        try (Statement statement = getConnection().createStatement()) {
-            lastConnQueryTimestamp = Instant.now();
-            ResultSet promptResponseResults = statement.executeQuery(responseQuery);
-            HashMap<Integer, ArrayList<NegotiationScriptResponse>> responsesByPromptId = new HashMap<>();
-            while (promptResponseResults.next()) {
-                int promptId = promptResponseResults.getInt("PromptId");
-                String text = promptResponseResults.getString("ResponseText");
-                ScriptLineType lineType = ScriptLineType.fromId(promptResponseResults.getInt("ScriptLineTypeId"));
-                ScriptLineTone lineTone = ScriptLineTone.fromId(promptResponseResults.getInt("ScriptLineToneId"));
-                ScriptLine scriptLine = new ScriptLine(text, lineType, lineTone);
-
-                String pluginDependenciesCSV = promptResponseResults.getString("PluginDependencyKeys");
-                String permissionDependenciesCSV = promptResponseResults.getString("PermissionDependencyKeys");
-                List<String> pluginDependencies = Arrays.asList(pluginDependenciesCSV.split(","));
-                List<String> permissionDependencies = Arrays.asList(permissionDependenciesCSV.split(","));
-
-                NegotiationScriptResponse response = new NegotiationScriptResponse(scriptLine, pluginDependencies, permissionDependencies);
-                if (!responsesByPromptId.containsKey(promptId))
-                    responsesByPromptId.put(promptId, new ArrayList<>());
-                responsesByPromptId.get(promptId).add(response);
-            }
-            promptResponseResults.close();
-
-            lastConnQueryTimestamp = Instant.now();
-            ResultSet promptResults = statement.executeQuery(promptQuery);
-            ArrayList<NegotiationScriptPrompt> prompts = new ArrayList<>();
-            while (promptResults.next()) {
-                int promptId = promptResults.getInt("PromptId");
-                String text = promptResults.getString("Text");
-                ScriptLineType lineType = ScriptLineType.fromId(promptResults.getInt("ScriptLineTypeId"));
-                ScriptLineTone lineTone = ScriptLineTone.fromId(promptResults.getInt("ScriptLineToneId"));
-                ScriptLine scriptLine = new ScriptLine(text, lineType, lineTone);
-
-                ArrayList<NegotiationScriptResponse> responses = responsesByPromptId.get(promptId);
-                NegotiationScriptPrompt prompt;
-                if (responses != null && !responses.isEmpty())
-                    prompt = new NegotiationScriptRespondablePrompt(scriptLine, responses);
-                else
-                    prompt = new NegotiationScriptPrompt(scriptLine);
-                prompts.add(prompt);
-            }
-
-            return prompts;
+        try (PreparedStatement sqlStatement = getConnection().prepareStatement(sqlQuery)) {
+            ResultSet results = sqlStatement.executeQuery();
+            return getIntegerValuesAsList(results, "PromptId");
         }
+    }
 
+    public List<Integer> getIdleTimeoutPromptIds(List<NegotiationEntityType> entityTypes, List<PersonalityType> personalityTypes) throws IOException, SQLException {
+        int[] entityIds = entityTypes.stream().mapToInt(NegotiationEntityType::getId).toArray();
+        int[] personalityIds = personalityTypes.stream().mapToInt(PersonalityType::getId).toArray();
+
+        Path path = Paths.get("src/test/resources/GetPromptIdsIdleTimeoutForEntityAndPersonality.sql");
+        String sqlQuery = String.join("", Files.readAllLines(path));
+        sqlQuery = sqlQuery.replace(":entityTypeIds", Arrays.toString(entityIds))
+                .replace(":personalityTypeIds", Arrays.toString(personalityIds));
+
+        try (PreparedStatement sqlStatement = getConnection().prepareStatement(sqlQuery)) {
+            ResultSet results = sqlStatement.executeQuery();
+            return getIntegerValuesAsList(results, "PromptId");
+        }
+    }
+
+    public List<Integer> getIdleWarningPromptIds(List<NegotiationEntityType> entityTypes, List<PersonalityType> personalityTypes) throws IOException, SQLException {
+        int[] entityIds = entityTypes.stream().mapToInt(NegotiationEntityType::getId).toArray();
+        int[] personalityIds = personalityTypes.stream().mapToInt(PersonalityType::getId).toArray();
+
+        Path path = Paths.get("src/test/resources/GetPromptIdsIdleWarningForEntityAndPersonality.sql");
+        String sqlQuery = String.join("", Files.readAllLines(path));
+        sqlQuery = sqlQuery.replace(":entityTypeIds", Arrays.toString(entityIds))
+                .replace(":personalityTypeIds", Arrays.toString(personalityIds));
+
+        try (PreparedStatement sqlStatement = getConnection().prepareStatement(sqlQuery)) {
+            ResultSet results = sqlStatement.executeQuery();
+            return getIntegerValuesAsList(results, "PromptId");
+        }
+    }
+
+    public List<Integer> getItemNegotiationPromptIds(List<NegotiationEntityType> entityTypes, List<PersonalityType> personalityTypes, boolean canBeInitialOffer, boolean canBeRevisedOffer, boolean canBeRepeatOffer, boolean canBeRejection, boolean canBeAcceptance) throws IOException, SQLException {
+        int[] entityIds = entityTypes.stream().mapToInt(NegotiationEntityType::getId).toArray();
+        int[] personalityIds = personalityTypes.stream().mapToInt(PersonalityType::getId).toArray();
+
+        Path path = Paths.get("src/test/resources/GetPromptIdsItemNegotationForEntityAndPersonality.sql");
+        String sqlQuery = String.join("", Files.readAllLines(path));
+        sqlQuery = sqlQuery.replace(":entityTypeIds", Arrays.toString(entityIds))
+                .replace(":personalityTypeIds", Arrays.toString(personalityIds))
+                .replace(":canBeInitialOffer", (canBeInitialOffer) ? "1" : "0")
+                .replace(":canBeRevisedOffer", (canBeRevisedOffer) ? "1" : "0")
+                .replace(":canBeRepeatOffer", (canBeRepeatOffer) ? "1" : "0")
+                .replace(":canBeRejection", (canBeRejection) ? "1" : "0")
+                .replace(":canBeAcceptance", (canBeAcceptance) ? "1" : "0");
+        try (PreparedStatement sqlStatement = getConnection().prepareStatement(sqlQuery)) {
+            ResultSet results = sqlStatement.executeQuery();
+            return getIntegerValuesAsList(results, "PromptId");
+        }
+    }
+
+    public List<Integer> getMoneyNegotiationPromptIds(List<NegotiationEntityType> entityTypes, List<PersonalityType> personalityTypes, boolean canBeInitialOffer, boolean canBeRevisedOffer, boolean canBeRepeatOffer, boolean canBeRejection, boolean canBeAcceptance) throws IOException, SQLException {
+        int[] entityIds = entityTypes.stream().mapToInt(NegotiationEntityType::getId).toArray();
+        int[] personalityIds = personalityTypes.stream().mapToInt(PersonalityType::getId).toArray();
+
+        Path path = Paths.get("src/test/resources/GetPromptIdsMoneyNegotationForEntityAndPersonality.sql");
+        String sqlQuery = String.join("", Files.readAllLines(path));
+        sqlQuery = sqlQuery.replace(":entityTypeIds", Arrays.toString(entityIds))
+                .replace(":personalityTypeIds", Arrays.toString(personalityIds))
+                .replace(":canBeInitialOffer", (canBeInitialOffer) ? "1" : "0")
+                .replace(":canBeRevisedOffer", (canBeRevisedOffer) ? "1" : "0")
+                .replace(":canBeRepeatOffer", (canBeRepeatOffer) ? "1" : "0")
+                .replace(":canBeRejection", (canBeRejection) ? "1" : "0")
+                .replace(":canBeAcceptance", (canBeAcceptance) ? "1" : "0");
+        try (PreparedStatement sqlStatement = getConnection().prepareStatement(sqlQuery)) {
+            ResultSet results = sqlStatement.executeQuery();
+            return getIntegerValuesAsList(results, "PromptId");
+        }
+    }
+
+    public List<Integer> getPowerNegotiationPromptIds(List<NegotiationEntityType> entityTypes, boolean canBeInitialPrompt) throws IOException, SQLException {
+        int[] entityIds = entityTypes.stream().mapToInt(NegotiationEntityType::getId).toArray();
+
+        Path path = Paths.get("src/test/resources/GetPromptIdsMoneyNegotationForEntityAndPersonality.sql");
+        String sqlQuery = String.join("", Files.readAllLines(path));
+        sqlQuery = sqlQuery.replace(":entityTypeIds", Arrays.toString(entityIds))
+                .replace(":canBeInitialPrompt", (canBeInitialPrompt) ? "1" : "0");
+
+        try (PreparedStatement sqlStatement = getConnection().prepareStatement(sqlQuery)) {
+            ResultSet results = sqlStatement.executeQuery();
+            return getIntegerValuesAsList(results, "PromptId");
+        }
     }
 
     /**
