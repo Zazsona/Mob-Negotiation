@@ -2,7 +2,7 @@ package com.zazsona.mobnegotiation.model2;
 
 public enum ResponseType
 {
-    PARLAY(0),
+    PARLEY(0),
     ATTACK(1),
     CANCEL(2);
 
