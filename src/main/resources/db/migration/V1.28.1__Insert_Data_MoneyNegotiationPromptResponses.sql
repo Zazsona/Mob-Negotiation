@@ -1,4 +1,4 @@
-INSERT INTO MoneyNegotiationPromptResponses (MoneyNegotiationPromptId, MoneyNegotiationResponseId)
+INSERT INTO MoneyNegotiationPromptResponses (MoneyNegotiationPromptId, MoneyNegotiationPromptResponseId)
 VALUES
         -- Creeper
        (0, 0) ,(0, 1)

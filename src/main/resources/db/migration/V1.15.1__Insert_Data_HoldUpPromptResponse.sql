@@ -1,4 +1,4 @@
-INSERT INTO Response (HoldUpResponseId, ResponseId)
+INSERT INTO Response (HoldUpPromptResponseId, ResponseId)
 VALUES
         (0, 0) -- "Lend me your power."
        ,(1, 1) -- "I want items."

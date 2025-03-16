@@ -1,4 +1,4 @@
-INSERT INTO PowerNegotiationPromptResponses (PowerNegotiationPromptId, PowerNegotiationResponseId)
+INSERT INTO PowerNegotiationPromptResponses (PowerNegotiationPromptId, PowerNegotiationPromptResponseId)
 VALUES
         (600, 60) -- Say it again, but louder.
        ,(600, 61) -- Say it again, but slower.

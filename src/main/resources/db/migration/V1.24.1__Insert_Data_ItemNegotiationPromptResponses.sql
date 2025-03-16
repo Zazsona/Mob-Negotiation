@@ -1,4 +1,4 @@
-INSERT INTO ItemNegotiationPromptResponses (ItemNegotiationPromptId, ItemNegotiationResponseId)
+INSERT INTO ItemNegotiationPromptResponses (ItemNegotiationPromptId, ItemNegotiationPromptResponseId)
 VALUES
         -- Creeper
        (0, 0) ,(0, 1)

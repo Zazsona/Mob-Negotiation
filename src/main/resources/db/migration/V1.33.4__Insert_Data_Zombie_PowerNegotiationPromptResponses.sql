@@ -1,4 +1,4 @@
-INSERT INTO PowerNegotiationPromptResponses (PowerNegotiationPromptId, PowerNegotiationResponseId)
+INSERT INTO PowerNegotiationPromptResponses (PowerNegotiationPromptId, PowerNegotiationPromptResponseId)
 VALUES
         (900, 90) -- Achieve my dreams.
        ,(900, 91) -- Help everyone I meet.

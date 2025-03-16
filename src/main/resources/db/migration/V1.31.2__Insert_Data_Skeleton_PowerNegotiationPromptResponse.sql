@@ -1,4 +1,4 @@
-INSERT INTO PowerNegotiationResponse (PowerNegotiationResponseId, ResponseId)
+INSERT INTO PowerNegotiationPromptResponse (PowerNegotiationPromptResponseId, ResponseId)
 VALUES
         (30, 60) -- Hand it over.
        ,(31, 61) -- I'm no good at that.

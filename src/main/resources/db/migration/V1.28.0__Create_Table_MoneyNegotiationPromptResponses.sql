@@ -1,7 +1,7 @@
 CREATE TABLE MoneyNegotiationPromptResponses
 (
-  MoneyNegotiationPromptId      INT        NOT NULL
-, MoneyNegotiationResponseId    INT        NOT NULL
+  MoneyNegotiationPromptId            INT        NOT NULL
+, MoneyNegotiationPromptResponseId    INT        NOT NULL
 , FOREIGN KEY(MoneyNegotiationPromptId) REFERENCES MoneyNegotiationPrompt(MoneyNegotiationPromptId)
-, FOREIGN KEY(MoneyNegotiationResponseId) REFERENCES MoneyNegotiationResponse(MoneyNegotiationResponseId)
+, FOREIGN KEY(MoneyNegotiationPromptResponseId) REFERENCES MoneyNegotiationPromptResponse(MoneyNegotiationPromptResponseId)
 );

@@ -1,4 +1,4 @@
-INSERT INTO PowerNegotiationPromptLink (PowerNegotiationPromptId, PowerNegotiationResponseId, PersonalityId, NextPowerNegotiationPromptId, FollowOnSuccess, FollowOnFailure)
+INSERT INTO PowerNegotiationPromptLink (PowerNegotiationPromptId, PowerNegotiationPromptResponseId, PersonalityId, NextPowerNegotiationPromptId, FollowOnSuccess, FollowOnFailure)
 VALUES
 -- You want... Power? First tell me... what you want do... with life?
     -- Achieve my dreams.

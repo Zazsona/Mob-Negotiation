@@ -1,4 +1,4 @@
-INSERT INTO PowerNegotiationPromptResponses (PowerNegotiationPromptId, PowerNegotiationResponseId)
+INSERT INTO PowerNegotiationPromptResponses (PowerNegotiationPromptId, PowerNegotiationPromptResponseId)
 VALUES
         -- Destruction is what you ssseek? I thought humans were creatorsss?
         (0, 0) -- Figured I'd give it a go.

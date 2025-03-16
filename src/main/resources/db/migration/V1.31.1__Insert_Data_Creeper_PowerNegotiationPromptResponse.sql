@@ -1,4 +1,4 @@
-INSERT INTO PowerNegotiationResponse (PowerNegotiationResponseId, ResponseId)
+INSERT INTO PowerNegotiationPromptResponse (PowerNegotiationPromptResponseId, ResponseId)
 VALUES
         (0, 30) -- Figured I'd give it a go.
        ,(1, 31) -- I need to prepare land for building.

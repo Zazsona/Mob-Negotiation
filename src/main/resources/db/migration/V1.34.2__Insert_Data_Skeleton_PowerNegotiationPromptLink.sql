@@ -1,4 +1,4 @@
-INSERT INTO PowerNegotiationPromptLink (PowerNegotiationPromptId, PowerNegotiationResponseId, PersonalityId, NextPowerNegotiationPromptId, FollowOnSuccess, FollowOnFailure)
+INSERT INTO PowerNegotiationPromptLink (PowerNegotiationPromptId, PowerNegotiationPromptResponseId, PersonalityId, NextPowerNegotiationPromptId, FollowOnSuccess, FollowOnFailure)
 VALUES
 -- YoU waNtiN' mY poWeR jus' liKe tHat? YoU'lL hAve tO woo mE fIrsT!
     -- Hand it over.

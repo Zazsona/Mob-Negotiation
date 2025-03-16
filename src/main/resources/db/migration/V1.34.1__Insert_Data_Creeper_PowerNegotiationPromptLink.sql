@@ -1,4 +1,4 @@
-INSERT INTO PowerNegotiationPromptLink (PowerNegotiationPromptId, PowerNegotiationResponseId, PersonalityId, NextPowerNegotiationPromptId, FollowOnSuccess, FollowOnFailure)
+INSERT INTO PowerNegotiationPromptLink (PowerNegotiationPromptId, PowerNegotiationPromptResponseId, PersonalityId, NextPowerNegotiationPromptId, FollowOnSuccess, FollowOnFailure)
 VALUES
 
 -- Destruction is what you ssseek? I thought humans were creatorsss?

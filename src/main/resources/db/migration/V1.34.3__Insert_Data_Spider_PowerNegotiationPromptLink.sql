@@ -1,4 +1,4 @@
-INSERT INTO PowerNegotiationPromptLink (PowerNegotiationPromptId, PowerNegotiationResponseId, PersonalityId, NextPowerNegotiationPromptId, FollowOnSuccess, FollowOnFailure)
+INSERT INTO PowerNegotiationPromptLink (PowerNegotiationPromptId, PowerNegotiationPromptResponseId, PersonalityId, NextPowerNegotiationPromptId, FollowOnSuccess, FollowOnFailure)
 VALUES
 -- The spider doesn't seem to understand...
     -- Say it again, but louder.
