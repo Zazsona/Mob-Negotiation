@@ -1,11 +1,9 @@
 package com.zazsona.mobnegotiation.repository.script;
 
 import com.zazsona.mobnegotiation.MobNegotiationPlugin;
-import com.zazsona.mobnegotiation.model2.Language;
-import com.zazsona.mobnegotiation.model2.PersonalityType;
-import com.zazsona.mobnegotiation.model2.NegotiationEntityType;
-import com.zazsona.mobnegotiation.model2.ResponseType;
+import com.zazsona.mobnegotiation.model2.*;
 import com.zazsona.mobnegotiation.model2.script.*;
+import com.zazsona.mobnegotiation.repository.script2.PromptTypeSchema;
 
 import javax.annotation.Nullable;
 import java.io.IOException;
@@ -20,10 +18,6 @@ import java.util.*;
  * Interfaces with the script database to retrieve data
  */
 public class SqliteScriptRepository {
-
-
-    // TODO: Add method to get sequel power prompt IDs
-
 
     private final String DB_URL;
     private final String DB_USERNAME;
@@ -62,202 +56,87 @@ public class SqliteScriptRepository {
         this.preferredLanguageCode = preferredLanguageCode;
     }
 
-    public List<Integer> getHoldUpPromptIds(List<NegotiationEntityType> entityTypes, List<PersonalityType> personalityTypes) throws IOException, SQLException {
-        int[] entityIds = entityTypes.stream().mapToInt(NegotiationEntityType::getId).toArray();
-        int[] personalityIds = personalityTypes.stream().mapToInt(PersonalityType::getId).toArray();
+    public List<Integer> getDialogueTreePromptIds(PromptTypeSchema promptType, @Nullable List<NegotiationEntityType> entityTypes, boolean requireCanBeInitialPrompt) throws IOException, SQLException {
+        if (!promptType.isDialogueTreePrompt())
+            throw new IllegalArgumentException(String.format("Prompt Type %s is not a valid Dialogue Tree prompt.", promptType.getPromptTable()));
+
+        boolean filterOnEntities = promptType.isEntityRestrictedPrompt() && entityTypes != null;
+        int[] entityIds = (!filterOnEntities) ? new int[0] : entityTypes.stream().mapToInt(NegotiationEntityType::getId).toArray();
 
         Map<String, String> queryParameters = new HashMap<>();
-        queryParameters.put(":entityTypeIds", Arrays.toString(entityIds));
-        queryParameters.put(":personalityTypeIds", Arrays.toString(personalityIds));
+        queryParameters.put(":tableName", promptType.getPromptTable());
+        if (entityIds.length > 0)
+            queryParameters.put(":entityTypeIds", Arrays.toString(entityIds));
+        queryParameters.put(":requireCanBeInitialPrompt", (requireCanBeInitialPrompt) ? "1" : "0");
 
-        return getPromptIds("src/test/resources/GetPromptIdsHoldUpForEntityAndPersonality.sql", queryParameters);
+        if (filterOnEntities)
+            return executePromptIdQuery("src/main/resources/db/adhoc/GetDialogueTreePromptIdsForEntity.sql", queryParameters);
+        else
+            return executePromptIdQuery("src/main/resources/db/adhoc/GetDialogueTreePromptIds.sql", queryParameters);
     }
 
-    /**
-     * Gets the prompts (including their responses) for the provided IDs
-     * @param promptIds the IDs to get prompts for
-     * @return a map of prompts, keyed by the prompt ID
-     * @throws IOException
-     * @throws SQLException
-     */
-    public Map<Integer, PromptScriptNode> getHoldUpPrompts(List<Integer> promptIds) throws IOException, SQLException {
-        return getHoldUpPrompts(promptIds, null, null);
+    public List<Integer> getDynamicOfferPromptIds(PromptTypeSchema promptType, @Nullable List<NegotiationEntityType> entityTypes, @Nullable List<PersonalityType> personalityTypes, boolean requireCanBeInitialOffer, boolean requireCanBeRevisedOffer, boolean requireCanBeRepeatOffer, boolean requireCanBeRejection, boolean requireCanBeAcceptance) throws IOException, SQLException {
+        if (!promptType.isDynamicOfferPrompt())
+            throw new IllegalArgumentException(String.format("Prompt Type %s is not a valid Dynamic Offer prompt.", promptType.getPromptTable()));
+
+        boolean filterOnEntities = promptType.isEntityRestrictedPrompt() && entityTypes != null;
+        boolean filterOnPersonality = promptType.isPersonalityRestrictedPrompt() && personalityTypes != null;
+        int[] entityIds = (!filterOnEntities) ? new int[0] : entityTypes.stream().mapToInt(NegotiationEntityType::getId).toArray();
+        int[] personalityIds = (!filterOnPersonality) ? new int[0] : personalityTypes.stream().mapToInt(PersonalityType::getId).toArray();
+
+        Map<String, String> queryParameters = new HashMap<>();
+        queryParameters.put(":tableName", promptType.getPromptTable());
+        if (entityIds.length > 0)
+            queryParameters.put(":entityTypeIds", Arrays.toString(entityIds));
+        if (personalityIds.length > 0)
+            queryParameters.put(":personalityTypeIds", Arrays.toString(personalityIds));
+        queryParameters.put(":requireCanBeInitialOffer", (requireCanBeInitialOffer) ? "1" : "0");
+        queryParameters.put(":requireCanBeRevisedOffer", (requireCanBeRevisedOffer) ? "1" : "0");
+        queryParameters.put(":requireCanBeRepeatOffer", (requireCanBeRepeatOffer) ? "1" : "0");
+        queryParameters.put(":requireCanBeRejection", (requireCanBeRejection) ? "1" : "0");
+        queryParameters.put(":requireCanBeAcceptance", (requireCanBeAcceptance) ? "1" : "0");
+
+        if (filterOnEntities && filterOnPersonality)
+            return executePromptIdQuery("src/main/resources/db/adhoc/GetDynamicOfferPromptIdsForEntityAndPersonality.sql", queryParameters);
+        else if (filterOnEntities)
+            return executePromptIdQuery("src/main/resources/db/adhoc/GetDynamicOfferPromptIdsForEntity.sql", queryParameters);
+        else if (filterOnPersonality)
+            return executePromptIdQuery("src/main/resources/db/adhoc/GetDynamicOfferPromptIdsForPersonality.sql", queryParameters);
+        else
+            return executePromptIdQuery("src/main/resources/db/adhoc/GetDynamicOfferPromptIds.sql", queryParameters);
     }
 
-    /**
-     * Gets the prompts for the provided IDs including responses where their dependencies are present in the pluginKeys and permissionKeys
-     * @param promptIds the IDs to get prompts for
-     * @param pluginKeys the available plugins to check against response dependencies
-     * @param permissionKeys the available permissions to check against response dependencies
-     * @return a map of prompts, keyed by the prompt ID
-     * @throws IOException
-     * @throws SQLException
-     */
-    public Map<Integer, PromptScriptNode> getHoldUpPrompts(List<Integer> promptIds, List<String> pluginKeys, List<String> permissionKeys) throws IOException, SQLException {
+    public List<Integer> getPromptIds(PromptTypeSchema promptType, @Nullable List<NegotiationEntityType> entityTypes, @Nullable List<PersonalityType> personalityTypes) throws IOException, SQLException {
+        boolean filterOnEntities = promptType.isEntityRestrictedPrompt() && entityTypes != null;
+        boolean filterOnPersonality = promptType.isPersonalityRestrictedPrompt() && personalityTypes != null;
+        int[] entityIds = (entityTypes == null) ? new int[0] : entityTypes.stream().mapToInt(NegotiationEntityType::getId).toArray();
+        int[] personalityIds = (personalityTypes == null) ? new int[0] : personalityTypes.stream().mapToInt(PersonalityType::getId).toArray();
+
+        Map<String, String> queryParameters = new HashMap<>();
+        queryParameters.put(":tableName", promptType.getPromptTable());
+        if (entityIds.length > 0)
+            queryParameters.put(":entityTypeIds", Arrays.toString(entityIds));
+        if (personalityIds.length > 0)
+            queryParameters.put(":personalityTypeIds", Arrays.toString(personalityIds));
+
+        if (filterOnEntities && filterOnPersonality)
+            return executePromptIdQuery("src/test/resources/GetPromptIdsForEntityAndPersonality.sql", queryParameters);
+        else if (filterOnEntities)
+            return executePromptIdQuery("src/test/resources/GetPromptIdsForEntity.sql", queryParameters);
+        else if (filterOnPersonality)
+            return executePromptIdQuery("src/test/resources/GetPromptIdsForPersonality.sql", queryParameters);
+        else
+            return executePromptIdQuery("src/test/resources/GetPromptIds.sql", queryParameters);
+    }
+
+    public Map<Integer, PromptScriptNode> getPrompts(PromptTypeSchema promptType, List<Integer> promptIds, boolean includeResponses) throws IOException, SQLException {
         int[] promptIdsArr = promptIds.stream().mapToInt(Integer::intValue).toArray();
-        boolean isPluginKeysNullOrEmpty = (pluginKeys == null || pluginKeys.isEmpty());
-        boolean isPermissionKeysNullOrEmpty = (permissionKeys == null || permissionKeys.isEmpty());
-
-        String promptIdsCsv = Arrays.toString(promptIdsArr);
-        String pluginKeysCsv = (isPluginKeysNullOrEmpty) ? "NULL" : String.join(",", pluginKeys);
-        String permissionKeysCsv = (isPermissionKeysNullOrEmpty) ? "NULL" : String.join(",", permissionKeys);
-
         Map<String, String> queryParameters = new HashMap<>();
-        queryParameters.put(":filterPluginDependencies", (isPluginKeysNullOrEmpty) ? "0" : "1");
-        queryParameters.put(":pluginKeys", pluginKeysCsv);
-        queryParameters.put(":filterPermissionDependencies", (isPermissionKeysNullOrEmpty) ? "0" : "1");
-        queryParameters.put(":permissionKeys", permissionKeysCsv);
-        queryParameters.put(":languageCode", preferredLanguageCode);
-        queryParameters.put(":promptIds", promptIdsCsv);
-
-        return getPrompts("src/test/resources/GetPromptsHoldUp.sql", queryParameters, true);
-    }
-
-    public List<Integer> getIdleTimeoutPromptIds(List<NegotiationEntityType> entityTypes, List<PersonalityType> personalityTypes) throws IOException, SQLException {
-        int[] entityIds = entityTypes.stream().mapToInt(NegotiationEntityType::getId).toArray();
-        int[] personalityIds = personalityTypes.stream().mapToInt(PersonalityType::getId).toArray();
-
-        Map<String, String> queryParameters = new HashMap<>();
-        queryParameters.put(":entityTypeIds", Arrays.toString(entityIds));
-        queryParameters.put(":personalityTypeIds", Arrays.toString(personalityIds));
-
-        return getPromptIds("src/test/resources/GetPromptIdsIdleTimeoutForEntityAndPersonality.sql", queryParameters);
-    }
-
-    public List<Integer> getIdleWarningPromptIds(List<NegotiationEntityType> entityTypes, List<PersonalityType> personalityTypes) throws IOException, SQLException {
-        int[] entityIds = entityTypes.stream().mapToInt(NegotiationEntityType::getId).toArray();
-        int[] personalityIds = personalityTypes.stream().mapToInt(PersonalityType::getId).toArray();
-
-        Map<String, String> queryParameters = new HashMap<>();
-        queryParameters.put(":entityTypeIds", Arrays.toString(entityIds));
-        queryParameters.put(":personalityTypeIds", Arrays.toString(personalityIds));
-
-        return getPromptIds("src/test/resources/GetPromptIdsIdleWarningForEntityAndPersonality.sql", queryParameters);
-    }
-
-    /**
-     * Gets the idle timeout prompts for the provided IDs
-     * @param promptIds the IDs to get prompts for
-     * @return a map of prompts, keyed by the prompt ID
-     * @throws IOException
-     * @throws SQLException
-     */
-    public Map<Integer, PromptScriptNode> getIdleTimeoutPrompts(List<Integer> promptIds)  throws IOException, SQLException {
-        int[] promptIdsArr = promptIds.stream().mapToInt(Integer::intValue).toArray();
-
-        Map<String, String> queryParameters = new HashMap<>();
-        queryParameters.put(":languageCode", preferredLanguageCode);
+        queryParameters.put(":tableName", promptType.getPromptTable());
         queryParameters.put(":promptIds", Arrays.toString(promptIdsArr));
+        queryParameters.put(":languageCode", Arrays.toString(promptIdsArr));
 
-        return getPrompts("src/test/resources/GetPromptsIdleTimeout.sql", queryParameters, false);
-    }
-
-    /**
-     * Gets the idle warning prompts for the provided IDs
-     * @param promptIds the IDs to get prompts for
-     * @return a map of prompts, keyed by the prompt ID
-     * @throws IOException
-     * @throws SQLException
-     */
-    public Map<Integer, PromptScriptNode> getIdleWarningPrompts(List<Integer> promptIds)  throws IOException, SQLException {
-        int[] promptIdsArr = promptIds.stream().mapToInt(Integer::intValue).toArray();
-
-        Map<String, String> queryParameters = new HashMap<>();
-        queryParameters.put(":languageCode", preferredLanguageCode);
-        queryParameters.put(":promptIds", Arrays.toString(promptIdsArr));
-
-        return getPrompts("src/test/resources/GetPromptsIdleWarning.sql", queryParameters, false);
-    }
-
-    public List<Integer> getItemNegotiationPromptIds(List<NegotiationEntityType> entityTypes, List<PersonalityType> personalityTypes, boolean canBeInitialOffer, boolean canBeRevisedOffer, boolean canBeRepeatOffer, boolean canBeRejection, boolean canBeAcceptance) throws IOException, SQLException {
-        int[] entityIds = entityTypes.stream().mapToInt(NegotiationEntityType::getId).toArray();
-        int[] personalityIds = personalityTypes.stream().mapToInt(PersonalityType::getId).toArray();
-
-        Map<String, String> queryParameters = new HashMap<>();
-        queryParameters.put(":entityTypeIds", Arrays.toString(entityIds));
-        queryParameters.put(":personalityTypeIds", Arrays.toString(personalityIds));
-        queryParameters.put(":canBeInitialOffer", (canBeInitialOffer) ? "1" : "0");
-        queryParameters.put(":canBeRevisedOffer", (canBeRevisedOffer) ? "1" : "0");
-        queryParameters.put(":canBeRepeatOffer", (canBeRepeatOffer) ? "1" : "0");
-        queryParameters.put(":canBeRejection", (canBeRejection) ? "1" : "0");
-        queryParameters.put(":canBeAcceptance", (canBeAcceptance) ? "1" : "0");
-
-        return getPromptIds("src/test/resources/GetPromptIdsItemNegotiationForEntityAndPersonality.sql", queryParameters);
-    }
-
-    public Map<Integer, PromptScriptNode> getItemNegotiationPrompts(List<Integer> promptIds)  throws IOException, SQLException {
-        int[] promptIdsArr = promptIds.stream().mapToInt(Integer::intValue).toArray();
-
-        Map<String, String> queryParameters = new HashMap<>();
-        queryParameters.put(":languageCode", preferredLanguageCode);
-        queryParameters.put(":promptIds", Arrays.toString(promptIdsArr));
-
-        return getPrompts("src/test/resources/GetPromptsItemNegotiation.sql", queryParameters, false);
-    }
-
-    public List<Integer> getMoneyNegotiationPromptIds(List<NegotiationEntityType> entityTypes, List<PersonalityType> personalityTypes, boolean canBeInitialOffer, boolean canBeRevisedOffer, boolean canBeRepeatOffer, boolean canBeRejection, boolean canBeAcceptance) throws IOException, SQLException {
-        int[] entityIds = entityTypes.stream().mapToInt(NegotiationEntityType::getId).toArray();
-        int[] personalityIds = personalityTypes.stream().mapToInt(PersonalityType::getId).toArray();
-
-        Map<String, String> queryParameters = new HashMap<>();
-        queryParameters.put(":entityTypeIds", Arrays.toString(entityIds));
-        queryParameters.put(":personalityTypeIds", Arrays.toString(personalityIds));
-        queryParameters.put(":canBeInitialOffer", (canBeInitialOffer) ? "1" : "0");
-        queryParameters.put(":canBeRevisedOffer", (canBeRevisedOffer) ? "1" : "0");
-        queryParameters.put(":canBeRepeatOffer", (canBeRepeatOffer) ? "1" : "0");
-        queryParameters.put(":canBeRejection", (canBeRejection) ? "1" : "0");
-        queryParameters.put(":canBeAcceptance", (canBeAcceptance) ? "1" : "0");
-
-        return getPromptIds("src/test/resources/GetPromptIdsMoneyNegotiationForEntityAndPersonality.sql", queryParameters);
-    }
-
-    public Map<Integer, PromptScriptNode> getMoneyNegotiationPrompts(List<Integer> promptIds)  throws IOException, SQLException {
-        int[] promptIdsArr = promptIds.stream().mapToInt(Integer::intValue).toArray();
-
-        Map<String, String> queryParameters = new HashMap<>();
-        queryParameters.put(":languageCode", preferredLanguageCode);
-        queryParameters.put(":promptIds", Arrays.toString(promptIdsArr));
-
-        return getPrompts("src/test/resources/GetPromptsMoneyNegotiation.sql", queryParameters, false);
-    }
-
-    public List<Integer> getPowerNegotiationPromptIds(List<NegotiationEntityType> entityTypes, boolean canBeInitialPrompt) throws IOException, SQLException {
-        int[] entityIds = entityTypes.stream().mapToInt(NegotiationEntityType::getId).toArray();
-
-        Map<String, String> queryParameters = new HashMap<>();
-        queryParameters.put(":entityTypeIds", Arrays.toString(entityIds));
-        queryParameters.put(":canBeInitialPrompt", (canBeInitialPrompt) ? "1" : "0");
-
-        return getPromptIds("src/test/resources/GetPromptIdsPowerNegotiationForEntity.sql", queryParameters);
-    }
-
-    public Map<Integer, PromptScriptNode> getPowerNegotiationPrompts(List<Integer> promptIds, List<PersonalityType> personalityTypes)  throws IOException, SQLException {
-        int[] promptIdsArr = promptIds.stream().mapToInt(Integer::intValue).toArray();
-        int[] personalityIdsArr = personalityTypes.stream().mapToInt(PersonalityType::getId).toArray();
-
-        Map<String, String> queryParameters = new HashMap<>();
-        queryParameters.put(":languageCode", preferredLanguageCode);
-        queryParameters.put(":promptIds", Arrays.toString(promptIdsArr));
-        queryParameters.put(":personalityTypeIds", Arrays.toString(personalityIdsArr));
-
-        String sqlQuery = prepareQueryFromFile("src/test/resources/GetPromptsPowerNegotiation.sql", queryParameters);
-        Map<Integer, PromptScriptNode> promptsById = new HashMap<>();
-        try (PreparedStatement sqlStatement = getConnection().prepareStatement(sqlQuery)) {
-            ResultSet rs = sqlStatement.executeQuery();
-            while (rs.next()) {
-                Integer promptId = rs.getInt("PromptId");
-                if (!promptsById.containsKey(promptId)) {
-                    Map.Entry<Integer, PromptScriptNode> promptById = getPromptFromQueryResult(rs);
-                    promptsById.put(promptById.getKey(), promptById.getValue());
-                }
-
-                PromptResponseScriptNode baseResponse = getPromptResponseFromQueryResult(rs).getValue();
-                float responseSuccessRate = rs.getFloat("ResponseSuccessRate");
-                SuccessRatedPromptResponseScriptNode responseNode = new SuccessRatedPromptResponseScriptNode(baseResponse.getScriptLine(), baseResponse.getResponseType(), responseSuccessRate);
-                promptsById.get(promptId).getChildren().add(responseNode);
-            }
-        }
-        return promptsById;
+        return executePromptQuery("src/test/resources/GetPrompts.sql", queryParameters, includeResponses);
     }
 
     /**
@@ -329,15 +208,6 @@ public class SqliteScriptRepository {
         }
     }
 
-    private Map<Integer, PromptScriptNode> getPromptsFromQueryResults(ResultSet rs) throws SQLException {
-        Map<Integer, PromptScriptNode> promptsById = new HashMap<>();
-        while (rs.next()) {
-            Map.Entry<Integer, PromptScriptNode> promptById = getPromptFromQueryResult(rs);
-            promptsById.put(promptById.getKey(), promptById.getValue());
-        }
-        return promptsById;
-    }
-
     private Map<Integer, PromptScriptNode> getPromptsWithResponsesFromQueryResults(ResultSet rs) throws SQLException {
         Map<Integer, PromptScriptNode> promptsById = new HashMap<>();
         while (rs.next()) {
@@ -381,7 +251,7 @@ public class SqliteScriptRepository {
         return sqlQuery;
     }
 
-    private List<Integer> getPromptIds(String queryScriptPath, Map<String, String> queryParameters) throws IOException, SQLException {
+    private List<Integer> executePromptIdQuery(String queryScriptPath, Map<String, String> queryParameters) throws IOException, SQLException {
         String sqlQuery = prepareQueryFromFile(queryScriptPath, queryParameters);
         List<Integer> promptIds = new ArrayList<>();
         try (PreparedStatement sqlStatement = getConnection().prepareStatement(sqlQuery)) {
@@ -392,13 +262,119 @@ public class SqliteScriptRepository {
         return promptIds;
     }
 
-    private Map<Integer, PromptScriptNode> getPrompts(String queryScriptPath, Map<String, String> queryParameters, boolean includeResponses) throws IOException, SQLException {
+    private Map<Integer, PromptScriptNode> executePromptQuery(String queryScriptPath, Map<String, String> queryParameters, boolean includeResponses) throws IOException, SQLException {
         String sqlQuery = prepareQueryFromFile(queryScriptPath, queryParameters);
-        Map<Integer, PromptScriptNode> prompts;
+        Map<Integer, PromptScriptNode> promptsById = new HashMap<>();
         try (PreparedStatement sqlStatement = getConnection().prepareStatement(sqlQuery)) {
             ResultSet rs = sqlStatement.executeQuery();
-            prompts = (includeResponses) ? getPromptsWithResponsesFromQueryResults(rs) : getPromptsFromQueryResults(rs);
+            while (rs.next()) {
+                Map.Entry<Integer, PromptScriptNode> promptById = getPromptFromQueryResult(rs);
+                promptsById.put(promptById.getKey(), promptById.getValue());
+            }
         }
-        return prompts;
+
+        if (!includeResponses)
+            return promptsById;
+
+        Map<Integer, Set<String>> pluginDepsByResponseId = executeResponseDependencyQuery("src/test/resources/GetPromptResponsePluginDependenciesForPrompt.sql", queryParameters);
+        Map<Integer, Set<String>> permDepsByResponseId = executeResponseDependencyQuery("src/test/resources/GetPromptResponsePermissionDependenciesForPrompt.sql", queryParameters);
+        Map<Integer, Personable<Float>> successRateByResponseId = executeResponseSuccessRateQuery("src/test/resources/GetPromptResponseSuccessRatesForPrompt.sql", queryParameters);
+        Map<PromptResponseReference, PromptResponseScriptNode> promptResponsesByRef = executePromptResponseQuery("src/test/resources/GetPromptResponsesForPrompt.sql", queryParameters);
+
+        for (Map.Entry<PromptResponseReference, PromptResponseScriptNode> promptEntry : promptResponsesByRef.entrySet()) {
+            PromptResponseReference responseRef = promptEntry.getKey();
+            int promptId = responseRef.getPromptId();
+            int responseId = responseRef.getResponseId();
+            PromptResponseScriptNode response = promptEntry.getValue();
+
+            response.getPluginKeyAllowList().addAll(pluginDepsByResponseId.get(responseId));
+            response.getPermissionKeyAllowList().addAll(permDepsByResponseId.get(responseId));
+            // TODO: Add success rate details (needs a prompt response object that supports this)
+
+            PromptScriptNode prompt = promptsById.get(promptEntry.getKey().getPromptId());
+            prompt.getResponses().add(response);
+        }
+
+        return promptsById;
+    }
+
+    private Map<PromptResponseReference, PromptResponseScriptNode> executePromptResponseQuery(String queryScriptPath, Map<String, String> queryParameters) throws IOException, SQLException {
+        Map<PromptResponseReference, PromptResponseScriptNode> promptResponsesByRef = new HashMap<>();
+        String responseSqlQuery = prepareQueryFromFile(queryScriptPath, queryParameters);
+        try (PreparedStatement sqlStatement = getConnection().prepareStatement(responseSqlQuery)) {
+            ResultSet rs = sqlStatement.executeQuery();
+            while (rs.next()) {
+                PromptResponseScriptNode promptResponse = getPromptResponseFromQueryResult(rs).getValue();
+                int promptId = rs.getInt("PromptId");
+                int responseId = rs.getInt("ResponseId");
+                PromptResponseReference ref = new PromptResponseReference(promptId, responseId);
+                promptResponsesByRef.put(ref, promptResponse);
+            }
+        }
+        return promptResponsesByRef;
+    }
+
+    private Map<Integer, Personable<Float>> executeResponseSuccessRateQuery(String queryScriptPath, Map<String, String> queryParameters) throws IOException, SQLException {
+        Map<Integer, Personable<Float>> successRateByResponseId = new HashMap<>();
+        String responseSuccessRateSqlQuery = prepareQueryFromFile(queryScriptPath, queryParameters);
+        try (PreparedStatement sqlStatement = getConnection().prepareStatement(responseSuccessRateSqlQuery)) {
+            ResultSet rs = sqlStatement.executeQuery();
+            while (rs.next()) {
+                int responseId = rs.getInt("ResponseId");
+                PersonalityType personalityType = PersonalityType.fromId(rs.getInt("PersonalityId"));
+                float successRate = rs.getFloat("SuccessRate");
+                if (!successRateByResponseId.containsKey(responseId))
+                    successRateByResponseId.put(responseId, new Personable<>());
+                successRateByResponseId.get(responseId).setVariant(personalityType, successRate);
+            }
+        }
+        return successRateByResponseId;
+    }
+
+    private Map<Integer, Set<String>> executeResponseDependencyQuery(String queryScriptPath, Map<String, String> queryParameters) throws IOException, SQLException {
+        Map<Integer, Set<String>> dependenciesByResponseId = new HashMap<>();
+        String responsePluginDependencySqlQuery = prepareQueryFromFile(queryScriptPath, queryParameters);
+        try (PreparedStatement sqlStatement = getConnection().prepareStatement(responsePluginDependencySqlQuery)) {
+            ResultSet rs = sqlStatement.executeQuery();
+            while (rs.next()) {
+                int responseId = rs.getInt("ResponseId");
+                String dependencyKey = rs.getString("DependencyKey");
+                if (!dependenciesByResponseId.containsKey(responseId))
+                    dependenciesByResponseId.put(responseId, new HashSet<>());
+                dependenciesByResponseId.get(responseId).add(dependencyKey);
+            }
+        }
+        return dependenciesByResponseId;
+    }
+
+    private class PromptResponseReference {
+        private int promptId;
+        private int responseId;
+
+        public PromptResponseReference(int promptId, int responseId) {
+            this.promptId = promptId;
+            this.responseId = responseId;
+        }
+
+        public int getPromptId() {
+            return promptId;
+        }
+
+        public int getResponseId() {
+            return responseId;
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) return true;
+            if (o == null || getClass() != o.getClass()) return false;
+            PromptResponseReference that = (PromptResponseReference) o;
+            return getPromptId() == that.getPromptId() && getResponseId() == that.getResponseId();
+        }
+
+        @Override
+        public int hashCode() {
+            return Objects.hash(getPromptId(), getResponseId());
+        }
     }
 }
