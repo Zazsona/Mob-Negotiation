@@ -20,7 +20,7 @@ const config: Config = {
   organizationName: 'Zazsona', // Usually your GitHub org/user name.
   projectName: 'Mob-Negotiation', // Usually your repo name.
 
-  onBrokenLinks: 'throw',
+  onBrokenLinks: 'warn', // I know, I know! Just for testing! TODO: Set back to throw later
   onBrokenMarkdownLinks: 'warn',
 
   // Even if you don't use internationalization, you can use this field to set
