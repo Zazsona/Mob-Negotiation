@@ -1,4 +1,4 @@
-package com.zazsona.mobnegotiation.model;
+package com.zazsona.mobnegotiation.model2;
 
 import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;

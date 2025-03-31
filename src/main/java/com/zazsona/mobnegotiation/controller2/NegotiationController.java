@@ -5,13 +5,13 @@ import com.zazsona.mobnegotiation.model.NegotiationResponse;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Mob;
 import org.bukkit.entity.Player;
-import view2.chat.NegotiationActionButton;
-import view2.chat.NegotiationChatPanel;
-import view2.chat.NegotiationMobMessageTextField;
-import view2.lib.chat.control.layout.ChatBoxLayout;
-import view2.lib.chat.interact.ITriggerListener;
-import view2.lib.chat.interact.PlayerTriggerEvent;
-import view2.world.NegotiationWorldState;
+import com.zazsona.mobnegotiation.view2.chat.NegotiationActionButton;
+import com.zazsona.mobnegotiation.view2.chat.NegotiationChatPanel;
+import com.zazsona.mobnegotiation.view2.chat.NegotiationMobMessageTextField;
+import com.zazsona.mobnegotiation.view2.lib.chat.control.layout.ChatBoxLayout;
+import com.zazsona.mobnegotiation.view2.lib.chat.interact.ITriggerListener;
+import com.zazsona.mobnegotiation.view2.lib.chat.interact.PlayerTriggerEvent;
+import com.zazsona.mobnegotiation.view2.world.NegotiationWorldState;
 
 import java.util.*;
 
@@ -32,7 +32,7 @@ public class NegotiationController
     public void renderNegotiation()
     {
         if (this.negotiationWorldState == null || !this.negotiationWorldState.isRendered())
-            this.negotiationWorldState = renderNegotiationToWorld();
+            this.negotiationWorldState = renderNegotiationToWorld(); // TODO: Listen for "destroyed" state to end negotiation
 
         if (this.negotiationChatPanel != null)
             this.negotiationChatPanel.destroy();
